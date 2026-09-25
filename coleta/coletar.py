@@ -26,10 +26,14 @@ if __name__ == '__main__':
     for f in FONTES:
         try:
             novos = f.coletar()
-        except Exception as erro:  # fonte fora do ar: mantem os dados da ultima coleta dela
-            print('falha em', f.__name__, '->', erro)
-            dados += [e for e in anteriores if e.get('fonte', '').startswith(f.BASE)]
+            if not novos:  # site que bloqueia o servidor responde "vazio" em vez de dar erro
+                raise RuntimeError('nenhum empreendimento retornado (site fora do ar ou bloqueando o acesso)')
+        except Exception as erro:  # mantem os dados da ultima coleta dessa fonte
+            velhos = [e for e in anteriores if e.get('fonte', '').startswith(f.BASE)]
+            print(f'falha em {f.__name__}: {erro} -> mantendo {len(velhos)} da coleta anterior')
+            dados += velhos
             continue
+        print(f'{f.__name__}: {len(novos)} coletados')
         for e in novos:
             e['etapa'] = ETAPAS.get((e['etapa'] or '').lower())
             e['tipo'] = tipo(e.pop('texto'))

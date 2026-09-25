@@ -13,37 +13,38 @@
           --obras:#1d4f91; --obras-bg:#dde8f7; --pronto:#1f6f4a; --pronto-bg:#e0f0e7; }
   * { box-sizing:border-box; }
   html, body { height:100%; }
-  body { margin:0; font:15px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); background:var(--bg);
+  body { margin:0; font:16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); background:var(--bg);
          display:grid; grid-template-rows:auto 1fr; height:100dvh; overflow:hidden; }
   header { background:var(--card); border-bottom:1px solid var(--line); padding:10px 16px; display:flex; flex-wrap:wrap; gap:10px 12px; align-items:center; }
-  h1 { margin:0 8px 0 0; font-size:21px; letter-spacing:-.3px; } h1 span { color:var(--accent); }
+  h1 { margin:0 8px 0 0; font-size:25px; letter-spacing:-.3px; } h1 span { color:var(--accent); }
   #filtros { display:flex; flex-wrap:wrap; gap:10px 12px; align-items:flex-end; }
   label { display:flex; flex-direction:column; font-size:12px; color:var(--muted); gap:3px; }
   select, input { font:inherit; padding:7px 9px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); min-width:130px; }
   select:focus-visible, input:focus-visible, button:focus-visible, a:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
   button { font:inherit; cursor:pointer; border:1px solid var(--line); background:#fff; color:var(--ink); border-radius:8px; padding:7px 12px; }
   #limpar { border:0; background:none; color:var(--accent); text-decoration:underline; padding:7px 4px; }
-  #total { margin-left:auto; color:var(--muted); font-size:14px; }
+  #total { margin-left:auto; color:var(--muted); font-size:12px; }
   #abrirFiltros, #alternar { display:none; }
   main { display:grid; grid-template-columns:390px 1fr; min-height:0; }
   #lista { overflow:auto; padding:12px; display:flex; flex-direction:column; gap:12px; }
   .card { flex-shrink:0; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; cursor:pointer; transition:border-color .15s; }
   .card:hover, .card.ativo { border-color:var(--accent); }
+  .card.ativo { box-shadow:0 0 0 2px var(--accent); }
   .card img { width:100%; aspect-ratio:16/8; object-fit:cover; display:block; background:var(--line); }
   .card .corpo { padding:10px 14px 12px; }
-  .card h2 { margin:0 0 4px; font-size:16px; line-height:1.25; }
+  .card h2 { margin:0 0 4px; font-size:20px; line-height:1.2; }
   .etapa { display:inline-block; font-size:12px; font-weight:600; padding:2px 9px; border-radius:99px; margin-bottom:6px; }
   .e-breve { color:var(--breve); background:var(--breve-bg); } .e-lanc { color:var(--lanc); background:var(--lanc-bg); }
   .e-obras { color:var(--obras); background:var(--obras-bg); } .e-pronto { color:var(--pronto); background:var(--pronto-bg); }
-  .info { color:var(--muted); font-size:13px; margin:2px 0; }
-  .fatos { color:var(--ink); font-size:14px; font-weight:600; margin:6px 0; }
+  .info { color:var(--muted); font-size:12px; margin:2px 0; }
+  .fatos { color:var(--ink); font-weight:600; margin:6px 0; }
   a { color:var(--accent); }
-  .fonte { display:inline-block; padding:6px 0; font-size:14px; }
+  .fonte { display:inline-block; padding:6px 0; }
   .vazio { text-align:center; color:var(--muted); padding:40px 16px; }
   #mapa { min-height:0; }
   .pino { width:18px; height:18px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.4); }
   .leaflet-popup-content { margin:12px 14px; font:inherit; }
-  .leaflet-popup-content h2 { font-size:15px; margin:0 0 4px; }
+  .leaflet-popup-content h2 { font-size:16px; font-weight:700; margin:0 0 4px; }
   .legenda { background:#fff; padding:6px 10px; border-radius:8px; font-size:12px; box-shadow:0 1px 4px rgba(0,0,0,.2); line-height:1.7; }
   .legenda i { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align:-1px; }
 
@@ -51,10 +52,10 @@
     header { padding:10px 12px; }
     #abrirFiltros { display:inline-flex; gap:6px; align-items:center; margin-left:auto; min-height:44px; }
     #abrirFiltros b { background:var(--accent); color:#fff; border-radius:99px; padding:0 7px; font-size:12px; }
-    #total { margin-left:0; width:100%; font-size:13px; }
+    #total { margin-left:0; width:100%; }
     #filtros { display:none; width:100%; grid-template-columns:1fr 1fr; gap:10px; }
     body.filtros-abertos #filtros { display:grid; }
-    select, input { min-width:0; width:100%; font-size:16px; min-height:44px; }
+    select, input { min-width:0; width:100%; min-height:44px; }  /* herdam 16px: menos que isso o iPhone da zoom ao tocar */
     #limpar { grid-column:1 / -1; min-height:44px; }
     main { grid-template-columns:1fr; position:relative; }
     #lista, #mapa { grid-area:1 / 1; }
@@ -131,6 +132,12 @@ fetch('dados.json').then(r => r.json()).then(d => {
   render();
 });
 
+function marcar(card, rolar) {
+  document.querySelectorAll('.card.ativo').forEach(c => c.classList.remove('ativo'));
+  card.classList.add('ativo');
+  if (rolar) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
 function render() {
   const f = Object.fromEntries(CAMPOS.map(id => [id, $(id).value]));
   const vis = dados.filter(e =>
@@ -157,10 +164,12 @@ function render() {
     $('lista').append(card);
     if (e.lat == null) continue;
     const m = L.marker([e.lat, e.lng], { icon: pino(e), title: e.nome }).bindPopup(html, { maxWidth: 260 }).addTo(camada);
+    m.on('click', () => marcar(card, !celular.matches));  // no celular a lista fica escondida atras do mapa
+    m.on('popupclose', () => card.classList.remove('ativo'));
     const abrir = ev => {
       if (ev.target.closest('a')) return;
       if (celular.matches) verLista(false);
-      mapa.setView([e.lat, e.lng], 15); m.openPopup();
+      mapa.setView([e.lat, e.lng], 15); m.openPopup(); marcar(card, false);
     };
     card.onclick = abrir;
     card.onkeydown = ev => { if (ev.key === 'Enter') abrir(ev); };

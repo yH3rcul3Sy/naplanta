@@ -50,8 +50,18 @@ def _tentativas(e):
         yield {'street': ' '.join(rua), 'city': e['cidade']}
 
 
+def no_brasil(lat, lng):
+    return -34 < lat < 5.5 and -74 < lng < -34.5
+
+
+assert no_brasil(-23.5, -46.2) and not no_brasil(23.5, 46.7) and not no_brasil(-19.4, -19.4)
+
+
 def completar(e):
     e.setdefault('cidade', None); e.setdefault('uf', None)
+    # fontes erram coordenadas: sinal trocado (Cury Jaguare caia na Arabia) ou lng = lat (Tenda Sete Lagoas no Atlantico)
+    if e['lat'] is not None and not no_brasil(e['lat'], e['lng']):
+        e['lat'], e['lng'] = (-abs(e['lat']), -abs(e['lng'])) if no_brasil(-abs(e['lat']), -abs(e['lng'])) else (None, None)
     if e['lat'] is None and e['endereco']:
         for t in _tentativas(e):
             if r := _get('search', countrycodes='br', limit=1, **t):
