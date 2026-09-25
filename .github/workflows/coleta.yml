@@ -1,0 +1,50 @@
+name: coleta e publicacao
+on:
+  schedule:
+    - cron: '0 9 * * *'  # 06:00 em Brasilia
+  workflow_dispatch:     # botao "Run workflow" na aba Actions
+  push:
+    branches: [main]
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: publicacao
+  cancel-in-progress: false
+jobs:
+  coleta:
+    if: github.event_name != 'push'  # push so republica o site, sem coletar de novo
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r coleta/requirements.txt
+      - run: python coleta/coletar.py
+      - run: |
+          git config user.name "coleta-bot"
+          git config user.email "coleta-bot@users.noreply.github.com"
+          git add site/dados.json coleta/geo_cache.json
+          git diff --cached --quiet || (git commit -m "Atualiza dados coletados" && git push)
+
+  publicar:
+    # o commit da coleta nao dispara outro workflow, entao a publicacao roda aqui mesmo
+    needs: coleta
+    if: always() && needs.coleta.result != 'failure' && needs.coleta.result != 'cancelled'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main  # pega o commit novo da coleta
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v4

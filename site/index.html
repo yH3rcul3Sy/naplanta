@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f6f4a">
+<title>NaPlanta</title>
+<link rel="preconnect" href="https://wsrv.nl">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root { --bg:#f6f5f2; --card:#fff; --ink:#1d1d1b; --muted:#6b6a66; --line:#e3e1dc; --accent:#1f6f4a;
+          --breve:#8a5a00; --breve-bg:#fbefd6; --lanc:#9a3b12; --lanc-bg:#fbe3d8;
+          --obras:#1d4f91; --obras-bg:#dde8f7; --pronto:#1f6f4a; --pronto-bg:#e0f0e7; }
+  * { box-sizing:border-box; }
+  html, body { height:100%; }
+  body { margin:0; font:15px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); background:var(--bg);
+         display:grid; grid-template-rows:auto 1fr; height:100dvh; overflow:hidden; }
+  header { background:var(--card); border-bottom:1px solid var(--line); padding:10px 16px; display:flex; flex-wrap:wrap; gap:10px 12px; align-items:center; }
+  h1 { margin:0 8px 0 0; font-size:21px; letter-spacing:-.3px; } h1 span { color:var(--accent); }
+  #filtros { display:flex; flex-wrap:wrap; gap:10px 12px; align-items:flex-end; }
+  label { display:flex; flex-direction:column; font-size:12px; color:var(--muted); gap:3px; }
+  select, input { font:inherit; padding:7px 9px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); min-width:130px; }
+  select:focus-visible, input:focus-visible, button:focus-visible, a:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  button { font:inherit; cursor:pointer; border:1px solid var(--line); background:#fff; color:var(--ink); border-radius:8px; padding:7px 12px; }
+  #limpar { border:0; background:none; color:var(--accent); text-decoration:underline; padding:7px 4px; }
+  #total { margin-left:auto; color:var(--muted); font-size:14px; }
+  #abrirFiltros, #alternar { display:none; }
+  main { display:grid; grid-template-columns:390px 1fr; min-height:0; }
+  #lista { overflow:auto; padding:12px; display:flex; flex-direction:column; gap:12px; }
+  .card { flex-shrink:0; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; cursor:pointer; transition:border-color .15s; }
+  .card:hover, .card.ativo { border-color:var(--accent); }
+  .card img { width:100%; aspect-ratio:16/8; object-fit:cover; display:block; background:var(--line); }
+  .card .corpo { padding:10px 14px 12px; }
+  .card h2 { margin:0 0 4px; font-size:16px; line-height:1.25; }
+  .etapa { display:inline-block; font-size:12px; font-weight:600; padding:2px 9px; border-radius:99px; margin-bottom:6px; }
+  .e-breve { color:var(--breve); background:var(--breve-bg); } .e-lanc { color:var(--lanc); background:var(--lanc-bg); }
+  .e-obras { color:var(--obras); background:var(--obras-bg); } .e-pronto { color:var(--pronto); background:var(--pronto-bg); }
+  .info { color:var(--muted); font-size:13px; margin:2px 0; }
+  .fatos { color:var(--ink); font-size:14px; font-weight:600; margin:6px 0; }
+  a { color:var(--accent); }
+  .fonte { display:inline-block; padding:6px 0; font-size:14px; }
+  .vazio { text-align:center; color:var(--muted); padding:40px 16px; }
+  #mapa { min-height:0; }
+  .pino { width:18px; height:18px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.4); }
+  .leaflet-popup-content { margin:12px 14px; font:inherit; }
+  .leaflet-popup-content h2 { font-size:15px; margin:0 0 4px; }
+  .legenda { background:#fff; padding:6px 10px; border-radius:8px; font-size:12px; box-shadow:0 1px 4px rgba(0,0,0,.2); line-height:1.7; }
+  .legenda i { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align:-1px; }
+
+  @media (max-width: 800px) {
+    header { padding:10px 12px; }
+    #abrirFiltros { display:inline-flex; gap:6px; align-items:center; margin-left:auto; min-height:44px; }
+    #abrirFiltros b { background:var(--accent); color:#fff; border-radius:99px; padding:0 7px; font-size:12px; }
+    #total { margin-left:0; width:100%; font-size:13px; }
+    #filtros { display:none; width:100%; grid-template-columns:1fr 1fr; gap:10px; }
+    body.filtros-abertos #filtros { display:grid; }
+    select, input { min-width:0; width:100%; font-size:16px; min-height:44px; }
+    #limpar { grid-column:1 / -1; min-height:44px; }
+    main { grid-template-columns:1fr; position:relative; }
+    #lista, #mapa { grid-area:1 / 1; }
+    #lista { padding:12px 12px 90px; background:var(--bg); z-index:1001; }
+    body:not(.ver-lista) #lista { visibility:hidden; }
+    #alternar { display:flex; position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom)); transform:translateX(-50%); z-index:1100;
+                background:var(--ink); color:#fff; border:0; border-radius:99px; padding:12px 22px; min-height:48px; font-weight:600;
+                box-shadow:0 4px 14px rgba(0,0,0,.3); gap:8px; align-items:center; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Na<span>Planta</span></h1>
+  <button id="abrirFiltros" aria-expanded="false" aria-controls="filtros">Filtros <b id="nFiltros" hidden></b></button>
+  <div id="filtros">
+    <label>Cidade <select id="cidade"><option value="">Todas</option></select></label>
+    <label>Tipo <select id="tipo"><option value="">Todos</option></select></label>
+    <label>Etapa <select id="etapa"><option value="">Todas</option></select></label>
+    <label>Construtora <select id="construtora"><option value="">Todas</option></select></label>
+    <label>Dormitórios (mín.) <select id="dorms"><option value="">Qualquer</option><option>1</option><option>2</option><option>3</option><option>4</option></select></label>
+    <label>Área mín. (m²) <input id="m2" type="number" inputmode="numeric" min="0" step="10" placeholder="ex.: 60"></label>
+    <button id="limpar" type="button">Limpar filtros</button>
+  </div>
+  <span id="total" aria-live="polite"></span>
+</header>
+<main>
+  <section id="lista" aria-label="Empreendimentos"></section>
+  <div id="mapa" role="region" aria-label="Mapa dos empreendimentos"></div>
+</main>
+<button id="alternar" type="button">Ver lista</button>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const CAMPOS = ['cidade', 'tipo', 'etapa', 'construtora', 'dorms', 'm2'];
+const ETAPA = { 'Breve lançamento': ['e-breve', '#c58a1a'], 'Lançamento': ['e-lanc', '#d0582a'],
+                'Em obras': ['e-obras', '#2f6fc4'], 'Pronto para morar': ['e-pronto', '#1f8a58'] };
+const celular = matchMedia('(max-width: 800px)');
+const mapa = L.map('mapa', { tap: false }).setView([-23.52, -46.19], 11);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap contributors', maxZoom: 19 }).addTo(mapa);
+const camada = L.featureGroup().addTo(mapa);
+const legenda = L.control({ position: 'bottomleft' });
+legenda.onAdd = () => Object.assign(L.DomUtil.create('div', 'legenda'), {
+  innerHTML: Object.entries(ETAPA).map(([n, [, c]]) => `<i style="background:${c}"></i>${n}`).join('<br>') });
+legenda.addTo(mapa);
+const faixa = (v, u = '') => v ? (v[0] === v[1] ? v[0] : `${v[0]} a ${v[1]}`) + u : null;
+// fotos das incorporadoras chegam a 1 MB; o wsrv.nl (gratuito, open source) entrega reduzidas em WebP e com cache
+const foto = u => `https://wsrv.nl/?url=${encodeURIComponent(u)}&w=640&h=320&fit=cover&output=webp&q=70`;
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pino = e => L.divIcon({ className: '', iconSize: [18, 18], iconAnchor: [9, 18], popupAnchor: [0, -18],
+  html: `<div class="pino" style="background:${(ETAPA[e.etapa] || [, '#666'])[1]}"></div>` });
+let dados = [];
+
+function verLista(sim) {
+  document.body.classList.toggle('ver-lista', sim);
+  $('alternar').textContent = sim ? 'Ver mapa' : 'Ver lista';
+  if (!sim) mapa.invalidateSize();
+}
+$('alternar').onclick = () => verLista(!document.body.classList.contains('ver-lista'));
+$('abrirFiltros').onclick = () => {
+  const aberto = document.body.classList.toggle('filtros-abertos');
+  $('abrirFiltros').setAttribute('aria-expanded', aberto);
+  mapa.invalidateSize();
+};
+$('limpar').onclick = () => { CAMPOS.forEach(id => $(id).value = ''); render(); };
+CAMPOS.forEach(id => $(id).addEventListener('input', render));
+
+fetch('dados.json').then(r => r.json()).then(d => {
+  dados = d;
+  for (const k of ['cidade', 'tipo', 'etapa', 'construtora'])
+    [...new Set(d.map(e => e[k]).filter(Boolean))].sort().forEach(v => $(k).add(new Option(v, v)));
+  if ([...$('cidade').options].some(o => o.value === 'Mogi das Cruzes')) $('cidade').value = 'Mogi das Cruzes';
+  render();
+});
+
+function render() {
+  const f = Object.fromEntries(CAMPOS.map(id => [id, $(id).value]));
+  const vis = dados.filter(e =>
+    (!f.cidade || e.cidade === f.cidade) && (!f.tipo || e.tipo === f.tipo) && (!f.etapa || e.etapa === f.etapa) &&
+    (!f.construtora || e.construtora === f.construtora) &&
+    (!f.dorms || (e.dorms && e.dorms[1] >= +f.dorms)) && (!f.m2 || (e.m2 && e.m2[1] >= +f.m2)));
+  const n = CAMPOS.filter(id => f[id]).length;
+  $('nFiltros').hidden = !n; $('nFiltros').textContent = n;
+  $('total').textContent = `${vis.length} empreendimento${vis.length === 1 ? '' : 's'}`;
+  camada.clearLayers(); $('lista').innerHTML = '';
+  if (!vis.length) $('lista').innerHTML = '<p class="vazio">Nenhum empreendimento com esses filtros.<br>Tente limpar algum deles.</p>';
+  for (const e of vis) {
+    const [cls] = ETAPA[e.etapa] || [''];
+    const fatos = [faixa(e.dorms, ' dorm.'), e.tipo === 'Lote' && e.m2 ? `lotes a partir de ${e.m2[0]} m²` : faixa(e.m2, ' m²')].filter(Boolean).join(' · ');
+    const html = `<span class="etapa ${cls}">${esc(e.etapa)}</span><h2>${esc(e.nome)}</h2>
+      <p class="info">${esc(e.tipo)} · ${esc(e.construtora)} · ${esc(e.cidade ?? '')}${e.uf ? ' - ' + esc(e.uf) : ''}</p>
+      ${e.endereco ? `<p class="info">${esc(e.endereco)}</p>` : ''}
+      ${fatos ? `<p class="fatos">${fatos}</p>` : ''}
+      ${e.entrega ? `<p class="info">Entrega: ${esc(e.entrega)}</p>` : ''}
+      <a class="fonte" href="${esc(e.fonte)}" target="_blank" rel="noopener">Ver na fonte original ↗</a>`;
+    const card = document.createElement('article');
+    card.className = 'card'; card.tabIndex = 0;
+    card.innerHTML = (e.imagem ? `<img src="${esc(foto(e.imagem))}" data-original="${esc(e.imagem)}" alt="" loading="lazy" decoding="async" width="640" height="320" onerror="if(this.dataset.original){this.src=this.dataset.original;this.removeAttribute('data-original')}">` : '') + `<div class="corpo">${html}</div>`;
+    $('lista').append(card);
+    if (e.lat == null) continue;
+    const m = L.marker([e.lat, e.lng], { icon: pino(e), title: e.nome }).bindPopup(html, { maxWidth: 260 }).addTo(camada);
+    const abrir = ev => {
+      if (ev.target.closest('a')) return;
+      if (celular.matches) verLista(false);
+      mapa.setView([e.lat, e.lng], 15); m.openPopup();
+    };
+    card.onclick = abrir;
+    card.onkeydown = ev => { if (ev.key === 'Enter') abrir(ev); };
+  }
+  mapa.invalidateSize();
+  if (camada.getLayers().length) mapa.fitBounds(camada.getBounds(), { padding: [30, 30], maxZoom: 15 });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+# documentos do Summit: dados pessoais dos autores e declaracao assinada
+summit/
+# configuracoes locais do Claude Code
+.claude/
+__pycache__/
+*.log
