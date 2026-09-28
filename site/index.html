@@ -97,6 +97,7 @@
     <label>Etapa <select id="etapa"><option value="">Todas</option></select></label>
     <label>Construtora <select id="construtora"><option value="">Todas</option></select></label>
     <label>Dormitórios (mín.) <select id="dorms"><option value="">Qualquer</option><option>1</option><option>2</option><option>3</option><option>4</option></select></label>
+    <label>Estação de trem/metrô <select id="estacao"><option value="">Qualquer distância</option><option value="1">Até 1 km</option><option value="2">Até 2 km</option><option value="3">Até 3 km</option></select></label>
     <label>Área mín. (m²) <input id="m2" type="number" inputmode="numeric" min="0" step="10" placeholder="ex.: 60"></label>
     <button id="limpar" type="button">Limpar filtros</button>
   </div>
@@ -120,7 +121,7 @@
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const $ = id => document.getElementById(id);
-const CAMPOS = ['cidade', 'tipo', 'etapa', 'construtora', 'dorms', 'm2'];
+const CAMPOS = ['cidade', 'tipo', 'etapa', 'construtora', 'dorms', 'estacao', 'm2'];
 const ETAPA = { 'Breve lançamento': ['e-breve', '#c58a1a'], 'Lançamento': ['e-lanc', '#d0582a'],
                 'Em obras': ['e-obras', '#2f6fc4'], 'Pronto para morar': ['e-pronto', '#1f8a58'] };
 const celular = matchMedia('(max-width: 800px)');
@@ -135,6 +136,18 @@ legenda.addTo(mapa);
 const faixa = (v, u = '') => v ? (v[0] === v[1] ? v[0] : `${v[0]} a ${v[1]}`) + u : null;
 // fotos das incorporadoras chegam a 1 MB; o wsrv.nl (gratuito, open source) entrega reduzidas em WebP e com cache
 const foto = u => `https://wsrv.nl/?url=${encodeURIComponent(u)}&w=640&h=320&fit=cover&output=webp&q=70`;
+const plural = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
+// dados do OpenStreetMap: estacao a ate 3 km e servicos a ate 1 km, distancias em linha reta
+function arredores(e) {
+  if (e.estacao === undefined) return '';  // ainda nao consultado
+  const est = e.estacao
+    ? `Estação ${esc(e.estacao.nome)} (${e.estacao.tipo}) · ${e.estacao.km.toLocaleString('pt-BR')} km em linha reta`
+    : 'Nenhuma estação de trem ou metrô a até 3 km';
+  const p = e.perto || {};
+  const servicos = [p.escolas && plural(p.escolas, 'escola', 'escolas'), p.saude && plural(p.saude, 'serviço de saúde', 'serviços de saúde'),
+                    p.mercados && plural(p.mercados, 'mercado', 'mercados'), p.parques && plural(p.parques, 'parque', 'parques')].filter(Boolean);
+  return `<p class="info perto">${est}</p>` + (servicos.length ? `<p class="info perto">A até 1 km: ${servicos.join(' · ')}</p>` : '');
+}
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pino = e => L.divIcon({ className: '', iconSize: [18, 18], iconAnchor: [9, 18], popupAnchor: [0, -18],
   html: `<div class="pino" style="background:${(ETAPA[e.etapa] || [, '#666'])[1]}"></div>` });
@@ -218,7 +231,8 @@ function render() {
   const vis = dados.filter(e =>
     (!f.cidade || e.cidade === f.cidade) && (!f.tipo || e.tipo === f.tipo) && (!f.etapa || e.etapa === f.etapa) &&
     (!f.construtora || e.construtora === f.construtora) &&
-    (!f.dorms || (e.dorms && e.dorms[1] >= +f.dorms)) && (!f.m2 || (e.m2 && e.m2[1] >= +f.m2)));
+    (!f.dorms || (e.dorms && e.dorms[1] >= +f.dorms)) && (!f.m2 || (e.m2 && e.m2[1] >= +f.m2)) &&
+    (!f.estacao || (e.estacao && e.estacao.km <= +f.estacao)));
   const n = CAMPOS.filter(id => f[id]).length;
   $('nFiltros').hidden = !n; $('nFiltros').textContent = n;
   $('total').textContent = `${vis.length} empreendimento${vis.length === 1 ? '' : 's'}`;
@@ -237,6 +251,7 @@ function render() {
       ${e.endereco ? `<p class="info">${esc(e.endereco)}</p>` : ''}
       ${fatos ? `<p class="fatos">${fatos}</p>` : ''}
       ${e.entrega ? `<p class="info">Entrega: ${esc(e.entrega)}</p>` : ''}
+      ${arredores(e)}
       <a class="fonte" href="${esc(e.fonte)}" target="_blank" rel="noopener">Ver na fonte original ↗</a>`;
     const card = document.createElement('article');
     card.className = 'card'; card.tabIndex = 0;

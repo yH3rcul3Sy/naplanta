@@ -1,6 +1,6 @@
 import json, pathlib, re
 from datetime import datetime, timedelta, timezone
-import cac, cury, damebe, geo, helbor, integra, sousaaraujo, tenda
+import arredores, cac, cury, damebe, geo, helbor, integra, sousaaraujo, tenda
 
 FONTES = [helbor, cac, cury, tenda, integra, sousaaraujo, damebe]
 SITE = pathlib.Path(__file__).parent.parent / 'site'
@@ -87,6 +87,7 @@ if __name__ == '__main__':
         dados += [geo.completar(e) for e in novos]
     for e in dados:
         e.pop('plantas', None)  # o site nao usa; so pesa no download
+    arredores.completar(dados)
     limite = (datetime.fromisoformat(dia) - timedelta(days=DIAS_DE_HISTORICO)).date().isoformat()
     historico['eventos'] = [e for e in eventos + historico['eventos'] if e['data'] >= limite]
     SITE.mkdir(exist_ok=True)
