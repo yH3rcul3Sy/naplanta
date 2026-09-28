@@ -4,3 +4,5 @@ summit/
 .claude/
 __pycache__/
 *.log
+# saida local do graphify (grafo de conhecimento do projeto)
+graphify-out/

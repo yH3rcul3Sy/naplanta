@@ -1,4 +1,6 @@
 name: coleta e publicacao
+# titulo de cada execucao na aba Actions (sem isso o GitHub usa a mensagem do commit)
+run-name: ${{ github.event_name == 'push' && 'Publicação do site' || github.event_name == 'schedule' && 'Coleta diária' || 'Coleta manual' }}
 on:
   schedule:
     - cron: '0 9 * * *'  # 06:00 em Brasilia
@@ -27,7 +29,7 @@ jobs:
       - run: |
           git config user.name "coleta-bot"
           git config user.email "coleta-bot@users.noreply.github.com"
-          git add site/dados.json coleta/geo_cache.json
+          git add site/dados.json site/mudancas.json coleta/geo_cache.json
           git diff --cached --quiet || (git commit -m "Atualiza dados coletados" && git push)
 
   publicar:

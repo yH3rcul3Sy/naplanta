@@ -47,10 +47,29 @@
   .leaflet-popup-content h2 { font-size:16px; font-weight:700; margin:0 0 4px; }
   .legenda { background:#fff; padding:6px 10px; border-radius:8px; font-size:12px; box-shadow:0 1px 4px rgba(0,0,0,.2); line-height:1.7; }
   .legenda i { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align:-1px; }
+  #abrirNovidades b, #abrirFiltros b { background:var(--accent); color:#fff; border-radius:99px; padding:0 7px; font-size:12px; margin-left:6px; }
+  .selo-novo { display:inline-block; font-size:12px; font-weight:700; padding:2px 9px; border-radius:99px; margin:0 0 6px 6px; background:var(--ink); color:#fff; }
+  #novidades { width:min(560px, calc(100% - 24px)); max-height:min(80dvh, 720px); border:0; border-radius:14px; padding:0; box-shadow:0 12px 40px rgba(0,0,0,.3); }
+  #novidades::backdrop { background:rgba(0,0,0,.4); }
+  #novidades header { position:sticky; top:0; padding:16px 18px 12px; flex-wrap:nowrap; }
+  #novidades h2 { margin:0; font-size:20px; }
+  #novidades header p { margin:2px 0 0; }
+  #fecharNovidades { margin-left:auto; align-self:flex-start; }
+  #eventos { padding:6px 18px 18px; }
+  #eventos h3 { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin:16px 0 6px; }
+  .evento { display:block; width:100%; text-align:left; border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-bottom:8px; background:#fff; }
+  .evento[disabled] { cursor:default; }
+  .evento:not([disabled]):hover { border-color:var(--accent); }
+  .evento strong { display:block; }
+  .t-novo { color:var(--pronto); } .t-etapa { color:var(--obras); } .t-saiu { color:var(--lanc); }
+  .tipo-evento { font-size:12px; font-weight:700; }
 
   @media (max-width: 800px) {
-    header { padding:10px 12px; }
-    #abrirFiltros { display:inline-flex; gap:6px; align-items:center; margin-left:auto; min-height:44px; }
+    header { padding:10px 12px; gap:8px; }
+    h1 { margin-right:0; }
+    #abrirNovidades { margin-left:auto; }
+    #abrirNovidades, #abrirFiltros { padding:7px 10px; min-height:44px; }
+    #abrirFiltros { display:inline-flex; gap:6px; align-items:center; }
     #abrirFiltros b { background:var(--accent); color:#fff; border-radius:99px; padding:0 7px; font-size:12px; }
     #total { margin-left:0; width:100%; }
     #filtros { display:none; width:100%; grid-template-columns:1fr 1fr; gap:10px; }
@@ -70,6 +89,7 @@
 <body>
 <header>
   <h1>Na<span>Planta</span></h1>
+  <button id="abrirNovidades" type="button" aria-haspopup="dialog">Novidades<b id="nNovidades" hidden></b></button>
   <button id="abrirFiltros" aria-expanded="false" aria-controls="filtros">Filtros <b id="nFiltros" hidden></b></button>
   <div id="filtros">
     <label>Cidade <select id="cidade"><option value="">Todas</option></select></label>
@@ -87,6 +107,16 @@
   <div id="mapa" role="region" aria-label="Mapa dos empreendimentos"></div>
 </main>
 <button id="alternar" type="button">Ver lista</button>
+<dialog id="novidades" aria-labelledby="tituloNovidades">
+  <header>
+    <div>
+      <h2 id="tituloNovidades">O que mudou</h2>
+      <p class="info" id="resumoNovidades"></p>
+    </div>
+    <button id="fecharNovidades" type="button" aria-label="Fechar">✕</button>
+  </header>
+  <div id="eventos"></div>
+</dialog>
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -124,8 +154,53 @@ $('abrirFiltros').onclick = () => {
 $('limpar').onclick = () => { CAMPOS.forEach(id => $(id).value = ''); render(); };
 CAMPOS.forEach(id => $(id).addEventListener('input', render));
 
-fetch('dados.json').then(r => r.json()).then(d => {
-  dados = d;
+const DIAS_NOVO = 7, DIAS_PAINEL = 30;
+const diasAtras = n => new Date(Date.now() - n * 864e5).toISOString().slice(0, 10);
+const dataBR = iso => iso.split('-').reverse().join('/');
+const TIPO_EVENTO = { novo: ['t-novo', 'Novo no site'], etapa: ['t-etapa', 'Mudou de etapa'], saiu: ['t-saiu', 'Saiu do site'] };
+let mudancas = { inicio: null, eventos: [] };
+const abrirPor = new Map();  // fonte -> funcao que foca o empreendimento no mapa
+
+function eventosVisiveis(dias) {
+  const cidade = $('cidade').value, limite = diasAtras(dias);
+  return mudancas.eventos.filter(e => e.data >= limite && (!cidade || e.cidade === cidade));
+}
+
+function mostrarNovidades() {
+  const cidade = $('cidade').value, evs = eventosVisiveis(DIAS_PAINEL);
+  $('resumoNovidades').textContent = `Últimos ${DIAS_PAINEL} dias ${cidade ? 'em ' + cidade : 'em todas as cidades'}` +
+    (mudancas.inicio ? ` · acompanhando diariamente desde ${dataBR(mudancas.inicio)}` : '');
+  $('eventos').innerHTML = evs.length ? '' :
+    '<p class="vazio">Nenhuma mudança nesse período.<br>A coleta roda todo dia: lançamentos, trocas de etapa e saídas aparecem aqui.</p>';
+  let dia;
+  for (const e of evs) {
+    if (e.data !== dia) $('eventos').insertAdjacentHTML('beforeend', `<h3>${dataBR(dia = e.data)}</h3>`);
+    const [cls, rotulo] = TIPO_EVENTO[e.tipo];
+    const detalhe = e.tipo === 'etapa' ? `${esc(e.de)} → ${esc(e.etapa)}`
+      : e.tipo === 'saiu' ? 'Provavelmente esgotado ou retirado pela incorporadora' : esc(e.etapa);
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'evento';
+    b.disabled = e.tipo === 'saiu' || !dados.some(d => d.fonte === e.fonte && d.lat != null);
+    b.innerHTML = `<span class="tipo-evento ${cls}">${rotulo}</span><strong>${esc(e.nome)}</strong>
+      <span class="info">${esc(e.construtora)} · ${esc(e.cidade ?? '')} · ${detalhe}</span>`;
+    b.onclick = () => {
+      $('novidades').close();
+      if (!abrirPor.has(e.fonte)) { CAMPOS.forEach(id => $(id).value = ''); $('cidade').value = e.cidade ?? ''; render(); }
+      abrirPor.get(e.fonte)?.({ target: document.body }, !celular.matches);
+    };
+    $('eventos').append(b);
+  }
+  $('novidades').showModal();
+}
+$('abrirNovidades').onclick = mostrarNovidades;
+$('fecharNovidades').onclick = () => $('novidades').close();
+$('novidades').onclick = ev => { if (ev.target === $('novidades')) $('novidades').close(); };  // clique fora fecha
+
+Promise.all([
+  fetch('dados.json').then(r => r.json()),
+  fetch('mudancas.json').then(r => r.ok ? r.json() : mudancas).catch(() => mudancas),
+]).then(([d, m]) => {
+  dados = d; mudancas = m;
   for (const k of ['cidade', 'tipo', 'etapa', 'construtora'])
     [...new Set(d.map(e => e[k]).filter(Boolean))].sort().forEach(v => $(k).add(new Option(v, v)));
   if ([...$('cidade').options].some(o => o.value === 'Mogi das Cruzes')) $('cidade').value = 'Mogi das Cruzes';
@@ -147,12 +222,17 @@ function render() {
   const n = CAMPOS.filter(id => f[id]).length;
   $('nFiltros').hidden = !n; $('nFiltros').textContent = n;
   $('total').textContent = `${vis.length} empreendimento${vis.length === 1 ? '' : 's'}`;
-  camada.clearLayers(); $('lista').innerHTML = '';
+  const nNovidades = eventosVisiveis(DIAS_NOVO).length;
+  $('nNovidades').hidden = !nNovidades; $('nNovidades').textContent = nNovidades;
+  $('abrirNovidades').setAttribute('aria-label', `Novidades: ${nNovidades} na última semana`);
+  const novoDesde = diasAtras(DIAS_NOVO);
+  camada.clearLayers(); $('lista').innerHTML = ''; abrirPor.clear();
   if (!vis.length) $('lista').innerHTML = '<p class="vazio">Nenhum empreendimento com esses filtros.<br>Tente limpar algum deles.</p>';
   for (const e of vis) {
     const [cls] = ETAPA[e.etapa] || [''];
     const fatos = [faixa(e.dorms, ' dorm.'), e.tipo === 'Lote' && e.m2 ? `lotes a partir de ${e.m2[0]} m²` : faixa(e.m2, ' m²')].filter(Boolean).join(' · ');
-    const html = `<span class="etapa ${cls}">${esc(e.etapa)}</span><h2>${esc(e.nome)}</h2>
+    const novo = e.desde && e.desde >= novoDesde ? `<span class="selo-novo" title="No site desde ${dataBR(e.desde)}">Novo</span>` : '';
+    const html = `<span class="etapa ${cls}">${esc(e.etapa)}</span>${novo}<h2>${esc(e.nome)}</h2>
       <p class="info">${esc(e.tipo)} · ${esc(e.construtora)} · ${esc(e.cidade ?? '')}${e.uf ? ' - ' + esc(e.uf) : ''}</p>
       ${e.endereco ? `<p class="info">${esc(e.endereco)}</p>` : ''}
       ${fatos ? `<p class="fatos">${fatos}</p>` : ''}
@@ -166,11 +246,12 @@ function render() {
     const m = L.marker([e.lat, e.lng], { icon: pino(e), title: e.nome }).bindPopup(html, { maxWidth: 260 }).addTo(camada);
     m.on('click', () => marcar(card, !celular.matches));  // no celular a lista fica escondida atras do mapa
     m.on('popupclose', () => card.classList.remove('ativo'));
-    const abrir = ev => {
+    const abrir = (ev, rolar = false) => {
       if (ev.target.closest('a')) return;
       if (celular.matches) verLista(false);
-      mapa.setView([e.lat, e.lng], 15); m.openPopup(); marcar(card, false);
+      mapa.setView([e.lat, e.lng], 15); m.openPopup(); marcar(card, rolar);
     };
+    abrirPor.set(e.fonte, abrir);
     card.onclick = abrir;
     card.onkeydown = ev => { if (ev.key === 'Enter') abrir(ev); };
   }
