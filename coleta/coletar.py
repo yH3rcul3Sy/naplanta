@@ -80,7 +80,7 @@ if __name__ == '__main__':
                 raise RuntimeError(f'so {len(novos)} de {len(velhos)} (coleta incompleta)')
         except Exception as erro:  # mantem os dados da ultima coleta dessa fonte
             print(f'falha em {f.__name__}: {erro} -> mantendo {len(velhos)} da coleta anterior')
-            dados += velhos
+            dados += [geo.completar(e) for e in velhos]
             continue
         print(f'{f.__name__}: {len(novos)} coletados')
         eventos += comparar(velhos, novos, dia)

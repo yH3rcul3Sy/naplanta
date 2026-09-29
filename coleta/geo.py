@@ -1,4 +1,4 @@
-import json, pathlib, re, time
+import json, pathlib, re, time, unicodedata
 import httpx
 
 URL = 'https://nominatim.openstreetmap.org'
@@ -35,13 +35,25 @@ def _cidade(a):
     return a.get('city') or a.get('town') or a.get('municipality') or a.get('village')
 
 
+def _sem_acento(s):
+    return unicodedata.normalize('NFKD', s or '').encode('ascii', 'ignore').decode().lower().strip()
+
+
+assert _sem_acento('São Paulo ') == 'sao paulo' and _sem_acento(None) == ''
+
+
+def na_cidade(lat, lng, cidade):
+    a = _get('reverse', lat=lat, lon=lng, zoom=10).get('address', {})  # ponto no mar volta sem endereco
+    return _sem_acento(_cidade(a)) == _sem_acento(cidade)
+
+
 ABREV = {'av.': 'Avenida', 'av': 'Avenida', 'r.': 'Rua', 'r': 'Rua', 'est.': 'Estrada', 'al.': 'Alameda'}
 
 
 def _tentativas(e):
     # o Nominatim erra enderecos longos; tenta do mais preciso ao mais aproximado
     end = e['endereco'].replace('|', ',')
-    yield {'q': end}
+    yield {'q': end if not e['cidade'] or e['cidade'] in end else f"{end}, {e['cidade']}"}
     if cep := re.search(r'\d{5}-?\d{3}', end):
         yield {'postalcode': cep[0]}
     rua = re.split(r'[,–-]', end)[0].split()
@@ -62,9 +74,13 @@ def completar(e):
     # fontes erram coordenadas: sinal trocado (Cury Jaguare caia na Arabia) ou lng = lat (Tenda Sete Lagoas no Atlantico)
     if e['lat'] is not None and not no_brasil(e['lat'], e['lng']):
         e['lat'], e['lng'] = (-abs(e['lat']), -abs(e['lng'])) if no_brasil(-abs(e['lat']), -abs(e['lng'])) else (None, None)
+    # a Tenda publica pontos no mar (Recife, Fortaleza) ou em outra cidade (Salvador -> Camacari)
+    if e['lat'] is not None and e['cidade'] and not na_cidade(e['lat'], e['lng'], e['cidade']):
+        e['lat'] = e['lng'] = None
     if e['lat'] is None and e['endereco']:
         for t in _tentativas(e):
-            if r := _get('search', countrycodes='br', limit=1, **t):
+            r = _get('search', countrycodes='br', limit=1, **t)
+            if r and (not e['cidade'] or na_cidade(float(r[0]['lat']), float(r[0]['lon']), e['cidade'])):
                 e['lat'], e['lng'] = float(r[0]['lat']), float(r[0]['lon'])
                 break
     if e['lat'] is not None and not e['cidade']:
