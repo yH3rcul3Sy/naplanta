@@ -53,7 +53,7 @@
   <ul>
     <li>Roda <strong>todo dia de manhã</strong>, automaticamente, e o site é republicado em seguida.</li>
     <li>Só lê o que o <code>robots.txt</code> de cada site libera, se identifica como <em>NaPlantaBot</em> e espera 1 segundo entre páginas.</li>
-    <li>Guarda só informações públicas do empreendimento: nome, etapa, endereço, dormitórios, área, previsão de entrega e uma foto. <strong>Preços não são coletados.</strong></li>
+    <li>Guarda só informações públicas do empreendimento: nome, etapa, endereço, dormitórios, área, previsão de entrega e uma foto em tamanho reduzido. <strong>Preços não são coletados.</strong></li>
     <li>Empreendimentos 100% vendidos ficam de fora.</li>
     <li>Se um site falha ou responde vazio, os dados da coleta anterior são mantidos. Se uma fonte perde mais de 30% dos empreendimentos de um dia para o outro, a coleta dela é tratada como incompleta.</li>
     <li>Comparando com o dia anterior, o painel <a href="./">Novidades</a> mostra lançamentos, mudanças de etapa e empreendimentos que saíram.</li>
@@ -82,7 +82,7 @@
   </ul>
 
   <h2>Código e créditos</h2>
-  <p>O NaPlanta é um projeto acadêmico da UMC, com <a href="https://github.com/yH3rcul3Sy/naplanta">código aberto no GitHub</a>. Mapa: <a href="https://leafletjs.com/">Leaflet</a> e © colaboradores do <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>. Fotos reduzidas pelo <a href="https://wsrv.nl/">wsrv.nl</a>.</p>
+  <p>O NaPlanta é um projeto acadêmico da UMC, com <a href="https://github.com/yH3rcul3Sy/naplanta">código aberto no GitHub</a>. Mapa: <a href="https://leafletjs.com/">Leaflet</a> e © colaboradores do <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>. Fotos das próprias incorporadoras, reduzidas durante a coleta.</p>
 </main>
 <script>
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));

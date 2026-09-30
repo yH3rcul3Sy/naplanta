@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" href="favicon.png" media="(prefers-color-scheme: dark)">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
-<link rel="preconnect" href="https://wsrv.nl">
+<link rel="preload" href="dados.json" as="fetch" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
 <style>
   :root { --bg:#f6f5f2; --card:#fff; --ink:#1d1d1b; --muted:#6b6a66; --line:#e3e1dc; --accent:#1f6f4a;
@@ -34,7 +34,7 @@
   .card { flex-shrink:0; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; cursor:pointer; transition:border-color .15s; }
   .card:hover, .card.ativo { border-color:var(--accent); }
   .card.ativo { box-shadow:0 0 0 2px var(--accent); }
-  .card img { width:100%; aspect-ratio:16/8; object-fit:cover; display:block; background:var(--line); }
+  .card img { width:100%; height:auto; aspect-ratio:16/8; object-fit:cover; display:block; background:var(--line); }
   .card .corpo { padding:10px 14px 12px; }
   .card h2 { margin:0 0 4px; font-size:20px; line-height:1.2; }
   .etapa { display:inline-block; font-size:12px; font-weight:600; padding:2px 9px; border-radius:99px; margin-bottom:6px; }
@@ -46,6 +46,8 @@
   .fonte { display:inline-block; padding:6px 0; }
   .vazio { text-align:center; color:var(--muted); padding:40px 16px; }
   #mapa { min-height:0; }
+  .grupo { display:grid; place-items:center; background:var(--ink); color:#fff; border:2px solid #fff; border-radius:50%;
+           font-size:12px; font-weight:700; box-shadow:0 1px 4px rgba(0,0,0,.4); }
   .pino { width:18px; height:18px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.4); }
   .leaflet-popup-content { margin:12px 14px; font:inherit; }
   .leaflet-popup-content h2 { font-size:16px; font-weight:700; margin:0 0 4px; }
@@ -123,6 +125,7 @@
   <div id="eventos"></div>
 </dialog>
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 const CAMPOS = ['cidade', 'tipo', 'etapa', 'construtora', 'dorms', 'estacao', 'm2'];
@@ -132,14 +135,14 @@ const celular = matchMedia('(max-width: 800px)');
 const mapa = L.map('mapa', { tap: false }).setView([-23.52, -46.19], 11);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors', maxZoom: 19 }).addTo(mapa);
-const camada = L.featureGroup().addTo(mapa);
+// pinos proximos viram um circulo com o total; a partir do zoom 15 aparecem todos
+const camada = L.markerClusterGroup({ disableClusteringAtZoom: 15, maxClusterRadius: 45, showCoverageOnHover: false,
+  iconCreateFunction: g => L.divIcon({ className: 'grupo', html: g.getChildCount(), iconSize: [34, 34] }) }).addTo(mapa);
 const legenda = L.control({ position: 'bottomleft' });
 legenda.onAdd = () => Object.assign(L.DomUtil.create('div', 'legenda'), {
   innerHTML: Object.entries(ETAPA).map(([n, [, c]]) => `<i style="background:${c}"></i>${n}`).join('<br>') });
 legenda.addTo(mapa);
 const faixa = (v, u = '') => v ? (v[0] === v[1] ? v[0] : `${v[0]} a ${v[1]}`) + u : null;
-// fotos das incorporadoras chegam a 1 MB; o wsrv.nl (gratuito, open source) entrega reduzidas em WebP e com cache
-const foto = u => `https://wsrv.nl/?url=${encodeURIComponent(u)}&w=640&h=320&fit=cover&output=webp&q=70`;
 const plural = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
 // dados do OpenStreetMap: estacao a ate 3 km e servicos a ate 1 km, distancias em linha reta
 function arredores(e) {
@@ -244,9 +247,10 @@ function render() {
   $('nNovidades').hidden = !nNovidades; $('nNovidades').textContent = nNovidades;
   $('abrirNovidades').setAttribute('aria-label', `Novidades: ${nNovidades} na última semana`);
   const novoDesde = diasAtras(DIAS_NOVO);
-  camada.clearLayers(); $('lista').innerHTML = ''; abrirPor.clear();
+  camada.clearLayers(); $('lista').innerHTML = ''; abrirPor.clear(); fila = []; mostrados = 0;
   if (!vis.length) $('lista').innerHTML = '<p class="vazio">Nenhum empreendimento com esses filtros.<br>Tente limpar algum deles.</p>';
-  for (const e of vis) {
+  const marcadores = [];
+  vis.forEach((e, i) => {
     const [cls] = ETAPA[e.etapa] || [''];
     const fatos = [faixa(e.dorms, ' dorm.'), e.tipo === 'Lote' && e.m2 ? `lotes a partir de ${e.m2[0]} m²` : faixa(e.m2, ' m²')].filter(Boolean).join(' · ');
     const novo = e.desde && e.desde >= novoDesde ? `<span class="selo-novo" title="No site desde ${dataBR(e.desde)}">Novo</span>` : '';
@@ -257,26 +261,46 @@ function render() {
       ${e.entrega ? `<p class="info">Entrega: ${esc(e.entrega)}</p>` : ''}
       ${arredores(e)}
       <a class="fonte" href="${esc(e.fonte)}" target="_blank" rel="noopener">Ver na fonte original ↗</a>`;
-    const card = document.createElement('article');
-    card.className = 'card'; card.tabIndex = 0;
-    card.innerHTML = (e.imagem ? `<img src="${esc(foto(e.imagem))}" data-original="${esc(e.imagem)}" alt="" loading="lazy" decoding="async" width="640" height="320" onerror="if(this.dataset.original){this.src=this.dataset.original;this.removeAttribute('data-original')}">` : '') + `<div class="corpo">${html}</div>`;
-    $('lista').append(card);
-    if (e.lat == null) continue;
-    const m = L.marker([e.lat, e.lng], { icon: pino(e), title: e.nome }).bindPopup(html, { maxWidth: 260 }).addTo(camada);
-    m.on('click', () => marcar(card, !celular.matches));  // no celular a lista fica escondida atras do mapa
-    m.on('popupclose', () => card.classList.remove('ativo'));
-    const abrir = (ev, rolar = false) => {
+    let card, m, abrir;
+    const obterCard = () => {  // criado so quando entra na lista (ou quando o pino dele e clicado)
+      if (card) return card;
+      card = document.createElement('article');
+      card.className = 'card'; card.tabIndex = 0;
+      card.innerHTML = (e.imagem ? `<img src="${esc(e.imagem)}" alt="" loading="lazy" decoding="async" width="600" height="300">` : '') + `<div class="corpo">${html}</div>`;
+      if (abrir) { card.onclick = abrir; card.onkeydown = ev => { if (ev.key === 'Enter') abrir(ev); }; }
+      return card;
+    };
+    const cardVisivel = () => (mostrarAte(i + 1), obterCard());
+    fila.push(obterCard);
+    if (e.lat == null) return;
+    m = L.marker([e.lat, e.lng], { icon: pino(e), title: e.nome }).bindPopup(html, { maxWidth: 260 });
+    marcadores.push(m);
+    m.on('click', () => marcar(cardVisivel(), !celular.matches));  // no celular a lista fica escondida atras do mapa
+    m.on('popupclose', () => card?.classList.remove('ativo'));
+    abrir = (ev, rolar = false) => {
       if (ev.target.closest('a')) return;
       if (celular.matches) verLista(false);
-      mapa.setView([e.lat, e.lng], 15); m.openPopup(); marcar(card, rolar);
+      mapa.setView([e.lat, e.lng], 15, { animate: false });
+      camada.zoomToShowLayer(m, () => m.openPopup());
+      marcar(cardVisivel(), rolar);
     };
     abrirPor.set(e.fonte, abrir);
-    card.onclick = abrir;
-    card.onkeydown = ev => { if (ev.key === 'Enter') abrir(ev); };
-  }
+  });
+  camada.addLayers(marcadores);  // em lote: bem mais rapido que um por um
+  mostrarAte(LOTE);
   mapa.invalidateSize();
-  if (camada.getLayers().length) mapa.fitBounds(camada.getBounds(), { padding: [30, 30], maxZoom: 15 });
+  if (marcadores.length) mapa.fitBounds(camada.getBounds(), { padding: [30, 30], maxZoom: 15 });
 }
+
+// a lista cresce de LOTE em LOTE conforme a rolagem chega perto do fim
+const LOTE = 30, fimDaLista = document.createElement('div');
+let fila = [], mostrados = 0;
+function mostrarAte(n) {
+  while (mostrados < Math.min(n, fila.length)) $('lista').append(fila[mostrados++]());
+  if (mostrados < fila.length) $('lista').append(fimDaLista); else fimDaLista.remove();
+}
+new IntersectionObserver(es => { if (es[0].isIntersecting) mostrarAte(mostrados + LOTE); },
+  { root: $('lista'), rootMargin: '800px' }).observe(fimDaLista);
 </script>
 </body>
 </html>
