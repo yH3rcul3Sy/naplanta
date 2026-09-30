@@ -4,7 +4,7 @@
   "description": "Mapa de lançamentos imobiliários na planta",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#2a6843",
+  "background_color": "#1d1d1b",
   "theme_color": "#1f6f4a",
   "icons": [
     {"src": "icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
