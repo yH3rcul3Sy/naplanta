@@ -1,25 +1,26 @@
 {
- "coleta": "2026-09-29T18:20-03:00",
+ "coleta": "2026-09-30T09:50-03:00",
  "fontes": [
   {
    "site": "https://helbor.com.br",
    "construtora": "Helbor",
    "total": 38,
    "ok": true,
-   "atualizada": "2026-09-29"
+   "atualizada": "2026-09-30"
   },
   {
    "site": "https://www.cacengenharia.com.br",
    "construtora": "C.A.C Engenharia",
    "total": 9,
    "ok": true,
-   "atualizada": "2026-09-29"
+   "atualizada": "2026-09-30"
   },
   {
    "site": "https://cury.net",
    "construtora": "Cury",
    "total": 169,
-   "ok": true,
+   "ok": false,
+   "erro": "nenhum empreendimento retornado (site fora do ar ou bloqueando o acesso)",
    "atualizada": "2026-09-29"
   },
   {
@@ -27,20 +28,21 @@
    "construtora": "Tenda",
    "total": 291,
    "ok": true,
-   "atualizada": "2026-09-29"
+   "atualizada": "2026-09-30"
   },
   {
    "site": "https://integraurbano.com.br",
    "construtora": "Integra Urbano",
    "total": 19,
    "ok": true,
-   "atualizada": "2026-09-29"
+   "atualizada": "2026-09-30"
   },
   {
    "site": "https://sousaaraujo.com.br",
    "construtora": "Sousa Araujo",
    "total": 20,
-   "ok": true,
+   "ok": false,
+   "erro": "nenhum empreendimento retornado (site fora do ar ou bloqueando o acesso)",
    "atualizada": "2026-09-29"
   },
   {
@@ -48,35 +50,35 @@
    "construtora": "Damebe",
    "total": 4,
    "ok": true,
-   "atualizada": "2026-09-29"
+   "atualizada": "2026-09-30"
   },
   {
    "site": "https://www.eztec.com.br",
    "construtora": "EZTEC",
    "total": 70,
    "ok": true,
-   "atualizada": "2026-09-29"
+   "atualizada": "2026-09-30"
   },
   {
    "site": "https://econconstrutora.com.br",
    "construtora": "Econ",
    "total": 109,
    "ok": true,
-   "atualizada": "2026-09-29"
+   "atualizada": "2026-09-30"
   },
   {
    "site": "https://www.metrocasa.com.br",
    "construtora": "Metrocasa",
    "total": 100,
    "ok": true,
-   "atualizada": "2026-09-29"
+   "atualizada": "2026-09-30"
   },
   {
    "site": "https://www.vibraresidencial.com.br",
    "construtora": "Vibra Residencial",
    "total": 20,
    "ok": true,
-   "atualizada": "2026-09-29"
+   "atualizada": "2026-09-30"
   }
  ]
 }
