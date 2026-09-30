@@ -22,7 +22,7 @@ def parse(url, html):
         'construtora': 'Metrocasa',
         'etapa': ETAPA.get(e.get('projectStatus')),
         'endereco': ', '.join(filter(None, [a.get('street'), a.get('number'), a.get('neighborhood'), a.get('city')])),
-        'cidade': a.get('city'), 'uf': a.get('state'),
+        'cidade': a.get('city') or 'São Paulo', 'uf': a.get('state') or 'SP',  # a Metrocasa so constroi na capital
         'lat': a.get('latitude'), 'lng': a.get('longitude'),
         'dorms': dorms(' '.join(pl.get('name') or '' for pl in plantas)),
         'm2': [min(areas), max(areas)] if areas else None,

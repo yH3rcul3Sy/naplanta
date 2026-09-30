@@ -40,13 +40,26 @@ def _consultar(sul, oeste, norte, leste):
     return None  # tudo fora do ar: tenta de novo na proxima coleta
 
 
+SERVICO = ('operator', 'network', 'train', 'subway', 'light_rail', 'monorail')
+
+
+def em_operacao(t):
+    # a futura estacao Cesar de Souza (Mogi) existe no OSM so como predio: sem operadora, rede nem tipo de trem
+    return bool(t.get('name')) and any(k in t for k in SERVICO) and t.get('usage') != 'tourism'         and not any(k.split(':')[0] in ('construction', 'proposed', 'disused', 'abandoned') for k in t)
+
+
+assert em_operacao({'name': 'Braz Cubas', 'railway': 'station', 'operator': 'CPTM', 'train': 'yes'})
+assert not em_operacao({'name': 'César de Souza', 'railway': 'station', 'building': 'train_station', 'public_transport': 'station'})
+assert not em_operacao({'name': 'X', 'railway': 'station', 'train': 'yes', 'construction:railway': 'station'})
+
+
 def resumir(lat, lng, elementos):
     estacoes, perto = [], dict.fromkeys(SERVICOS, 0)
     for el in elementos:
         t, p = el.get('tags', {}), el.get('center', el)
         d = km(lat, lng, p['lat'], p['lon'])
         if t.get('railway') == 'station':
-            if d <= RAIO_ESTACAO and t.get('name') and 'disused' not in t and t.get('usage') != 'tourism':
+            if d <= RAIO_ESTACAO and em_operacao(t):
                 tipo = 'metrô' if t.get('station') == 'subway' or t.get('subway') == 'yes' else \
                        'monotrilho' if t.get('station') == 'monorail' else 'trem'
                 nome = re.sub(r'^esta[çc][ãa]o\s+', '', t['name'], flags=re.I)  # o OSM ora traz "Estação X", ora "X"
@@ -60,10 +73,11 @@ def resumir(lat, lng, elementos):
 
 
 _r = resumir(-23.5, -46.2, [
-    {'tags': {'railway': 'station', 'name': 'Longe'}, 'lat': -23.52, 'lon': -46.2},
-    {'tags': {'railway': 'station', 'name': 'Estação Perto', 'station': 'subway'}, 'lat': -23.505, 'lon': -46.2},
-    {'tags': {'railway': 'station', 'name': 'Antiga', 'disused': 'yes'}, 'lat': -23.5, 'lon': -46.2},
-    {'tags': {'railway': 'station', 'name': 'Fora do raio'}, 'lat': -23.6, 'lon': -46.2},
+    {'tags': {'railway': 'station', 'name': 'Longe', 'train': 'yes'}, 'lat': -23.52, 'lon': -46.2},
+    {'tags': {'railway': 'station', 'name': 'Estação Perto', 'station': 'subway', 'subway': 'yes'}, 'lat': -23.505, 'lon': -46.2},
+    {'tags': {'railway': 'station', 'name': 'Antiga', 'disused': 'yes', 'train': 'yes'}, 'lat': -23.5, 'lon': -46.2},
+    {'tags': {'railway': 'station', 'name': 'Futura', 'building': 'train_station'}, 'lat': -23.5, 'lon': -46.2},
+    {'tags': {'railway': 'station', 'name': 'Fora do raio', 'train': 'yes'}, 'lat': -23.6, 'lon': -46.2},
     {'tags': {'amenity': 'school'}, 'center': {'lat': -23.5, 'lon': -46.2}},
     {'tags': {'amenity': 'school'}, 'lat': -23.52, 'lon': -46.2},  # 2,2 km: fora do raio de servicos
     {'tags': {'shop': 'supermarket'}, 'lat': -23.5, 'lon': -46.2}])

@@ -54,7 +54,7 @@
     <li>Roda <strong>todo dia de manhã</strong>, automaticamente, e o site é republicado em seguida.</li>
     <li>Só lê o que o <code>robots.txt</code> de cada site libera, se identifica como <em>NaPlantaBot</em> e espera 1 segundo entre páginas.</li>
     <li>Guarda só informações públicas do empreendimento: nome, etapa, endereço, dormitórios, área, previsão de entrega e uma foto em tamanho reduzido. <strong>Preços não são coletados.</strong></li>
-    <li>Empreendimentos 100% vendidos ficam de fora.</li>
+    <li>Empreendimentos 100% vendidos ficam de fora. Os prontos para morar são coletados, mas o mapa mostra por padrão só os que estão <strong>na planta</strong> (breve lançamento, lançamento e em obras); os prontos aparecem marcando "Incluir prontos para morar".</li>
     <li>Se um site falha ou responde vazio, os dados da coleta anterior são mantidos. Se uma fonte perde mais de 30% dos empreendimentos de um dia para o outro, a coleta dela é tratada como incompleta.</li>
     <li>Comparando com o dia anterior, o painel <a href="./">Novidades</a> mostra lançamentos, mudanças de etapa e empreendimentos que saíram.</li>
   </ul>
@@ -62,7 +62,7 @@
   <h2>Localização, estação e serviços</h2>
   <ul>
     <li>Quando a incorporadora informa a coordenada, ela é usada. Se o ponto cai fora da cidade informada (ou no mar), o endereço é localizado de novo pelo <a href="https://nominatim.org/">Nominatim</a>, do OpenStreetMap. Sem uma localização confiável, o empreendimento aparece só na lista, sem pino.</li>
-    <li>A estação de trem ou metrô mais próxima (até 3 km) e as escolas, serviços de saúde, mercados e parques (até 1 km) vêm do <a href="https://www.openstreetmap.org/">OpenStreetMap</a>. As distâncias são <strong>em linha reta</strong>, não o caminho a pé.</li>
+    <li>A estação de trem ou metrô mais próxima (até 3 km) e as escolas, serviços de saúde, mercados e parques (até 1 km) vêm do <a href="https://www.openstreetmap.org/">OpenStreetMap</a>. As distâncias são <strong>em linha reta</strong>, não o caminho a pé. Só contam estações em operação: estações planejadas ou em obras, como a futura César de Souza, em Mogi, ficam de fora.</li>
   </ul>
 
   <h2>Incorporadoras que ficaram de fora</h2>
@@ -77,7 +77,7 @@
   <h2>Limites</h2>
   <ul>
     <li>A etapa (lançamento, em obras, pronto) é a que a incorporadora informa no site dela, com os nomes padronizados.</li>
-    <li>Alguns pinos são aproximados, no ponto da rua em vez do número exato.</li>
+    <li>Alguns pinos são aproximados: no ponto da rua em vez do número exato ou, quando nem isso foi possível, no bairro. Nesse caso o card avisa "Localização aproximada".</li>
     <li>Informação desatualizada no site da incorporadora aparece desatualizada aqui também.</li>
   </ul>
 

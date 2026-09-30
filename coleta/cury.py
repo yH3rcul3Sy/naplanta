@@ -34,13 +34,23 @@ def parse(url, html):
     }
 
 
+IMOVEL = re.compile(r'(?:https://cury\.net)?(/imovel/[A-Za-z]{2}/[a-z0-9-]+/[a-z0-9-]+)(?=["#?\s<])')
+
+
 def coletar():
+    # o sitemap so traz empreendimentos antigos (quase todos prontos); os lancamentos e obras aparecem na pagina
+    # inicial e nos "imoveis relacionados" de cada pagina, entao a coleta segue esses links ate nao achar nenhum novo
     out = []
     with httpx.Client(headers=UA, timeout=30, follow_redirects=True) as c:
-        xml = c.get(f'{BASE}/sitemap.xml').text
-        for url in sorted(set(re.findall(rf'<loc>({BASE}/imovel/[^<]+)</loc>', xml))):
+        fila = {BASE + p for p in IMOVEL.findall(c.get(f'{BASE}/sitemap.xml').text + c.get(BASE).text)}
+        vistos = set()
+        while fila - vistos:
+            url = min(fila - vistos)
+            vistos.add(url)
             time.sleep(1)
             r = c.get(url)
-            if r.status_code == 200 and (e := parse(url, r.text)):
-                out.append(e)
+            if r.status_code == 200:
+                fila |= {BASE + p for p in IMOVEL.findall(r.text)}
+                if e := parse(url, r.text):
+                    out.append(e)
     return out

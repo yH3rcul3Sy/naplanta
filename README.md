@@ -10,7 +10,7 @@ Projeto acadêmico da Universidade de Mogi das Cruzes (UMC), submetido ao UMC Su
 
 ## O que o site faz
 
-- **Mapa e lista** de cerca de 850 empreendimentos de 11 incorporadoras, com filtros por cidade, tipo (apartamento, casa em condomínio, lote), etapa da obra, construtora, dormitórios, área e distância até a estação.
+- **Mapa e lista** de cerca de 900 empreendimentos de 11 incorporadoras, com filtros por cidade, tipo (apartamento, casa em condomínio, lote), etapa da obra, construtora, dormitórios, área e distância até a estação. Por padrão mostra só o que está **na planta** (breve lançamento, lançamento e em obras); os prontos para morar aparecem com a opção "Incluir prontos para morar".
 - **Estação de trem ou metrô mais próxima** (até 3 km) e escolas, serviços de saúde, mercados e parques a até 1 km, em linha reta.
 - **O que mudou:** lançamentos novos, mudanças de etapa e empreendimentos que saíram do site, comparando cada coleta com a do dia anterior.
 - **Sobre os dados:** página com a situação de cada fonte, a data da última coleta, as regras de coleta e os limites.

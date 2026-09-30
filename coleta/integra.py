@@ -16,8 +16,12 @@ def parse(url, html, etapa):
     lat = lng = None
     if m := re.search(r'(-2\d\.\d{4,}),\s*(-[45]\d\.\d{4,})', html):
         lat, lng = float(m[1]), float(m[2])
+    elif m := re.search(r'maps/embed\?pb=[^"]*?!2d(-[45]\d\.\d+)!3d(-2\d\.\d+)', html):  # centro do mapa embutido
+        lat, lng = float(m[2]), float(m[1])
     mapa = s.find('a', href=re.compile(r'google\.com/maps/place/'))
-    end = unquote(mapa['href'].split('/place/')[1].split('/')[0]).replace('+', ' ') if mapa else None
+    busca = re.search(r'google\.com/maps\?[^"]*?[?&]q=([^&"]+)', html)
+    end = unquote(mapa['href'].split('/place/')[1].split('/')[0]).replace('+', ' ') if mapa \
+        else unquote(busca[1]).replace('+', ' ') if busca else None
     texto = ' '.join(s.get_text(' ').split())
     m2 = re.search(r'([\d,]+)\s*(?:a\s*([\d,]+)\s*)?m²\s*[\d,e ]+dorms', texto)
     dorms = re.search(r'((?:\d+\s*(?:,|e)\s*)*\d+)\s*dorms', texto)

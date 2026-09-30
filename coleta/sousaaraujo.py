@@ -22,11 +22,13 @@ def parse(url, html):
     m2 = [float(x.replace(',', '.')) for x in re.findall(r'([\d,]+)\s*m²', topo)]
     dorms = [int(x) for g in re.findall(r'((?:\d+\s*(?:,|e|ou)\s*)*\d+)\s*dorm', topo, re.I) for x in re.findall(r'\d+', g)]
     img = re.search(r'https://cdnm\.com\.br/sousaaraujo/media/[^"\s]+?\.jpe?g', html)
+    texto = ' '.join(s.get_text(' ').split())
+    end = re.search(r'((?:Av\.|Avenida|Rua|R\.|Estrada|Alameda|Rodovia)\s[^|]{5,120}?)\s+Google Maps', texto)  # "Av. X, 1545 - Bairro, Cidade - SP Google Maps"
     return {
         'nome': h1.get_text(strip=True).title(),
         'construtora': 'Sousa Araujo',
         'etapa': etapa.get_text(strip=True) if etapa else None,
-        'endereco': None,
+        'endereco': end[1].strip(' -') if end else None,
         'cidade': local[1] if local else None, 'uf': local[2] if local else None,
         'lat': lat, 'lng': lng,
         'dorms': [min(dorms), max(dorms)] if dorms else None,

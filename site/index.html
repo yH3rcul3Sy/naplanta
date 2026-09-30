@@ -14,7 +14,8 @@
 <style>
   :root { --bg:#f6f5f2; --card:#fff; --ink:#1d1d1b; --muted:#6b6a66; --line:#e3e1dc; --accent:#1f6f4a;
           --breve:#8a5a00; --breve-bg:#fbefd6; --lanc:#9a3b12; --lanc-bg:#fbe3d8;
-          --obras:#1d4f91; --obras-bg:#dde8f7; --pronto:#1f6f4a; --pronto-bg:#e0f0e7; }
+          --obras:#1d4f91; --obras-bg:#dde8f7; --pronto:#1f6f4a; --pronto-bg:#e0f0e7;
+          --accent-bg:#e7f2ec; --linha-forte:#c9c6bf; --sombra:0 6px 18px rgba(29,29,27,.12); }
   * { box-sizing:border-box; }
   html, body { height:100%; }
   body { margin:0; font:16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); background:var(--bg);
@@ -23,18 +24,30 @@
   h1 { margin:0 8px 0 0; font-size:25px; letter-spacing:-.3px; } h1 span { color:var(--accent); }
   #filtros { display:flex; flex-wrap:wrap; gap:10px 12px; align-items:flex-end; }
   label { display:flex; flex-direction:column; font-size:12px; color:var(--muted); gap:3px; }
-  select, input { font:inherit; padding:7px 9px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink); min-width:130px; }
-  select:focus-visible, input:focus-visible, button:focus-visible, a:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
-  button { font:inherit; cursor:pointer; border:1px solid var(--line); background:#fff; color:var(--ink); border-radius:8px; padding:7px 12px; }
-  #limpar { border:0; background:none; color:var(--accent); text-decoration:underline; padding:7px 4px; }
+  select, input { font:inherit; padding:7px 9px; border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--ink); min-width:130px;
+                  cursor:pointer; transition:border-color .15s, box-shadow .15s; }
+  input[type=number] { cursor:text; }
+  select:hover, input:hover { border-color:var(--linha-forte); }
+  select:focus-visible, input:focus-visible { outline:none; border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-bg); }
+  button:focus-visible, a:focus-visible, .card:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  button { font:inherit; font-weight:600; cursor:pointer; border:1px solid var(--line); background:#fff; color:var(--ink); border-radius:10px;
+           padding:7px 14px; transition:background-color .15s, border-color .15s, color .15s, transform .1s; }
+  button:hover { background:var(--accent-bg); border-color:var(--accent); color:var(--accent); }
+  button:active { transform:translateY(1px); }
+  #limpar { border:0; background:none; color:var(--accent); font-weight:400; text-decoration:underline; text-underline-offset:3px; padding:7px 4px; }
+  #limpar:hover { background:none; color:var(--ink); }
+  .check { flex-direction:row; align-items:center; gap:8px; font-size:14px; color:var(--ink); cursor:pointer; padding:7px 0; }
+  .check input { min-width:0; width:18px; height:18px; margin:0; accent-color:var(--accent); cursor:pointer; }
   #rodape { margin-left:auto; color:var(--muted); font-size:12px; }
   #abrirFiltros, #alternar { display:none; }
   main { display:grid; grid-template-columns:390px 1fr; min-height:0; }
   #lista { overflow:auto; padding:12px; display:flex; flex-direction:column; gap:12px; }
-  .card { flex-shrink:0; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; cursor:pointer; transition:border-color .15s; }
-  .card:hover, .card.ativo { border-color:var(--accent); }
-  .card.ativo { box-shadow:0 0 0 2px var(--accent); }
-  .card img { width:100%; height:auto; aspect-ratio:16/8; object-fit:cover; display:block; background:var(--line); }
+  .card { flex-shrink:0; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; cursor:pointer;
+          transition:border-color .15s, box-shadow .2s, transform .2s; }
+  .card:hover { border-color:var(--accent); box-shadow:var(--sombra); transform:translateY(-2px); }
+  .card.ativo { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent), var(--sombra); }
+  .card img { width:100%; height:auto; aspect-ratio:16/8; object-fit:cover; display:block; background:var(--line); transition:transform .4s; }
+  .card:hover img { transform:scale(1.03); }
   .card .corpo { padding:10px 14px 12px; }
   .card h2 { margin:0 0 4px; font-size:20px; line-height:1.2; }
   .etapa { display:inline-block; font-size:12px; font-weight:600; padding:2px 9px; border-radius:99px; margin-bottom:6px; }
@@ -43,12 +56,17 @@
   .info { color:var(--muted); font-size:12px; margin:2px 0; }
   .fatos { color:var(--ink); font-weight:600; margin:6px 0; }
   a { color:var(--accent); }
-  .fonte { display:inline-block; padding:6px 0; }
+  .fonte { display:inline-block; padding:6px 0; font-weight:600; text-underline-offset:3px; }
+  .fonte:hover { color:var(--ink); }
+  .aprox { color:var(--breve); }
   .vazio { text-align:center; color:var(--muted); padding:40px 16px; }
   #mapa { min-height:0; }
   .grupo { display:grid; place-items:center; background:var(--ink); color:#fff; border:2px solid #fff; border-radius:50%;
-           font-size:12px; font-weight:700; box-shadow:0 1px 4px rgba(0,0,0,.4); }
-  .pino { width:18px; height:18px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.4); }
+           font-size:12px; font-weight:700; box-shadow:0 1px 4px rgba(0,0,0,.4); transition:transform .15s; }
+  .grupo:hover { transform:scale(1.12); }
+  .pino { width:18px; height:18px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.4);
+          transition:transform .15s; transform-origin:0 100%; }
+  .leaflet-marker-icon:hover .pino { transform:rotate(-45deg) scale(1.25); }
   .leaflet-popup-content { margin:12px 14px; font:inherit; }
   .leaflet-popup-content h2 { font-size:16px; font-weight:700; margin:0 0 4px; }
   .legenda { background:#fff; padding:6px 10px; border-radius:8px; font-size:12px; box-shadow:0 1px 4px rgba(0,0,0,.2); line-height:1.7; }
@@ -63,12 +81,17 @@
   #fecharNovidades { margin-left:auto; align-self:flex-start; }
   #eventos { padding:6px 18px 18px; }
   #eventos h3 { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin:16px 0 6px; }
-  .evento { display:block; width:100%; text-align:left; border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-bottom:8px; background:#fff; }
+  .evento { display:block; width:100%; text-align:left; border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-bottom:8px;
+            background:#fff; color:var(--ink); font-weight:400; }
   .evento[disabled] { cursor:default; }
-  .evento:not([disabled]):hover { border-color:var(--accent); }
+  .evento[disabled]:hover { background:#fff; border-color:var(--line); color:var(--ink); }
+  .evento:not([disabled]):hover { color:var(--ink); }
   .evento strong { display:block; }
   .t-novo { color:var(--pronto); } .t-etapa { color:var(--obras); } .t-saiu { color:var(--lanc); }
   .tipo-evento { font-size:12px; font-weight:700; }
+  @media (max-width: 1100px) and (min-width: 801px) { main { grid-template-columns:330px 1fr; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition:none !important; } }
+  @media (hover: none) { .card:hover { transform:none; box-shadow:none; } .card:hover img { transform:none; } }
 
   @media (max-width: 800px) {
     header { padding:10px 12px; gap:8px; }
@@ -89,6 +112,8 @@
     #alternar { display:flex; position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom)); transform:translateX(-50%); z-index:1100;
                 background:var(--ink); color:#fff; border:0; border-radius:99px; padding:12px 22px; min-height:48px; font-weight:600;
                 box-shadow:0 4px 14px rgba(0,0,0,.3); gap:8px; align-items:center; }
+    #alternar:hover, #alternar:active { background:var(--accent); color:#fff; }
+    .check { align-self:end; min-height:44px; font-size:14px; line-height:1.2; }
   }
 </style>
 </head>
@@ -105,6 +130,7 @@
     <label>Dormitórios (mín.) <select id="dorms"><option value="">Qualquer</option><option>1</option><option>2</option><option>3</option><option>4</option></select></label>
     <label>Estação de trem/metrô <select id="estacao"><option value="">Qualquer distância</option><option value="1">Até 1 km</option><option value="2">Até 2 km</option><option value="3">Até 3 km</option></select></label>
     <label>Área mín. (m²) <input id="m2" type="number" inputmode="numeric" min="0" step="10" placeholder="ex.: 60"></label>
+    <label class="check"><input id="prontos" type="checkbox"> Incluir prontos para morar</label>
     <button id="limpar" type="button">Limpar filtros</button>
   </div>
   <span id="rodape"><span id="total" aria-live="polite"></span> · <a href="transparencia.html">Sobre os dados</a></span>
@@ -135,13 +161,11 @@ const celular = matchMedia('(max-width: 800px)');
 const mapa = L.map('mapa', { tap: false }).setView([-23.52, -46.19], 11);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors', maxZoom: 19 }).addTo(mapa);
-// balao com numero so para pinos sobrepostos: o raio junta pinos a ate ~2x 6 px, bem menos que o pino (18 px);
-// o balao abre em leque no clique quando e o mesmo ponto (Mirage e Solare) ou aproxima o mapa quando so estao muito perto
-// com "Todas" as cidades os pinos ficam soltos
-const agrupados = L.markerClusterGroup({ maxClusterRadius: 6, showCoverageOnHover: false, animate: false,
+// balao com numero so para empreendimentos no mesmo lugar de fato (a ate ~3 m, como Mirage e Solare), em qualquer zoom:
+// o raio em pixels acompanha o zoom (metros por pixel ~ 156543 * cos(23°) / 2^z). O balao abre em leque no clique
+const METROS_JUNTOS = 3;
+const camada = L.markerClusterGroup({ maxClusterRadius: z => METROS_JUNTOS / (144000 / 2 ** z), showCoverageOnHover: false, animate: false,
   iconCreateFunction: g => L.divIcon({ className: 'grupo', html: g.getChildCount(), iconSize: [34, 34] }) }).addTo(mapa);
-const soltos = L.featureGroup().addTo(mapa);
-let camada = agrupados;
 const legenda = L.control({ position: 'bottomleft' });
 legenda.onAdd = () => Object.assign(L.DomUtil.create('div', 'legenda'), {
   innerHTML: Object.entries(ETAPA).map(([n, [, c]]) => `<i style="background:${c}"></i>${n}`).join('<br>') });
@@ -175,8 +199,9 @@ $('abrirFiltros').onclick = () => {
   $('abrirFiltros').setAttribute('aria-expanded', aberto);
   mapa.invalidateSize();
 };
-$('limpar').onclick = () => { CAMPOS.forEach(id => $(id).value = ''); render(); };
+$('limpar').onclick = () => { CAMPOS.forEach(id => $(id).value = ''); $('prontos').checked = false; render(); };
 CAMPOS.forEach(id => $(id).addEventListener('input', render));
+$('prontos').addEventListener('input', render);
 
 const DIAS_NOVO = 7, DIAS_PAINEL = 30;
 const diasAtras = n => new Date(Date.now() - n * 864e5).toISOString().slice(0, 10);
@@ -209,7 +234,7 @@ function mostrarNovidades() {
       <span class="info">${esc(e.construtora)} · ${esc(e.cidade ?? '')} · ${detalhe}</span>`;
     b.onclick = () => {
       $('novidades').close();
-      if (!abrirPor.has(e.fonte)) { CAMPOS.forEach(id => $(id).value = ''); $('cidade').value = e.cidade ?? ''; render(); }
+      if (!abrirPor.has(e.fonte)) { CAMPOS.forEach(id => $(id).value = ''); $('cidade').value = e.cidade ?? ''; $('prontos').checked = true; render(); }
       abrirPor.get(e.fonte)?.({ target: document.body }, !celular.matches);
     };
     $('eventos').append(b);
@@ -240,18 +265,20 @@ function marcar(card, rolar) {
 function render() {
   const f = Object.fromEntries(CAMPOS.map(id => [id, $(id).value]));
   const vis = dados.filter(e =>
-    (!f.cidade || e.cidade === f.cidade) && (!f.tipo || e.tipo === f.tipo) && (!f.etapa || e.etapa === f.etapa) &&
+    (!f.cidade || e.cidade === f.cidade) && (!f.tipo || e.tipo === f.tipo) &&
+    // o foco e na planta: prontos so aparecem marcando a caixa ou escolhendo essa etapa
+    (f.etapa ? e.etapa === f.etapa : $('prontos').checked || e.etapa !== 'Pronto para morar') &&
     (!f.construtora || e.construtora === f.construtora) &&
     (!f.dorms || (e.dorms && e.dorms[1] >= +f.dorms)) && (!f.m2 || (e.m2 && e.m2[1] >= +f.m2)) &&
     (!f.estacao || (e.estacao && e.estacao.km <= +f.estacao)));
-  const n = CAMPOS.filter(id => f[id]).length;
+  const n = CAMPOS.filter(id => f[id]).length + $('prontos').checked;
   $('nFiltros').hidden = !n; $('nFiltros').textContent = n;
   $('total').textContent = `${vis.length} empreendimento${vis.length === 1 ? '' : 's'}`;
   const nNovidades = eventosVisiveis(DIAS_NOVO).length;
   $('nNovidades').hidden = !nNovidades; $('nNovidades').textContent = nNovidades;
   $('abrirNovidades').setAttribute('aria-label', `Novidades: ${nNovidades} na última semana`);
   const novoDesde = diasAtras(DIAS_NOVO);
-  agrupados.clearLayers(); soltos.clearLayers(); camada = f.cidade ? agrupados : soltos; $('lista').innerHTML = ''; abrirPor.clear(); fila = []; mostrados = 0;
+  camada.clearLayers(); $('lista').innerHTML = ''; abrirPor.clear(); fila = []; mostrados = 0;
   if (!vis.length) $('lista').innerHTML = '<p class="vazio">Nenhum empreendimento com esses filtros.<br>Tente limpar algum deles.</p>';
   const marcadores = [];
   vis.forEach((e, i) => {
@@ -263,6 +290,7 @@ function render() {
       ${e.endereco ? `<p class="info">${esc(e.endereco)}</p>` : ''}
       ${fatos ? `<p class="fatos">${fatos}</p>` : ''}
       ${e.entrega ? `<p class="info">Entrega: ${esc(e.entrega)}</p>` : ''}
+      ${e.aprox ? '<p class="info aprox">Localização aproximada: o pino está no bairro, não no endereço exato</p>' : ''}
       ${arredores(e)}
       <a class="fonte" href="${esc(e.fonte)}" target="_blank" rel="noopener">Ver na fonte original ↗</a>`;
     let card, m, abrir;
@@ -285,14 +313,13 @@ function render() {
       if (ev.target.closest('a')) return;
       if (celular.matches) verLista(false);
       mapa.setView([e.lat, e.lng], 15, { animate: false });
-      const grupo = camada.getVisibleParent?.(m);  // se ainda estiver agrupado, abre o leque antes do popup
+      const grupo = camada.getVisibleParent(m);  // se ainda estiver agrupado, abre o leque antes do popup
       if (grupo && grupo !== m) { camada.once('spiderfied', () => m.openPopup()); grupo.spiderfy(); } else m.openPopup();
       marcar(cardVisivel(), rolar);
     };
     abrirPor.set(e.fonte, abrir);
   });
-  if (camada === agrupados) camada.addLayers(marcadores);  // em lote: bem mais rapido que um por um
-  else marcadores.forEach(m => m.addTo(camada));
+  camada.addLayers(marcadores);  // em lote: bem mais rapido que um por um
   mostrarAte(LOTE);
   mapa.invalidateSize();
   if (marcadores.length) mapa.fitBounds(camada.getBounds(), { padding: [30, 30], maxZoom: 15 });
