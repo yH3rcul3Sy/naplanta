@@ -1,10 +1,10 @@
 import json, pathlib, re
 from datetime import datetime, timedelta, timezone
-import arredores, cac, cury, damebe, geo, helbor, integra, sousaaraujo, tenda
+import arredores, cac, cury, damebe, econ, eztec, geo, helbor, integra, metrocasa, sousaaraujo, tenda, vibra
 
-FONTES = [helbor, cac, cury, tenda, integra, sousaaraujo, damebe]
+FONTES = [helbor, cac, cury, tenda, integra, sousaaraujo, damebe, eztec, econ, metrocasa, vibra]
 SITE = pathlib.Path(__file__).parent.parent / 'site'
-DESTINO, MUDANCAS = SITE / 'dados.json', SITE / 'mudancas.json'
+DESTINO, MUDANCAS, STATUS = SITE / 'dados.json', SITE / 'mudancas.json', SITE / 'status.json'
 ETAPAS = {'breve lançamento': 'Breve lançamento', 'lançamento': 'Lançamento', 'em obras': 'Em obras',
           'obras avançadas': 'Em obras', 'em construção': 'Em obras', 'pronto para morar': 'Pronto para morar'}
 QUEDA_MAXIMA = 0.3  # fonte que perde mais que isso de um dia para o outro falhou no meio (Helbor em 26/09: 38 -> 8)
@@ -63,7 +63,8 @@ if __name__ == '__main__':
     dia = hoje()
     anteriores = json.loads(DESTINO.read_text(encoding='utf8')) if DESTINO.exists() else []
     historico = json.loads(MUDANCAS.read_text(encoding='utf8')) if MUDANCAS.exists() else {'inicio': dia, 'eventos': []}
-    dados, eventos = [], []
+    antes = {s['site']: s for s in json.loads(STATUS.read_text(encoding='utf8'))['fontes']} if STATUS.exists() else {}
+    dados, eventos, fontes = [], [], []
     for f in FONTES:
         velhos = [e for e in anteriores if e.get('fonte', '').startswith(f.BASE)]
         try:
@@ -81,10 +82,13 @@ if __name__ == '__main__':
         except Exception as erro:  # mantem os dados da ultima coleta dessa fonte
             print(f'falha em {f.__name__}: {erro} -> mantendo {len(velhos)} da coleta anterior')
             dados += [geo.completar(e) for e in velhos]
+            fontes.append({'site': f.BASE, 'construtora': velhos[0]['construtora'] if velhos else f.__name__, 'total': len(velhos),
+                           'ok': False, 'erro': str(erro), 'atualizada': antes.get(f.BASE, {}).get('atualizada')})
             continue
         print(f'{f.__name__}: {len(novos)} coletados')
         eventos += comparar(velhos, novos, dia)
         dados += [geo.completar(e) for e in novos]
+        fontes.append({'site': f.BASE, 'construtora': novos[0]['construtora'], 'total': len(novos), 'ok': True, 'atualizada': dia})
     for e in dados:
         e.pop('plantas', None)  # o site nao usa; so pesa no download
     arredores.completar(dados)
@@ -93,4 +97,6 @@ if __name__ == '__main__':
     SITE.mkdir(exist_ok=True)
     DESTINO.write_text(json.dumps(dados, ensure_ascii=False, separators=(',', ':')), encoding='utf8')
     MUDANCAS.write_text(json.dumps(historico, ensure_ascii=False, separators=(',', ':')), encoding='utf8')
+    agora = datetime.now(timezone(timedelta(hours=-3))).isoformat(timespec='minutes')
+    STATUS.write_text(json.dumps({'coleta': agora, 'fontes': fontes}, ensure_ascii=False, indent=1), encoding='utf8')
     print(len(dados), 'empreendimentos,', len(eventos), 'mudancas hoje ->', SITE)

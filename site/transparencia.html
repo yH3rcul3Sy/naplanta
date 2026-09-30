@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1f6f4a">
+<title>Sobre os dados · NaPlanta</title>
+<link rel="icon" type="image/png" href="favicon-claro.png" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" href="favicon.png" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<style>
+  :root { --bg:#f6f5f2; --card:#fff; --ink:#1d1d1b; --muted:#6b6a66; --line:#e3e1dc; --accent:#1f6f4a;
+          --ok:#1f6f4a; --ok-bg:#e0f0e7; --aviso:#8a5a00; --aviso-bg:#fbefd6; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); background:var(--bg); }
+  header { background:var(--card); border-bottom:1px solid var(--line); padding:10px 16px; display:flex; align-items:center; gap:12px; }
+  .marca { font-size:25px; font-weight:700; letter-spacing:-.3px; color:inherit; text-decoration:none; } .marca span { color:var(--accent); }
+  main > h1 { font-size:25px; margin:8px 0 4px; }
+  .voltar { margin-left:auto; }
+  main { max-width:760px; margin:0 auto; padding:20px 16px 48px; }
+  h2 { font-size:20px; margin:32px 0 8px; }
+  p, li { color:var(--ink); } .info { color:var(--muted); font-size:12px; }
+  a { color:var(--accent); }
+  a:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .resumo { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+  .resumo strong { font-size:20px; }
+  .fontes { display:grid; gap:8px; }
+  .fonte { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 14px; display:grid; grid-template-columns:1fr auto; gap:2px 12px; align-items:center; }
+  .fonte .nome { font-weight:600; }
+  .selo { font-size:12px; font-weight:600; padding:2px 9px; border-radius:99px; white-space:nowrap; justify-self:end; }
+  .selo.ok { color:var(--ok); background:var(--ok-bg); } .selo.aviso { color:var(--aviso); background:var(--aviso-bg); }
+  .fonte .info { grid-column:1 / -1; margin:0; }
+  ul { padding-left:20px; } li { margin:4px 0; }
+</style>
+</head>
+<body>
+<header>
+  <a class="marca" href="./">Na<span>Planta</span></a>
+  <a class="voltar" href="./">← Voltar ao mapa</a>
+</header>
+<main>
+  <h1>Sobre os dados</h1>
+  <p class="info">De onde vem cada informação do NaPlanta, quando foi coletada e quais são os limites.</p>
+
+  <div class="resumo" id="resumo">Carregando…</div>
+
+  <h2>Fontes</h2>
+  <p>Os dados vêm direto dos sites das próprias incorporadoras, sem intermediários. Cada card do mapa leva à página original.</p>
+  <div class="fontes" id="fontes"></div>
+
+  <h2>Como a coleta funciona</h2>
+  <ul>
+    <li>Roda <strong>todo dia de manhã</strong>, automaticamente, e o site é republicado em seguida.</li>
+    <li>Só lê o que o <code>robots.txt</code> de cada site libera, se identifica como <em>NaPlantaBot</em> e espera 1 segundo entre páginas.</li>
+    <li>Guarda só informações públicas do empreendimento: nome, etapa, endereço, dormitórios, área, previsão de entrega e uma foto. <strong>Preços não são coletados.</strong></li>
+    <li>Empreendimentos 100% vendidos ficam de fora.</li>
+    <li>Se um site falha ou responde vazio, os dados da coleta anterior são mantidos. Se uma fonte perde mais de 30% dos empreendimentos de um dia para o outro, a coleta dela é tratada como incompleta.</li>
+    <li>Comparando com o dia anterior, o painel <a href="./">Novidades</a> mostra lançamentos, mudanças de etapa e empreendimentos que saíram.</li>
+  </ul>
+
+  <h2>Localização, estação e serviços</h2>
+  <ul>
+    <li>Quando a incorporadora informa a coordenada, ela é usada. Se o ponto cai fora da cidade informada (ou no mar), o endereço é localizado de novo pelo <a href="https://nominatim.org/">Nominatim</a>, do OpenStreetMap. Sem uma localização confiável, o empreendimento aparece só na lista, sem pino.</li>
+    <li>A estação de trem ou metrô mais próxima (até 3 km) e as escolas, serviços de saúde, mercados e parques (até 1 km) vêm do <a href="https://www.openstreetmap.org/">OpenStreetMap</a>. As distâncias são <strong>em linha reta</strong>, não o caminho a pé.</li>
+  </ul>
+
+  <h2>Incorporadoras que ficaram de fora</h2>
+  <ul>
+    <li><strong>MRV:</strong> o <code>robots.txt</code> proíbe a coleta das páginas de imóveis.</li>
+    <li><strong>Habras:</strong> o site bloqueia acessos automatizados.</li>
+    <li><strong>Plano&amp;Plano:</strong> o <code>robots.txt</code> proíbe a coleta das páginas de empreendimentos.</li>
+    <li><strong>Cyrela:</strong> o site bloqueia acessos automatizados.</li>
+  </ul>
+  <p class="info">Bloqueios são respeitados, nunca contornados.</p>
+
+  <h2>Limites</h2>
+  <ul>
+    <li>A etapa (lançamento, em obras, pronto) é a que a incorporadora informa no site dela, com os nomes padronizados.</li>
+    <li>Alguns pinos são aproximados, no ponto da rua em vez do número exato.</li>
+    <li>Informação desatualizada no site da incorporadora aparece desatualizada aqui também.</li>
+  </ul>
+
+  <h2>Código e créditos</h2>
+  <p>O NaPlanta é um projeto acadêmico da UMC, com <a href="https://github.com/yH3rcul3Sy/naplanta">código aberto no GitHub</a>. Mapa: <a href="https://leafletjs.com/">Leaflet</a> e © colaboradores do <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>. Fotos reduzidas pelo <a href="https://wsrv.nl/">wsrv.nl</a>.</p>
+</main>
+<script>
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const dataBR = iso => iso ? iso.slice(0, 10).split('-').reverse().join('/') : null;
+function motivo(erro) {
+  if (/nenhum/.test(erro)) return 'O site não responde à coleta automática feita pelos servidores do GitHub. Os dados são atualizados quando a coleta roda no computador do projeto.';
+  if (/incompleta/.test(erro)) return 'A coleta de hoje veio incompleta, então a anterior foi mantida.';
+  return 'O site estava fora do ar ou mudou de formato, então a coleta anterior foi mantida.';
+}
+fetch('status.json').then(r => r.ok ? r.json() : Promise.reject()).then(({ coleta, fontes }) => {
+  const total = fontes.reduce((s, f) => s + f.total, 0);
+  const quando = new Date(coleta).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Sao_Paulo' });
+  document.getElementById('resumo').innerHTML =
+    `<strong>${total.toLocaleString('pt-BR')} empreendimentos</strong> de ${fontes.length} incorporadoras<br>
+     <span class="info">Última coleta: ${quando} · ${fontes.filter(f => f.ok).length} de ${fontes.length} fontes atualizadas</span>`;
+  document.getElementById('fontes').innerHTML = [...fontes].sort((a, b) => b.total - a.total).map(f => `
+    <div class="fonte">
+      <span class="nome">${esc(f.construtora)} <span class="info">· ${f.total} empreendimentos</span></span>
+      <span class="selo ${f.ok ? 'ok' : 'aviso'}">${f.ok ? 'Atualizada' : f.atualizada ? 'Dados de ' + dataBR(f.atualizada) : 'Sem atualização'}</span>
+      <p class="info"><a href="${esc(f.site)}">${esc(f.site.replace(/^https?:\/\/(www\.)?/, ''))}</a>${f.ok ? '' : ' · ' + motivo(f.erro)}</p>
+    </div>`).join('');
+}).catch(() => {
+  document.getElementById('resumo').textContent = 'A situação de cada fonte aparece aqui depois da próxima coleta.';
+});
+</script>
+</body>
+</html>
