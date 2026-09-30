@@ -135,10 +135,10 @@ const celular = matchMedia('(max-width: 800px)');
 const mapa = L.map('mapa', { tap: false }).setView([-23.52, -46.19], 11);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors', maxZoom: 19 }).addTo(mapa);
-// so agrupa pinos que ficariam colados ou um em cima do outro (o pino tem 18 px); o grupo abre em leque
-// no clique quando sao o mesmo ponto (Mirage e Solare) ou aproxima o mapa quando so estao muito perto
+// balao com numero so para pinos sobrepostos: o raio junta pinos a ate ~2x 6 px, bem menos que o pino (18 px);
+// o balao abre em leque no clique quando e o mesmo ponto (Mirage e Solare) ou aproxima o mapa quando so estao muito perto
 // com "Todas" as cidades os pinos ficam soltos
-const agrupados = L.markerClusterGroup({ maxClusterRadius: 12, showCoverageOnHover: false, animate: false,
+const agrupados = L.markerClusterGroup({ maxClusterRadius: 6, showCoverageOnHover: false, animate: false,
   iconCreateFunction: g => L.divIcon({ className: 'grupo', html: g.getChildCount(), iconSize: [34, 34] }) }).addTo(mapa);
 const soltos = L.featureGroup().addTo(mapa);
 let camada = agrupados;
