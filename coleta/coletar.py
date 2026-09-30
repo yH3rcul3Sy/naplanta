@@ -91,7 +91,7 @@ if __name__ == '__main__':
         fontes.append({'site': f.BASE, 'construtora': novos[0]['construtora'], 'total': len(novos), 'ok': True, 'atualizada': dia})
     for e in dados:
         e.pop('plantas', None)  # o site nao usa; so pesa no download
-    geo.separar(dados)
+    geo.no_predio(dados)
     arredores.completar(dados)
     fotos.completar(dados)
     limite = (datetime.fromisoformat(dia) - timedelta(days=DIAS_DE_HISTORICO)).date().isoformat()

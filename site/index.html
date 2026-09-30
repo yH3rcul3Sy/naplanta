@@ -135,10 +135,13 @@ const celular = matchMedia('(max-width: 800px)');
 const mapa = L.map('mapa', { tap: false }).setView([-23.52, -46.19], 11);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors', maxZoom: 19 }).addTo(mapa);
-// pinos proximos viram um circulo com o total; de perto so agrupa os que ficariam um em cima do outro,
-// e esse grupo abre em leque no clique (predios vizinhos com a mesma coordenada, como Mirage e Solare)
-const camada = L.markerClusterGroup({ maxClusterRadius: z => z < 15 ? 45 : 12, showCoverageOnHover: false, animate: false,
+// so agrupa pinos que ficariam colados ou um em cima do outro (o pino tem 18 px); o grupo abre em leque
+// no clique quando sao o mesmo ponto (Mirage e Solare) ou aproxima o mapa quando so estao muito perto
+// com "Todas" as cidades os pinos ficam soltos
+const agrupados = L.markerClusterGroup({ maxClusterRadius: 12, showCoverageOnHover: false, animate: false,
   iconCreateFunction: g => L.divIcon({ className: 'grupo', html: g.getChildCount(), iconSize: [34, 34] }) }).addTo(mapa);
+const soltos = L.featureGroup().addTo(mapa);
+let camada = agrupados;
 const legenda = L.control({ position: 'bottomleft' });
 legenda.onAdd = () => Object.assign(L.DomUtil.create('div', 'legenda'), {
   innerHTML: Object.entries(ETAPA).map(([n, [, c]]) => `<i style="background:${c}"></i>${n}`).join('<br>') });
@@ -248,7 +251,7 @@ function render() {
   $('nNovidades').hidden = !nNovidades; $('nNovidades').textContent = nNovidades;
   $('abrirNovidades').setAttribute('aria-label', `Novidades: ${nNovidades} na última semana`);
   const novoDesde = diasAtras(DIAS_NOVO);
-  camada.clearLayers(); $('lista').innerHTML = ''; abrirPor.clear(); fila = []; mostrados = 0;
+  agrupados.clearLayers(); soltos.clearLayers(); camada = f.cidade ? agrupados : soltos; $('lista').innerHTML = ''; abrirPor.clear(); fila = []; mostrados = 0;
   if (!vis.length) $('lista').innerHTML = '<p class="vazio">Nenhum empreendimento com esses filtros.<br>Tente limpar algum deles.</p>';
   const marcadores = [];
   vis.forEach((e, i) => {
@@ -282,13 +285,14 @@ function render() {
       if (ev.target.closest('a')) return;
       if (celular.matches) verLista(false);
       mapa.setView([e.lat, e.lng], 15, { animate: false });
-      const grupo = camada.getVisibleParent(m);  // se ainda estiver agrupado, abre o leque antes do popup
+      const grupo = camada.getVisibleParent?.(m);  // se ainda estiver agrupado, abre o leque antes do popup
       if (grupo && grupo !== m) { camada.once('spiderfied', () => m.openPopup()); grupo.spiderfy(); } else m.openPopup();
       marcar(cardVisivel(), rolar);
     };
     abrirPor.set(e.fonte, abrir);
   });
-  camada.addLayers(marcadores);  // em lote: bem mais rapido que um por um
+  if (camada === agrupados) camada.addLayers(marcadores);  // em lote: bem mais rapido que um por um
+  else marcadores.forEach(m => m.addTo(camada));
   mostrarAte(LOTE);
   mapa.invalidateSize();
   if (marcadores.length) mapa.fitBounds(camada.getBounds(), { padding: [30, 30], maxZoom: 15 });

@@ -77,33 +77,38 @@ def _palavras(s):
     return {w for w in re.findall(r'[a-z0-9]{3,}', _sem_acento(s)) if w not in GENERICAS}
 
 
-def mesmo_nome(nome, osm):  # todas as palavras do empreendimento precisam estar no nome do OSM
-    return bool(_palavras(nome)) and _palavras(nome) <= _palavras(osm)
+ROMANOS = {'i': '1', 'ii': '2', 'iii': '3', 'iv': '4'}
+
+
+def _numeros(s):  # fase/torre: "Meu Lar Mogi 2" e "Meu Lar Mogi II" sao o mesmo; sem numero vale como 1
+    return {ROMANOS.get(w, w) for w in re.findall(r'\b(?:\d+|i{1,3}|iv)\b', _sem_acento(s))}
+
+
+def mesmo_nome(nome, osm):  # todas as palavras do empreendimento no nome do OSM, e o mesmo numero de fase
+    n_osm = _numeros(osm)
+    return bool(_palavras(nome)) and _palavras(nome) <= _palavras(osm) and (not n_osm or n_osm == (_numeros(nome) or {'1'}))
 
 
 assert mesmo_nome('Residencial Way', 'Way Loft') and mesmo_nome('Stories - Belém', 'Condomínio Stories Home Belém')
 assert not mesmo_nome('Urban Barra Funda', 'Edifício Urban Office') and not mesmo_nome('Jardim Dos Ipês', 'Rua Jardim')
+assert mesmo_nome('Meu Lar Mogi', 'Meu Lar Mogi I') and not mesmo_nome('Meu Lar Mogi', 'Meu Lar Mogi II')
+assert mesmo_nome('Meu Lar Mogi 2', 'Meu Lar Mogi II') and mesmo_nome('Duetto', 'Duetto Damebe Residence')
 
 
 def pelo_nome(e):
     """Predio com o mesmo nome no OpenStreetMap, perto do ponto atual; None se nao houver."""
     for r in _get('search', q=f"{e['nome']}, {e['cidade']}", countrycodes='br', limit=3):
-        if r.get('category') in ('building', 'landuse') and mesmo_nome(e['nome'], r.get('name') or '') \
+        if r.get('category') in ('building', 'landuse', 'leisure') and mesmo_nome(e['nome'], r.get('name') or '') \
                 and abs(float(r['lat']) - e['lat']) < 0.02 and abs(float(r['lon']) - e['lng']) < 0.02:  # ~2 km
             return float(r['lat']), float(r['lon'])
 
 
-def separar(dados):
-    """Varios empreendimentos no mesmo ponto (endereco aproximado ou coordenada repetida pela fonte, como Way e Duetto
-    no CEP da avenida): tenta o ponto de cada predio pelo nome. Os que continuarem juntos o mapa abre em leque."""
-    grupos = {}
+def no_predio(dados):
+    """Leva o pino ao predio de mesmo nome no OpenStreetMap, quando ele existe: a fonte costuma dar o estande de vendas
+    (Cury, ~100 m ao lado) ou so a rua (Way e Duetto caiam no CEP da avenida), e o mapa mostra o predio com o nome."""
     for e in dados:
-        if e.get('lat') is not None and e.get('cidade'):
-            grupos.setdefault((round(e['lat'], 5), round(e['lng'], 5)), []).append(e)
-    for g in grupos.values():
-        for e in g if len(g) > 1 else []:
-            if p := pelo_nome(e):
-                e['lat'], e['lng'] = p
+        if e.get('lat') is not None and e.get('cidade') and (p := pelo_nome(e)):
+            e['lat'], e['lng'] = p
 
 
 def completar(e):
