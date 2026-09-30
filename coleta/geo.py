@@ -69,6 +69,43 @@ def no_brasil(lat, lng):
 assert no_brasil(-23.5, -46.2) and not no_brasil(23.5, 46.7) and not no_brasil(-19.4, -19.4)
 
 
+GENERICAS = {'residencial', 'condominio', 'edificio', 'resort', 'park', 'parque', 'jardim', 'jardins', 'life', 'home', 'clube',
+             'club', 'vila', 'das', 'dos', 'del', 'the', 'metrocasa', 'vibra', 'viva', 'sou', 'mais'}
+
+
+def _palavras(s):
+    return {w for w in re.findall(r'[a-z0-9]{3,}', _sem_acento(s)) if w not in GENERICAS}
+
+
+def mesmo_nome(nome, osm):  # todas as palavras do empreendimento precisam estar no nome do OSM
+    return bool(_palavras(nome)) and _palavras(nome) <= _palavras(osm)
+
+
+assert mesmo_nome('Residencial Way', 'Way Loft') and mesmo_nome('Stories - Belém', 'Condomínio Stories Home Belém')
+assert not mesmo_nome('Urban Barra Funda', 'Edifício Urban Office') and not mesmo_nome('Jardim Dos Ipês', 'Rua Jardim')
+
+
+def pelo_nome(e):
+    """Predio com o mesmo nome no OpenStreetMap, perto do ponto atual; None se nao houver."""
+    for r in _get('search', q=f"{e['nome']}, {e['cidade']}", countrycodes='br', limit=3):
+        if r.get('category') in ('building', 'landuse') and mesmo_nome(e['nome'], r.get('name') or '') \
+                and abs(float(r['lat']) - e['lat']) < 0.02 and abs(float(r['lon']) - e['lng']) < 0.02:  # ~2 km
+            return float(r['lat']), float(r['lon'])
+
+
+def separar(dados):
+    """Varios empreendimentos no mesmo ponto (endereco aproximado ou coordenada repetida pela fonte, como Way e Duetto
+    no CEP da avenida): tenta o ponto de cada predio pelo nome. Os que continuarem juntos o mapa abre em leque."""
+    grupos = {}
+    for e in dados:
+        if e.get('lat') is not None and e.get('cidade'):
+            grupos.setdefault((round(e['lat'], 5), round(e['lng'], 5)), []).append(e)
+    for g in grupos.values():
+        for e in g if len(g) > 1 else []:
+            if p := pelo_nome(e):
+                e['lat'], e['lng'] = p
+
+
 def completar(e):
     e.setdefault('cidade', None); e.setdefault('uf', None)
     # fontes erram coordenadas: sinal trocado (Cury Jaguare caia na Arabia) ou lng = lat (Tenda Sete Lagoas no Atlantico)

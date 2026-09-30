@@ -135,8 +135,9 @@ const celular = matchMedia('(max-width: 800px)');
 const mapa = L.map('mapa', { tap: false }).setView([-23.52, -46.19], 11);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '&copy; OpenStreetMap contributors', maxZoom: 19 }).addTo(mapa);
-// pinos proximos viram um circulo com o total; a partir do zoom 15 aparecem todos
-const camada = L.markerClusterGroup({ disableClusteringAtZoom: 15, maxClusterRadius: 45, showCoverageOnHover: false,
+// pinos proximos viram um circulo com o total; de perto so agrupa os que ficariam um em cima do outro,
+// e esse grupo abre em leque no clique (predios vizinhos com a mesma coordenada, como Mirage e Solare)
+const camada = L.markerClusterGroup({ maxClusterRadius: z => z < 15 ? 45 : 12, showCoverageOnHover: false, animate: false,
   iconCreateFunction: g => L.divIcon({ className: 'grupo', html: g.getChildCount(), iconSize: [34, 34] }) }).addTo(mapa);
 const legenda = L.control({ position: 'bottomleft' });
 legenda.onAdd = () => Object.assign(L.DomUtil.create('div', 'legenda'), {
@@ -281,7 +282,8 @@ function render() {
       if (ev.target.closest('a')) return;
       if (celular.matches) verLista(false);
       mapa.setView([e.lat, e.lng], 15, { animate: false });
-      camada.zoomToShowLayer(m, () => m.openPopup());
+      const grupo = camada.getVisibleParent(m);  // se ainda estiver agrupado, abre o leque antes do popup
+      if (grupo && grupo !== m) { camada.once('spiderfied', () => m.openPopup()); grupo.spiderfy(); } else m.openPopup();
       marcar(cardVisivel(), rolar);
     };
     abrirPor.set(e.fonte, abrir);
