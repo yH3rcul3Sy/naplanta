@@ -1,5 +1,5 @@
 {
- "coleta": "2026-10-03T11:25-03:00",
+ "coleta": "2026-10-04T11:52-03:00",
  "fontes": [
   {
    "site": "https://helbor.com.br",
@@ -14,7 +14,7 @@
    "construtora": "C.A.C Engenharia",
    "total": 9,
    "ok": true,
-   "atualizada": "2026-10-03"
+   "atualizada": "2026-10-04"
   },
   {
    "site": "https://cury.net",
@@ -29,14 +29,14 @@
    "construtora": "Tenda",
    "total": 290,
    "ok": true,
-   "atualizada": "2026-10-03"
+   "atualizada": "2026-10-04"
   },
   {
    "site": "https://integraurbano.com.br",
    "construtora": "Integra Urbano",
    "total": 19,
    "ok": true,
-   "atualizada": "2026-10-03"
+   "atualizada": "2026-10-04"
   },
   {
    "site": "https://sousaaraujo.com.br",
@@ -51,35 +51,35 @@
    "construtora": "Damebe",
    "total": 4,
    "ok": true,
-   "atualizada": "2026-10-03"
+   "atualizada": "2026-10-04"
   },
   {
    "site": "https://www.eztec.com.br",
    "construtora": "EZTEC",
    "total": 70,
    "ok": true,
-   "atualizada": "2026-10-03"
+   "atualizada": "2026-10-04"
   },
   {
    "site": "https://econconstrutora.com.br",
    "construtora": "Econ",
    "total": 109,
    "ok": true,
-   "atualizada": "2026-10-03"
+   "atualizada": "2026-10-04"
   },
   {
    "site": "https://www.metrocasa.com.br",
    "construtora": "Metrocasa",
    "total": 100,
    "ok": true,
-   "atualizada": "2026-10-03"
+   "atualizada": "2026-10-04"
   },
   {
    "site": "https://www.vibraresidencial.com.br",
    "construtora": "Vibra Residencial",
    "total": 20,
    "ok": true,
-   "atualizada": "2026-10-03"
+   "atualizada": "2026-10-04"
   }
  ]
 }
