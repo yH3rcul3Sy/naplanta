@@ -1,10 +1,9 @@
-import re, time
+import re
 from urllib.parse import unquote
-import httpx
 from bs4 import BeautifulSoup
+import rede
 
 BASE = 'https://www.damebe.com.br'
-UA = {'User-Agent': 'NaPlantaBot/0.1 (projeto academico UMC)'}
 FORA = {'', 'quem-somos', 'contato', 'blog', 'politica-de-privacidade'}
 
 
@@ -49,12 +48,11 @@ def parse(url, html):
 
 def coletar():
     out = []
-    with httpx.Client(headers=UA, timeout=30, follow_redirects=True) as c:
+    with rede.cliente() as c:
         xml = c.get(f'{BASE}/page-sitemap.xml').text
         for url in re.findall(r'<loc>([^<]+)</loc>', xml):
             if url.rstrip('/').rsplit('/', 1)[-1].replace('www.damebe.com.br', '') in FORA:
                 continue
-            time.sleep(1)
             r = c.get(url)
             if r.status_code == 200 and (e := parse(url, r.text)):
                 out.append(e)

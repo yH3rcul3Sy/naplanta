@@ -1,10 +1,9 @@
-import json, re, time
-import httpx
+import json, re
 from econ import rsc
 from eztec import dorms
+import rede
 
 BASE = 'https://www.metrocasa.com.br'
-UA = {'User-Agent': 'NaPlantaBot/0.1 (projeto academico UMC)'}
 ETAPA = {'coming_soon': 'Breve lançamento', 'pre_launch': 'Breve lançamento', 'launch': 'Lançamento',
          'under_construction': 'Em obras', 'ready_to_move_in': 'Pronto para morar'}
 
@@ -34,10 +33,9 @@ def parse(url, html):
 
 def coletar():
     out = []
-    with httpx.Client(headers=UA, timeout=30, follow_redirects=True) as c:
+    with rede.cliente() as c:
         xml = c.get(f'{BASE}/sitemap.xml').text
         for url in sorted(set(re.findall(rf'{BASE}/imoveis/[a-z0-9-]+(?=<|\s)', xml))):
-            time.sleep(1)
             r = c.get(url)
             if r.status_code == 200 and (e := parse(url, r.text)):
                 out.append(e)

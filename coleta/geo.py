@@ -10,9 +10,17 @@ cache = json.loads(CACHE.read_text(encoding='utf8')) if CACHE.exists() else {}
 def _get(path, **params):
     key = path + json.dumps(params, sort_keys=True)
     if key not in cache:
-        time.sleep(1)  # politica do Nominatim: 1 req/s
-        cache[key] = httpx.get(f'{URL}/{path}', params={**params, 'format': 'jsonv2', 'addressdetails': 1},
-                               headers=UA, timeout=30).json()
+        for tentativa in range(3):  # 429/5xx do Nominatim costuma passar em segundos
+            time.sleep(1 if tentativa == 0 else 10)  # politica do Nominatim: 1 req/s
+            try:
+                r = httpx.get(f'{URL}/{path}', params={**params, 'format': 'jsonv2', 'addressdetails': 1},
+                              headers=UA, timeout=30)
+                r.raise_for_status()  # pagina de erro nunca entra no cache
+                cache[key] = r.json()
+                break
+            except (httpx.HTTPError, ValueError):
+                if tentativa == 2:
+                    raise  # Nominatim fora do ar: a coleta para sem gravar nada e os dados de ontem ficam no ar
         CACHE.write_text(json.dumps(cache, ensure_ascii=False), encoding='utf8')
     return cache[key]
 

@@ -25,6 +25,31 @@ assert tipo('Casas em Condomínio Fechado de 2 e 3 dorms.') == 'Casa em condomí
 assert tipo('Casa Piauí, studios de 30 m²') == 'Apartamento'
 
 
+def problemas(e, base):
+    """Campos fora do formato que o site espera: o HTML das incorporadoras e entrada de terceiros."""
+    num = lambda v: isinstance(v, (int, float)) and not isinstance(v, bool)
+    faixa = lambda v: v is None or (isinstance(v, list) and len(v) == 2 and all(map(num, v)) and v[0] <= v[1])
+    texto = lambda v: v is None or isinstance(v, str)
+    regras = {'nome': lambda v: isinstance(v, str) and v.strip() != '',
+              'fonte': lambda v: isinstance(v, str) and v.startswith(base + '/'),
+              'lat': lambda v: v is None or (num(v) and -90 <= v <= 90),
+              'lng': lambda v: v is None or (num(v) and -180 <= v <= 180),
+              'dorms': faixa, 'm2': faixa,
+              'imagem': lambda v: v is None or (isinstance(v, str) and v.startswith(('https://', 'http://'))),
+              'etapa': texto, 'endereco': texto, 'cidade': texto, 'uf': texto, 'entrega': texto}
+    ruins = [k for k, ok in regras.items() if not ok(e.get(k))]
+    if (e.get('lat') is None) != (e.get('lng') is None):
+        ruins += ['lat', 'lng']
+    return sorted(set(ruins))
+
+
+_ok = {'nome': 'A', 'fonte': 'https://x.com/a', 'lat': -23.5, 'lng': -46.2, 'dorms': [1, 3], 'm2': None, 'imagem': 'https://x.com/a.jpg'}
+assert problemas(_ok, 'https://x.com') == []
+assert problemas({**_ok, 'fonte': 'https://x.com.golpe.io/a'}, 'https://x.com') == ['fonte']
+assert problemas({**_ok, 'm2': ['50', 70], 'imagem': 'javascript:alert(1)', 'lng': None}, 'https://x.com') == ['imagem', 'lat', 'lng', 'm2']
+assert problemas({**_ok, 'dorms': [3, 1], 'nome': ' '}, 'https://x.com') == ['dorms', 'nome']
+
+
 def comparar(velhos, novos, dia):
     """Leva a data de estreia ('desde') de uma coleta para a outra e lista o que mudou numa fonte."""
     if not velhos:  # fonte recem-integrada: tudo nela seria "novo", mas nao e lancamento
@@ -70,6 +95,12 @@ if __name__ == '__main__':
         try:
             novos = []
             for e in f.coletar():
+                if ruins := problemas(e, f.BASE):
+                    if {'nome', 'fonte'} & set(ruins):  # sem nome ou link de origem nao da para mostrar
+                        print(f'{f.__name__}: descartado, campos invalidos {ruins}: {str(e)[:150]}')
+                        continue
+                    print(f"{f.__name__}: {e['fonte']} com campos invalidos {ruins} -> ficam vazios")
+                    e.update(dict.fromkeys(ruins))
                 e['etapa'] = ETAPAS.get((e['etapa'] or '').lower())
                 e['tipo'] = tipo(e.pop('texto'))
                 if e['etapa']:  # descarta "100% vendido" e etapas desconhecidas

@@ -114,6 +114,7 @@ Depois é só abrir http://localhost:8000. A primeira coleta demora mais, porque
 coleta/
   coletar.py           orquestra a coleta e detecta mudanças
   <incorporadora>.py   um coletor por fonte (coletar() e parse())
+  rede.py              acesso aos sites: robots.txt, identificação e pausa entre páginas
   geo.py               localização e conferência de coordenadas
   arredores.py         estação e serviços próximos
   fotos.py             miniaturas das fotos

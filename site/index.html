@@ -2,6 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<!-- so carrega o que vem do proprio site, da CDN do Leaflet e dos mapas do OSM (inline liberado: o JS mora neste arquivo) -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https://*.tile.openstreetmap.org; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#e7f2ec">
 <title>NaPlanta</title>
@@ -9,7 +11,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <link rel="preload" href="dados.json" as="fetch" crossorigin>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
 <style>
   :root { --bg:#f6f5f2; --card:#fff; --ink:#1d1d1b; --muted:#6b6a66; --line:#e3e1dc; --accent:#1f6f4a;
           --breve:#8a5a00; --breve-bg:#fbefd6; --lanc:#9a3b12; --lanc-bg:#fbe3d8;
@@ -165,8 +168,11 @@
   </header>
   <div id="eventos"></div>
 </dialog>
-<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<!-- integrity: o navegador recusa o arquivo se a CDN entregar algo diferente; ao trocar de versao, gerar o hash de novo -->
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"
+        integrity="sha384-eXVCORTRlv4FUUgS/xmOyr66XBVraen8ATNLMESp92FKXLAMiKkerixTiBvXriZr" crossorigin="anonymous"></script>
 <script>
 const $ = id => document.getElementById(id);
 const CAMPOS = ['cidade', 'tipo', 'etapa', 'construtora', 'dorms', 'estacao', 'm2'];
@@ -303,7 +309,7 @@ function render() {
     const html = `<span class="etapa ${cls}">${esc(e.etapa)}</span>${novo}<h2>${esc(e.nome)}</h2>
       <p class="info">${esc(e.tipo)} · ${esc(e.construtora)} · ${esc(e.cidade ?? '')}${e.uf ? ' - ' + esc(e.uf) : ''}</p>
       ${e.endereco ? `<p class="info">${esc(e.endereco)}</p>` : ''}
-      ${fatos ? `<p class="fatos">${fatos}</p>` : ''}
+      ${fatos ? `<p class="fatos">${esc(fatos)}</p>` : ''}
       ${e.entrega ? `<p class="info">Entrega: ${esc(e.entrega)}</p>` : ''}
       ${e.aprox ? '<p class="info aprox">Localização aproximada: o pino está no bairro, não no endereço exato</p>' : ''}
       ${arredores(e)}

@@ -1,9 +1,8 @@
-import json, re, time
-import httpx
+import json, re
 from bs4 import BeautifulSoup
+import rede
 
 BASE = 'https://www.vibraresidencial.com.br'
-UA = {'User-Agent': 'NaPlantaBot/0.1 (projeto academico UMC)'}
 ETAPA = {'breve lançamento': 'Breve lançamento', 'lançamento': 'Lançamento', 'em obras': 'Em obras',
          'pronto': 'Pronto para morar', 'pronto para morar': 'Pronto para morar', 'entregue': 'Pronto para morar'}
 
@@ -43,10 +42,9 @@ def parse(url, html):
 
 def coletar():
     out = []
-    with httpx.Client(headers=UA, timeout=30, follow_redirects=True) as c:
+    with rede.cliente() as c:
         html = c.get(f'{BASE}/produtos/').text
         for url in sorted(set(re.findall(rf'{BASE}/produtos/[a-z0-9-]+/', html))):
-            time.sleep(1)
             r = c.get(url)
             if r.status_code == 200 and (e := parse(url, r.text)):
                 out.append(e)

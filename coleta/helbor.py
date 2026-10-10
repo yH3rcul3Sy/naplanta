@@ -1,10 +1,9 @@
-import re, time
-import httpx
+import re
 from bs4 import BeautifulSoup
 from geo import geohash
+import rede
 
 BASE = 'https://helbor.com.br'
-UA = {'User-Agent': 'NaPlantaBot/0.1 (projeto academico UMC)'}
 
 
 def links(c):
@@ -48,9 +47,8 @@ def parse(url, html):
 
 def coletar():
     out = []
-    with httpx.Client(headers=UA, timeout=30, follow_redirects=True) as c:
+    with rede.cliente() as c:
         for url in links(c):
-            time.sleep(1)  # educado com o servidor
             r = c.get(url)
             if r.status_code == 200 and (e := parse(url, r.text)):
                 out.append(e)
