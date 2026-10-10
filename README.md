@@ -53,7 +53,7 @@ flowchart LR
 2. **Localização:** a coordenada da fonte é conferida no [Nominatim](https://nominatim.org/). Se o ponto cai fora da cidade, o endereço é procurado de novo. O pino vai para o prédio de mesmo nome no OpenStreetMap quando ele existe. Sem posição confiável, o pino fica no bairro, com aviso de "localização aproximada".
 3. **Arredores:** estação e serviços próximos vêm do OpenStreetMap, pela API [Overpass](https://overpass-api.de/).
 4. **Fotos:** cada foto é baixada uma vez e vira uma miniatura WebP servida pelo próprio site.
-5. **Publicação:** o site é um único `index.html` que lê o `dados.json` e desenha o mapa com Leaflet. Não há servidor nem banco de dados.
+5. **Publicação:** o site é uma página estática (`index.html` + `app.js`) que lê o `dados.json` e desenha o mapa com Leaflet. Não há servidor nem banco de dados.
 
 ## Regras da coleta
 
@@ -61,7 +61,7 @@ flowchart LR
 - ✅ Identifica-se como `NaPlantaBot/0.1 (projeto academico UMC)` e espera 1 segundo entre páginas.
 - ✅ Guarda só informações públicas do empreendimento. **Não coleta preços nem dados pessoais.**
 - ✅ Empreendimentos 100% vendidos ficam de fora.
-- ✅ Se um site falha, responde vazio ou perde mais de 30% dos empreendimentos de um dia para o outro, os dados anteriores são mantidos.
+- ✅ Se um site falha, responde vazio ou perde mais de 30% dos empreendimentos de um dia para o outro, os dados anteriores são mantidos. Uma queda que se repete por 3 coletas seguidas é aceita como real. Fonte parada há mais de um dia ganha aviso no card e na aba Actions.
 
 ## Fontes
 
@@ -120,7 +120,8 @@ coleta/
   fotos.py             miniaturas das fotos
 site/
   index.html           mapa, lista, filtros e painel de novidades
-  transparencia.html   página "Sobre os dados"
+  app.js               lógica do mapa (fora do HTML para a CSP bloquear script inline)
+  transparencia.html   página "Sobre os dados" (+ transparencia.js)
   dados.json           empreendimentos (gerado)
   mudancas.json        histórico de mudanças, 180 dias (gerado)
   status.json          situação de cada fonte (gerado)
