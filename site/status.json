@@ -1,5 +1,5 @@
 {
- "coleta": "2026-10-10T12:14-03:00",
+ "coleta": "2026-10-10T20:03-03:00",
  "fontes": [
   {
    "site": "https://helbor.com.br",
@@ -18,10 +18,9 @@
   {
    "site": "https://cury.net",
    "construtora": "Cury",
-   "total": 228,
-   "ok": false,
-   "erro": "nenhum empreendimento retornado (site fora do ar ou bloqueando o acesso)",
-   "atualizada": "2026-09-30"
+   "total": 223,
+   "ok": true,
+   "atualizada": "2026-10-10"
   },
   {
    "site": "https://tenda.com",
@@ -41,9 +40,8 @@
    "site": "https://sousaaraujo.com.br",
    "construtora": "Sousa Araujo",
    "total": 20,
-   "ok": false,
-   "erro": "nenhum empreendimento retornado (site fora do ar ou bloqueando o acesso)",
-   "atualizada": "2026-09-30"
+   "ok": true,
+   "atualizada": "2026-10-10"
   },
   {
    "site": "https://www.damebe.com.br",
