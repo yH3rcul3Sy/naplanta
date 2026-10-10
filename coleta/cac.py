@@ -1,9 +1,8 @@
-import re, time
-import httpx
+import re
 from bs4 import BeautifulSoup
+import rede
 
 BASE = 'https://www.cacengenharia.com.br'
-UA = {'User-Agent': 'NaPlantaBot/0.1 (projeto academico UMC)'}
 
 
 def ficha(s, campo):
@@ -53,10 +52,9 @@ def parse(url, html):
 
 def coletar():
     out = []
-    with httpx.Client(headers=UA, timeout=30, follow_redirects=True) as c:
+    with rede.cliente() as c:
         xml = c.get(f'{BASE}/empreendimento-sitemap.xml').text
         for url in re.findall(rf'<loc>({BASE}/empreendimento/[^<]+)</loc>', xml):
-            time.sleep(1)
             r = c.get(url)
             if r.status_code == 200 and (e := parse(url, r.text)):
                 out.append(e)
