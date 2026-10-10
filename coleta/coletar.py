@@ -8,7 +8,16 @@ DESTINO, MUDANCAS, STATUS = SITE / 'dados.json', SITE / 'mudancas.json', SITE / 
 ETAPAS = {'breve lançamento': 'Breve lançamento', 'lançamento': 'Lançamento', 'em obras': 'Em obras',
           'obras avançadas': 'Em obras', 'em construção': 'Em obras', 'pronto para morar': 'Pronto para morar'}
 QUEDA_MAXIMA = 0.3  # fonte que perde mais que isso de um dia para o outro falhou no meio (Helbor em 26/09: 38 -> 8)
+COLETAS_PARA_ACEITAR_QUEDA = 3  # a mesma queda em coletas seguidas e real (esgotamento em massa), nao falha
 DIAS_DE_HISTORICO = 180
+
+
+def quedas(n_novos, n_velhos, seguidas):
+    """Quantas coletas seguidas a fonte veio com queda grande (0 = normal)."""
+    return seguidas + 1 if n_novos < n_velhos * (1 - QUEDA_MAXIMA) else 0
+
+
+assert quedas(8, 38, 0) == 1 and quedas(8, 38, 2) == 3 and quedas(30, 38, 2) == 0 and quedas(5, 0, 0) == 0
 
 
 def tipo(texto):
@@ -92,6 +101,7 @@ if __name__ == '__main__':
     dados, eventos, fontes = [], [], []
     for f in FONTES:
         velhos = [e for e in anteriores if e.get('fonte', '').startswith(f.BASE)]
+        seguidas = 0
         try:
             novos = []
             for e in f.coletar():
@@ -107,14 +117,19 @@ if __name__ == '__main__':
                     novos.append(e)
             if not novos:  # site que bloqueia o servidor responde "vazio" em vez de dar erro
                 raise RuntimeError('nenhum empreendimento retornado (site fora do ar ou bloqueando o acesso)')
-            if len(novos) < len(velhos) * (1 - QUEDA_MAXIMA):
-                # ponytail: queda real e grande num dia so (esgotamento em massa) tambem e barrada; aceitar se repetir por dias
+            seguidas = quedas(len(novos), len(velhos), antes.get(f.BASE, {}).get('quedas', 0))
+            if 0 < seguidas < COLETAS_PARA_ACEITAR_QUEDA:
                 raise RuntimeError(f'so {len(novos)} de {len(velhos)} (coleta incompleta)')
+            if seguidas:
+                print(f'{f.__name__}: queda para {len(novos)} repetida em {seguidas} coletas seguidas -> aceita como real')
         except Exception as erro:  # mantem os dados da ultima coleta dessa fonte
             print(f'falha em {f.__name__}: {erro} -> mantendo {len(velhos)} da coleta anterior')
             dados += [geo.completar(e) for e in velhos]
             fontes.append({'site': f.BASE, 'construtora': velhos[0]['construtora'] if velhos else f.__name__, 'total': len(velhos),
-                           'ok': False, 'erro': str(erro), 'atualizada': antes.get(f.BASE, {}).get('atualizada')})
+                           'ok': False, 'erro': str(erro), 'atualizada': antes.get(f.BASE, {}).get('atualizada'),
+                           **({'quedas': seguidas} if seguidas else {})})
+            # aviso na aba Actions: fonte parada nao derruba a coleta, mas precisa ser vista
+            print(f"::warning::{f.__name__} sem atualizar desde {antes.get(f.BASE, {}).get('atualizada')}: {erro}")
             continue
         print(f'{f.__name__}: {len(novos)} coletados')
         eventos += comparar(velhos, novos, dia)

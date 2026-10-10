@@ -29,7 +29,8 @@ jobs:
           git config user.name "coleta-bot"
           git config user.email "coleta-bot@users.noreply.github.com"
           git add site/dados.json site/mudancas.json site/status.json site/fotos coleta/geo_cache.json coleta/arredores_cache.json
-          git diff --cached --quiet || (git commit -m "Atualiza dados coletados" && git push)
+          # pull antes do push: um commit na main durante a coleta (que leva ate 1 h) rejeitaria o push e perderia o dia
+          git diff --cached --quiet || (git commit -m "Atualiza dados coletados" && git pull --rebase && git push)
 
   publicar:
     # o commit da coleta nao dispara outro workflow, entao a publicacao roda aqui mesmo

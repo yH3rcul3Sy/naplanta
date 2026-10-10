@@ -1,12 +1,11 @@
 """Miniaturas das fotos servidas pelo proprio site: a Tenda assina os links com credencial que expira em horas,
 a Cury bloqueia servicos de redimensionamento e o wsrv.nl demora segundos na primeira vez."""
-import hashlib, io, pathlib, time
-import httpx
+import hashlib, io, pathlib
 from PIL import Image, ImageOps
+import rede
 
 PASTA = pathlib.Path(__file__).parent.parent / 'site' / 'fotos'
 TAMANHO, QUALIDADE = (600, 300), 62  # o card mostra 16:8 com ate ~390 px de largura (x2 em tela retina)
-UA = {'User-Agent': 'NaPlantaBot/0.1 (projeto academico UMC)'}
 
 
 def nome(url):
@@ -29,7 +28,6 @@ def miniatura(url, cliente):
             img = ImageOps.fit(Image.open(io.BytesIO(r.content)).convert('RGB'), TAMANHO, Image.LANCZOS)
             PASTA.mkdir(exist_ok=True)
             img.save(destino, 'WEBP', quality=QUALIDADE, method=6)
-            time.sleep(0.2)
         except Exception as erro:
             print('foto nao baixou:', url.split('?')[0][:100], getattr(getattr(erro, 'response', None), 'status_code', type(erro).__name__))
             return None
@@ -37,7 +35,7 @@ def miniatura(url, cliente):
 
 
 def completar(dados):
-    with httpx.Client(headers=UA, timeout=30, follow_redirects=True) as c:
+    with rede.cliente() as c:  # as fotos seguem as mesmas regras de acesso das paginas (robots.txt e pausa)
         for e in dados:
             e['imagem'] = miniatura(e.get('imagem'), c)
     usadas = {e['imagem'] for e in dados if e.get('imagem')}
