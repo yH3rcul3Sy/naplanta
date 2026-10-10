@@ -1,10 +1,9 @@
-import re, time
-import httpx
+import re
 from bs4 import BeautifulSoup
 from geo import geohash
+import rede
 
 BASE = 'https://sousaaraujo.com.br'
-UA = {'User-Agent': 'NaPlantaBot/0.1 (projeto academico UMC)'}
 
 
 def parse(url, html):
@@ -41,7 +40,7 @@ def parse(url, html):
 
 def coletar():
     out, urls = [], set()
-    with httpx.Client(headers=UA, timeout=30, follow_redirects=True) as c:
+    with rede.cliente() as c:
         for pagina in range(1, 20):  # listagem paginada; para quando uma pagina nao traz nada novo
             html = c.get(f'{BASE}/empreendimentos', params={'page': pagina}).text
             novas = set(re.findall(rf'{BASE}/empreendimentos/[a-z0-9-]+(?=")', html)) - urls
@@ -49,7 +48,6 @@ def coletar():
                 break
             urls |= novas
         for url in sorted(urls):
-            time.sleep(1)
             r = c.get(url)
             if r.status_code == 200 and (e := parse(url, r.text)):
                 out.append(e)

@@ -1,9 +1,8 @@
 import json, re
-import httpx
 from econ import rsc
+import rede
 
 BASE = 'https://www.eztec.com.br'
-UA = {'User-Agent': 'NaPlantaBot/0.1 (projeto academico UMC)'}
 ETAPA = {'breve_lancamento': 'Breve lançamento', 'lancamento': 'Lançamento', 'obras_iniciadas': 'Em obras',
          'obras_aceleradas': 'Em obras', 'pronto_para_morar': 'Pronto para morar', 'pronto': 'Pronto para morar'}  # 'vendido' fica de fora
 CIDADES = {'São Caetano': 'São Caetano do Sul'}
@@ -37,7 +36,8 @@ def parse(e):
 
 def coletar():
     # a pagina de imoveis ja traz a lista completa com etapa e coordenadas; nao precisa abrir um por um
-    html = httpx.get(f'{BASE}/imoveis', headers=UA, timeout=30, follow_redirects=True).text
+    with rede.cliente() as c:
+        html = c.get(f'{BASE}/imoveis').text
     p = rsc(html)
     lista = json.JSONDecoder().raw_decode(p, p.index('"empreendimentos":[') + len('"empreendimentos":'))[0]
     return [parse(e) for e in lista]

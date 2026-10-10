@@ -1,8 +1,7 @@
-import json, re, time, unicodedata
-import httpx
+import json, re, unicodedata
+import rede
 
 BASE = 'https://tenda.com'
-UA = {'User-Agent': 'NaPlantaBot/0.1 (projeto academico UMC)'}
 # estagio_obra da Tenda: 1 obras nao iniciadas, 2 terraplenagem, 3 fundacao, 4 construcao, 5 acabamento, 6 entrega
 ESTAGIO = {'1': 'Lançamento', '2': 'Em obras', '3': 'Em obras', '4': 'Em obras', '5': 'Em obras', '6': 'Pronto para morar'}
 
@@ -53,10 +52,9 @@ def parse(url, html):
 
 def coletar():
     out = []
-    with httpx.Client(headers=UA, timeout=30, follow_redirects=True) as c:
+    with rede.cliente() as c:
         xml = c.get(f'{BASE}/sitemap.xml').text
         for url in sorted(set(re.findall(rf'<loc>({BASE}/apartamentos-a-venda/[a-z]+/[a-z0-9-]+/[a-z0-9-]+)</loc>', xml))):
-            time.sleep(1)
             r = c.get(url)
             if r.status_code == 200 and (e := parse(url, r.text)):
                 out.append(e)

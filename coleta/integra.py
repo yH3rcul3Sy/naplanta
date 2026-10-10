@@ -1,10 +1,9 @@
-import re, time
+import re
 from urllib.parse import unquote
-import httpx
 from bs4 import BeautifulSoup
+import rede
 
 BASE = 'https://integraurbano.com.br'
-UA = {'User-Agent': 'NaPlantaBot/0.1 (projeto academico UMC)'}
 LISTAS = {'breve-lancamento': 'Breve lançamento', 'lancamento': 'Lançamento', 'em-obras': 'Em obras'}
 
 
@@ -43,11 +42,10 @@ def parse(url, html, etapa):
 
 def coletar():
     out = []
-    with httpx.Client(headers=UA, timeout=30, follow_redirects=True) as c:
+    with rede.cliente() as c:
         for lista, etapa in LISTAS.items():
             html = c.get(f'{BASE}/empreendimentos/tipo/{lista}').text
             for url in sorted(set(re.findall(rf'{BASE}/empreendimento/[a-z0-9-]+', html))):
-                time.sleep(1)
                 r = c.get(url)
                 if r.status_code == 200 and (e := parse(url, r.text, etapa)):
                     out.append(e)

@@ -1,9 +1,8 @@
-import re, time
-import httpx
+import re
 from bs4 import BeautifulSoup
+import rede
 
 BASE = 'https://cury.net'
-UA = {'User-Agent': 'NaPlantaBot/0.1 (projeto academico UMC)'}
 
 
 def parse(url, html):
@@ -41,13 +40,12 @@ def coletar():
     # o sitemap so traz empreendimentos antigos (quase todos prontos); os lancamentos e obras aparecem na pagina
     # inicial e nos "imoveis relacionados" de cada pagina, entao a coleta segue esses links ate nao achar nenhum novo
     out = []
-    with httpx.Client(headers=UA, timeout=30, follow_redirects=True) as c:
+    with rede.cliente() as c:
         fila = {BASE + p for p in IMOVEL.findall(c.get(f'{BASE}/sitemap.xml').text + c.get(BASE).text)}
         vistos = set()
         while fila - vistos:
             url = min(fila - vistos)
             vistos.add(url)
-            time.sleep(1)
             r = c.get(url)
             if r.status_code == 200:
                 fila |= {BASE + p for p in IMOVEL.findall(r.text)}
