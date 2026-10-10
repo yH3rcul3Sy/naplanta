@@ -101,6 +101,7 @@ Requer **Python 3.12** ou mais novo.
 ```bash
 pip install -r coleta/requirements.txt
 python coleta/coletar.py
+python coleta/paginas.py   # opcional: páginas por empreendimento e sitemap
 python -m http.server 8000 --directory site
 ```
 
@@ -118,6 +119,8 @@ coleta/
   geo.py               localização e conferência de coordenadas
   arredores.py         estação e serviços próximos
   fotos.py             miniaturas das fotos
+  paginas.py           uma página por empreendimento + sitemap (roda na publicação)
+  local.ps1            coleta diária no computador do projeto (Cury e Sousa Araujo)
 site/
   index.html           mapa, lista, filtros e painel de novidades
   app.js               lógica do mapa (fora do HTML para a CSP bloquear script inline)

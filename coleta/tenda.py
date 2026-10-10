@@ -1,13 +1,10 @@
-import json, re, unicodedata
+import json, re
 import rede
+from paginas import slug
 
 BASE = 'https://tenda.com'
 # estagio_obra da Tenda: 1 obras nao iniciadas, 2 terraplenagem, 3 fundacao, 4 construcao, 5 acabamento, 6 entrega
 ESTAGIO = {'1': 'Lançamento', '2': 'Em obras', '3': 'Em obras', '4': 'Em obras', '5': 'Em obras', '6': 'Pronto para morar'}
-
-
-def slug(s):
-    return re.sub(r'[^a-z0-9]+', '-', unicodedata.normalize('NFKD', s or '').encode('ascii', 'ignore').decode().lower()).strip('-')
 
 
 def parse(url, html):

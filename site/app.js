@@ -77,14 +77,15 @@ function mostrarNovidades() {
     b.disabled = e.tipo === 'saiu' || !dados.some(d => d.fonte === e.fonte && d.lat != null);
     b.innerHTML = `<span class="tipo-evento ${cls}">${rotulo}</span><strong>${esc(e.nome)}</strong>
       <span class="info">${esc(e.construtora)} · ${esc(e.cidade ?? '')} · ${detalhe}</span>`;
-    b.onclick = () => {
-      $('novidades').close();
-      if (!abrirPor.has(e.fonte)) { CAMPOS.forEach(id => $(id).value = ''); $('cidade').value = e.cidade ?? ''; $('prontos').checked = true; render(); }
-      abrirPor.get(e.fonte)?.({ target: document.body }, !celular.matches);
-    };
+    b.onclick = () => { $('novidades').close(); focar(e); };
     $('eventos').append(b);
   }
   $('novidades').showModal();
+}
+// abre o empreendimento no mapa; se os filtros o escondem, mostra a cidade dele com tudo
+function focar(e) {
+  if (!abrirPor.has(e.fonte)) { CAMPOS.forEach(id => $(id).value = ''); $('cidade').value = e.cidade ?? ''; $('prontos').checked = true; render(); }
+  abrirPor.get(e.fonte)?.({ target: document.body }, !celular.matches);
 }
 $('abrirNovidades').onclick = mostrarNovidades;
 $('fecharNovidades').onclick = () => $('novidades').close();
@@ -103,6 +104,9 @@ Promise.all([
     [...new Set(d.map(e => e[k]).filter(Boolean))].sort().forEach(v => $(k).add(new Option(v, v)));
   if ([...$('cidade').options].some(o => o.value === 'Mogi das Cruzes')) $('cidade').value = 'Mogi das Cruzes';
   render();
+  // link "Ver no mapa" das paginas de empreendimento: ?e=<pagina>
+  const alvo = d.find(e => e.pagina && e.pagina === new URLSearchParams(location.search).get('e'));
+  if (alvo) focar(alvo);
 }).catch(() => {
   $('lista').innerHTML = '<p class="vazio">Não foi possível carregar os empreendimentos.<br>Confira a conexão e recarregue a página.</p>';
 });
@@ -144,7 +148,8 @@ function render() {
       ${e.aprox ? '<p class="info aprox">Localização aproximada: o pino está no bairro, não no endereço exato</p>' : ''}
       ${parados[e.construtora] ? `<p class="info aprox">Dados de ${dataBR(parados[e.construtora])}: o site da ${esc(e.construtora)} não respondeu às últimas coletas</p>` : ''}
       ${arredores(e)}
-      <a class="fonte" href="${esc(e.fonte)}" target="_blank" rel="noopener">Ver na fonte original ↗</a>`;
+      <a class="fonte" href="${esc(e.fonte)}" target="_blank" rel="noopener">Ver na fonte original ↗</a>
+      ${e.pagina ? ` · <a class="fonte" href="e/${esc(e.pagina)}.html">Detalhes e compartilhar</a>` : ''}`;
     let card, m, abrir;
     const obterCard = () => {  // criado so quando entra na lista (ou quando o pino dele e clicado)
       if (card) return card;
