@@ -1,11 +1,12 @@
 """Acesso aos sites das incorporadoras: identifica o robo, respeita o robots.txt e espera entre paginas.
 Todo coletor abre as paginas por cliente(); assim as regras da coleta valem no codigo, nao so no README."""
-import re, time
+import time
 from urllib.parse import urlsplit
 from urllib.robotparser import RobotFileParser
 import httpx
+from naplanta.config import UA_ROBO
 
-UA = 'NaPlantaBot/0.1 (projeto academico UMC)'
+UA = UA_ROBO
 ROBO = 'NaPlantaBot'  # nome que o robots.txt usa para dar regras so para nos
 PAUSA = 1  # segundos entre paginas
 _regras = {}  # 'https://site' -> RobotFileParser
@@ -38,17 +39,6 @@ class _Transporte(httpx.HTTPTransport):
             return httpx.Response(403, request=request)  # os coletores ja ignoram resposta diferente de 200
         time.sleep(PAUSA)
         return super().handle_request(request)
-
-
-_MCMV = re.compile(r'minha\s*casa,?\s*minha\s*vida|\bmcmv\b', re.I)
-
-
-def cita_mcmv(html):
-    """A pagina da incorporadora cita o Minha Casa Minha Vida (o site mostra so isso, nunca afirma que o imovel se enquadra)."""
-    return bool(_MCMV.search(html or ''))
-
-
-assert cita_mcmv('Apartamentos no Minha Casa, Minha Vida') and cita_mcmv('faixa 2 do MCMV') and not cita_mcmv('minha casa nova')
 
 
 def cliente():

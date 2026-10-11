@@ -1,5 +1,6 @@
 import json, re
-import rede
+from naplanta.dominio.texto import cita_mcmv
+from naplanta.infra import rede
 
 BASE = 'https://econconstrutora.com.br'
 ETAPA = {'futuro-lancamento': 'Breve lançamento', 'breve-lancamento': 'Breve lançamento', 'lancamento': 'Lançamento',
@@ -37,7 +38,7 @@ def parse(url, html):
         'texto': f"{e['titulo']} apartamentos",
         'imagem': (e.get('new_thumb') or (e.get('fotos') or [{}])[0].get('path')),
         'fonte': url,
-        'mcmv': rede.cita_mcmv(html),
+        'mcmv': cita_mcmv(html),
     }
 
 

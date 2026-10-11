@@ -1,7 +1,8 @@
 import re
 from urllib.parse import unquote
 from bs4 import BeautifulSoup
-import rede
+from naplanta.dominio.texto import cita_mcmv
+from naplanta.infra import rede
 
 BASE = 'https://integraurbano.com.br'
 LISTAS = {'breve-lancamento': 'Breve lançamento', 'lancamento': 'Lançamento', 'em-obras': 'Em obras'}
@@ -37,7 +38,7 @@ def parse(url, html, etapa):
         'texto': texto[:600],
         'imagem': og.get('og:image') or (img[0] if (img := re.search(rf'{BASE}/public/uploads/\w+\.(?:jpe?g|webp)', html)) else None),
         'fonte': url,
-        'mcmv': rede.cita_mcmv(html),
+        'mcmv': cita_mcmv(html),
     }
 
 

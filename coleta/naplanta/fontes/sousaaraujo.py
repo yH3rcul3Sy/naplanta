@@ -1,7 +1,8 @@
 import re
 from bs4 import BeautifulSoup
-from geo import geohash
-import rede
+from naplanta.dominio.coordenadas import geohash
+from naplanta.dominio.texto import cita_mcmv
+from naplanta.infra import rede
 
 BASE = 'https://sousaaraujo.com.br'
 
@@ -35,7 +36,7 @@ def parse(url, html):
         'texto': topo,
         'imagem': img[0] if img else None,
         'fonte': url,
-        'mcmv': rede.cita_mcmv(html),
+        'mcmv': cita_mcmv(html),
     }
 
 

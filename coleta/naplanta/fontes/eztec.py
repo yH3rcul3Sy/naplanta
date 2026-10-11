@@ -1,6 +1,6 @@
 import json, re
-from econ import rsc
-import rede
+from naplanta.fontes.econ import rsc
+from naplanta.infra import rede
 
 BASE = 'https://www.eztec.com.br'
 ETAPA = {'breve_lancamento': 'Breve lançamento', 'lancamento': 'Lançamento', 'obras_iniciadas': 'Em obras',

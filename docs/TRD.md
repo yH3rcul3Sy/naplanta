@@ -9,34 +9,34 @@ Tudo em lote: um robô gera arquivos JSON por dia e um site estático os lê. **
 ```mermaid
 flowchart LR
     subgraph Coleta [Coleta · Python 3.12]
-      A[GitHub Actions 06h] --> C[coletar.py]
+      A[GitHub Actions 06h] --> C[app/coleta_diaria.py]
       L[PC do projeto 12h<br>local.ps1] --> C
-      C --> R[rede.py<br>robots.txt + pausa]
+      C --> R[infra/rede.py<br>robots.txt + pausa]
       R --> F[11 coletores]
       C --> G[geo.py<br>Nominatim]
       C --> AR[arredores.py<br>Overpass]
       C --> FO[fotos.py<br>WebP 600x300]
     end
     C --> J[(dados.json<br>mudancas.json<br>status.json)]
-    J --> P[publicar<br>paginas.py]
+    J --> P[publicar<br>publicacao/paginas.py]
     P --> GH[GitHub Pages]
-    GH --> U[Navegador<br>index.html + app.js + Leaflet]
+    GH --> U[Navegador<br>index.html + js/ + Leaflet]
 ```
 
 ## 2. Componentes
 
-| Componente | Tecnologia | Responsabilidade |
+A estrutura completa e a regra de dependência entre camadas estão em [arquitetura.md](arquitetura.md).
+
+| Camada | Onde | Responsabilidade |
 |---|---|---|
-| `coleta/coletar.py` | Python, stdlib | Orquestra: coleta, valida, compara com ontem e grava os JSON |
-| `coleta/rede.py` | httpx | Único acesso aos sites: `robots.txt`, User-Agent, pausa de 1 s |
-| `coleta/<fonte>.py` | httpx e BeautifulSoup | `coletar()` devolve a lista de empreendimentos. `parse()` lê uma página |
-| `coleta/geo.py` | Nominatim (OSM) | Confere e corrige coordenadas e põe o pino no prédio de mesmo nome |
-| `coleta/arredores.py` | Overpass (OSM) | Estação mais próxima (3 km) e serviços (1 km) |
-| `coleta/fotos.py` | Pillow | Baixa uma vez e gera miniatura WebP |
-| `coleta/paginas.py` | stdlib | Páginas por empreendimento e `sitemap.xml`, geradas na publicação |
-| `coleta/local.ps1` | PowerShell | Coleta diária no PC (fontes que barram o GitHub) |
-| `site/index.html` + `app.js` | Leaflet 1.9 e markercluster | Mapa, lista, filtros, novidades |
-| `.github/workflows/coleta.yml` | GitHub Actions | Coleta agendada e publicação |
+| Entrada | `coleta/coletar.py`, `coleta/paginas.py` | Pontos de entrada usados pelo Actions e pelo `local.ps1` |
+| Caso de uso | `naplanta/app/coleta_diaria.py` | Orquestra: coleta, valida, compara com ontem e grava |
+| Domínio | `naplanta/dominio/` | Regras puras: validação, etapa, tipo, mudanças, quedas, texto |
+| Adaptadores | `naplanta/fontes/<fonte>.py` | `coletar()` devolve a lista de empreendimentos; `parse()` lê uma página |
+| Infra | `naplanta/infra/` | `rede` (robots.txt e pausa), `geo` (Nominatim), `arredores` (Overpass), `fotos` (Pillow), `repositorio` (JSON) |
+| Publicação | `naplanta/publicacao/paginas.py` | Páginas por empreendimento e `sitemap.xml` |
+| Front-end | `site/js/` (`nucleo/`, `ui/`, `main.js`) | Mapa (Leaflet 1.9 + markercluster), lista, filtros, novidades |
+| CI/CD | `.github/workflows/coleta.yml` | Coleta agendada e publicação |
 
 ## 3. Contrato dos coletores
 
@@ -47,9 +47,9 @@ BASE = 'https://site-da-incorporadora.com.br'   # todo 'fonte' precisa começar 
 def coletar() -> list[dict]                     # usa rede.cliente()
 ```
 
-Cada empreendimento devolvido precisa ter `nome`, `construtora`, `etapa`, `fonte` e `texto` (usado para inferir o tipo), e opcionalmente `endereco`, `cidade`, `uf`, `lat`, `lng`, `dorms`, `m2`, `entrega` e `imagem`. `coletar.problemas()` valida o formato. Sem nome ou link, o item é descartado. Com outro campo inválido, só esse campo é esvaziado.
+Cada empreendimento devolvido precisa ter `nome`, `construtora`, `etapa`, `fonte` e `texto` (usado para inferir o tipo), e opcionalmente `endereco`, `cidade`, `uf`, `lat`, `lng`, `dorms`, `m2`, `entrega` e `imagem`. `dominio.empreendimento.problemas()` valida o formato. Sem nome ou link, o item é descartado. Com outro campo inválido, só esse campo é esvaziado.
 
-**Para adicionar uma fonte:** crie `coleta/<fonte>.py` com `BASE` e `coletar()`, inclua na lista `FONTES` de `coletar.py`, confira o `robots.txt` e rode a coleta localmente.
+**Para adicionar uma fonte:** crie `coleta/naplanta/fontes/<fonte>.py` com `BASE` e `coletar()`, inclua na lista `FONTES` de `fontes/__init__.py`, confira o `robots.txt` e rode a coleta localmente.
 
 ## 4. Regras de robustez
 

@@ -1,6 +1,6 @@
 import json, re
-import rede
-from paginas import slug
+from naplanta.dominio.texto import cita_mcmv, slug
+from naplanta.infra import rede
 
 BASE = 'https://tenda.com'
 # estagio_obra da Tenda: 1 obras nao iniciadas, 2 terraplenagem, 3 fundacao, 4 construcao, 5 acabamento, 6 entrega
@@ -44,7 +44,7 @@ def parse(url, html):
         'texto': f"{d.get('tipo') or ''} {d.get('descricao') or ''}",
         'imagem': ref(d.get('foto_card')),
         'fonte': url,
-        'mcmv': rede.cita_mcmv(html),
+        'mcmv': cita_mcmv(html),
     }
 
 

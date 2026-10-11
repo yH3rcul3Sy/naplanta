@@ -81,12 +81,12 @@ Os eventos ficam do mais novo para o mais antigo. `de` só existe em `tipo: "eta
                 "atualizada": "2026-10-10", "erro": "só se ok=false", "quedas": "só se houver queda" } ] }
 ```
 
-## Caches (em `coleta/`, versionados)
+## Caches (em `coleta/cache/`, versionados)
 
 | Arquivo | Chave | Valor | Validade |
 |---|---|---|---|
-| `geo_cache.json` | `caminho + parâmetros` do Nominatim | resposta JSON | não expira |
-| `arredores_cache.json` | `"lat,lng"` com 4 casas | `{estacao, perto}` | não expira |
+| `geo.json` | `caminho + parâmetros` do Nominatim | resposta JSON | não expira |
+| `arredores.json` | `"lat,lng"` com 4 casas | `{estacao, perto}` | não expira |
 
 ## Arquivos gerados na publicação (fora do git)
 
@@ -98,4 +98,4 @@ Os eventos ficam do mais novo para o mais antigo. `de` só existe em `tipo: "eta
 
 ## Quando migrar para um banco
 
-Só quando houver **dado gerado por usuário**, como inscrições em alertas, favoritos ou contas. Sugestão: **Supabase (Postgres)**, com camada gratuita e API pronta. As tabelas seriam `empreendimentos` e `eventos`, espelhando os JSON acima, mais `alertas (email, filtros jsonb, criado_em, confirmado)`. Os JSON continuariam sendo a fonte do mapa, porque são mais rápidos e mais baratos.
+Só quando houver **dado gerado por usuário**, como inscrições em alertas, favoritos ou contas. Sugestão: **Supabase (Postgres)**, com camada gratuita e API pronta. As tabelas seriam `empreendimentos` e `eventos`, espelhando os JSON acima, mais `alertas (email, filtros jsonb, criado_em, confirmado)`. A troca ficaria só em `naplanta/infra/repositorio.py`. Os JSON continuariam sendo a fonte do mapa, porque são mais rápidos e mais baratos.

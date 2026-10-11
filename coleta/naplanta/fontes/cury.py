@@ -1,6 +1,7 @@
 import re
 from bs4 import BeautifulSoup
-import rede
+from naplanta.dominio.texto import cita_mcmv
+from naplanta.infra import rede
 
 BASE = 'https://cury.net'
 
@@ -30,7 +31,7 @@ def parse(url, html):
         'texto': sobre,
         'imagem': img[0] if img else None,
         'fonte': url,
-        'mcmv': rede.cita_mcmv(html),
+        'mcmv': cita_mcmv(html),
     }
 
 

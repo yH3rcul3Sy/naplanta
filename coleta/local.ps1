@@ -29,7 +29,7 @@ try {
     & "$copia\.venv\Scripts\python.exe" -m pip install -q -r "$copia\coleta\requirements.txt"
     & "$copia\.venv\Scripts\python.exe" "$copia\coleta\coletar.py"
     if ($LASTEXITCODE) { throw 'coletar.py falhou' }
-    GitBot add site/dados.json site/mudancas.json site/status.json site/fotos coleta/geo_cache.json coleta/arredores_cache.json
+    GitBot add site/dados.json site/mudancas.json site/status.json site/fotos coleta/cache
     git -C $copia diff --cached --quiet
     if ($LASTEXITCODE) {
         GitBot commit -q -m 'Atualiza dados coletados (coleta local)'

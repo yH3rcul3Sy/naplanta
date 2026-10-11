@@ -1,13 +1,14 @@
 """Estacao de trem/metro mais proxima e servicos a pe, pelo OpenStreetMap (API Overpass)."""
-import json, math, pathlib, re, time
+import json, math, re, time
 from collections import defaultdict
 import httpx
+from naplanta.config import CACHE as PASTA_CACHE, UA_OSM
 
 # o servidor principal vive sobrecarregado (504) e o z. cai com frequencia; o lz4 e o mais estavel (set/2026)
 ESPELHOS = ['https://lz4.overpass-api.de/api/interpreter', 'https://overpass-api.de/api/interpreter',
             'https://z.overpass-api.de/api/interpreter']
-UA = {'User-Agent': 'NaPlanta/0.1 (projeto academico UMC)'}
-CACHE = pathlib.Path(__file__).parent / 'arredores_cache.json'
+UA = {'User-Agent': UA_OSM}
+CACHE = PASTA_CACHE / 'arredores.json'
 RAIO_ESTACAO, RAIO_SERVICOS = 3.0, 1.0  # km
 SERVICOS = {'escolas': ['amenity=school', 'amenity=kindergarten'], 'saude': ['amenity=hospital', 'amenity=clinic'],
             'mercados': ['shop=supermarket'], 'parques': ['leisure=park']}

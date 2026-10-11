@@ -53,7 +53,7 @@ flowchart LR
 2. **Localização:** a coordenada da fonte é conferida no [Nominatim](https://nominatim.org/). Se o ponto cai fora da cidade, o endereço é procurado de novo. O pino vai para o prédio de mesmo nome no OpenStreetMap quando ele existe. Sem posição confiável, o pino fica no bairro, com aviso de "localização aproximada".
 3. **Arredores:** estação e serviços próximos vêm do OpenStreetMap, pela API [Overpass](https://overpass-api.de/).
 4. **Fotos:** cada foto é baixada uma vez e vira uma miniatura WebP servida pelo próprio site.
-5. **Publicação:** o site é uma página estática (`index.html` + `app.js`) que lê o `dados.json` e desenha o mapa com Leaflet. Não há servidor nem banco de dados.
+5. **Publicação:** o site é uma página estática (`index.html` + módulos em `site/js/`) que lê o `dados.json` e desenha o mapa com Leaflet. Não há servidor nem banco de dados.
 
 ## Regras da coleta
 
@@ -96,7 +96,7 @@ Cury e Sousa Araujo não respondem às coletas feitas pelos servidores do GitHub
 
 ## Documentação
 
-[PRD](docs/PRD.md) · [TRD](docs/TRD.md) · [Fluxos](docs/fluxos.md) · [Backend](docs/backend.md) · [Design](docs/design.md) · [Plano](docs/plano-implementacao.md) · [Futuro e escala](docs/futuro.md)
+[Arquitetura](docs/arquitetura.md) · [PRD](docs/PRD.md) · [TRD](docs/TRD.md) · [Fluxos](docs/fluxos.md) · [Backend](docs/backend.md) · [Design](docs/design.md) · [Plano](docs/plano-implementacao.md) · [Futuro e escala](docs/futuro.md)
 
 ## Rodar localmente
 
@@ -117,24 +117,26 @@ Depois é só abrir http://localhost:8000. A primeira coleta demora mais, porque
 
 ```
 coleta/
-  coletar.py           orquestra a coleta e detecta mudanças
-  <incorporadora>.py   um coletor por fonte (coletar() e parse())
-  rede.py              acesso aos sites: robots.txt, identificação e pausa entre páginas
-  geo.py               localização e conferência de coordenadas
-  arredores.py         estação e serviços próximos
-  fotos.py             miniaturas das fotos
-  paginas.py           uma página por empreendimento + sitemap (roda na publicação)
-  local.ps1            coleta diária no computador do projeto (Cury e Sousa Araujo)
+  coletar.py · paginas.py   pontos de entrada (coleta diária; páginas e sitemap)
+  local.ps1                 coleta diária no computador do projeto (Cury e Sousa Araujo)
+  cache/                    respostas do Nominatim e do Overpass
+  naplanta/
+    config.py               caminhos, URL, fuso e identificação do robô
+    dominio/                regras puras: validação, etapas, mudanças, texto
+    fontes/                 um adaptador por incorporadora + registro FONTES
+    infra/                  rede (robots.txt), geo, arredores, fotos, repositório JSON
+    app/coleta_diaria.py    caso de uso que orquestra a coleta
+    publicacao/paginas.py   páginas por empreendimento e sitemap
 site/
-  index.html           mapa, lista, filtros e painel de novidades
-  app.js               lógica do mapa (fora do HTML para a CSP bloquear script inline)
-  transparencia.html   página "Sobre os dados" (+ transparencia.js)
-  dados.json           empreendimentos (gerado)
-  mudancas.json        histórico de mudanças, 180 dias (gerado)
-  status.json          situação de cada fonte (gerado)
-  fotos/               miniaturas (geradas)
+  index.html · transparencia.html
+  js/main.js                composição do app
+  js/nucleo/                filtros, formatação, situação (sem DOM)
+  js/ui/                    mapa (Leaflet), lista, filtros, cabeçalho, novidades, boas-vindas
+  dados.json · mudancas.json · status.json · fotos/   gerados pela coleta
 .github/workflows/coleta.yml   coleta diária e publicação
 ```
+
+Detalhes em [docs/arquitetura.md](docs/arquitetura.md).
 
 </details>
 

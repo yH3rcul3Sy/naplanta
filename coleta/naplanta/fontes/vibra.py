@@ -1,6 +1,7 @@
 import json, re
 from bs4 import BeautifulSoup
-import rede
+from naplanta.dominio.texto import cita_mcmv
+from naplanta.infra import rede
 
 BASE = 'https://www.vibraresidencial.com.br'
 ETAPA = {'breve lançamento': 'Breve lançamento', 'lançamento': 'Lançamento', 'em obras': 'Em obras',
@@ -37,7 +38,7 @@ def parse(url, html):
         'texto': f"{g['name']} apartamentos",
         'imagem': (g.get('image') or [{}])[0].get('url'),
         'fonte': url,
-        'mcmv': rede.cita_mcmv(html),
+        'mcmv': cita_mcmv(html),
     }
 
 

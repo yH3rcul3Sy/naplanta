@@ -1,10 +1,10 @@
 """Miniaturas das fotos servidas pelo proprio site: a Tenda assina os links com credencial que expira em horas,
 a Cury bloqueia servicos de redimensionamento e o wsrv.nl demora segundos na primeira vez."""
-import hashlib, io, pathlib
+import hashlib, io
 from PIL import Image, ImageOps
-import rede
+from naplanta.config import FOTOS as PASTA
+from naplanta.infra import rede
 
-PASTA = pathlib.Path(__file__).parent.parent / 'site' / 'fotos'
 TAMANHO, QUALIDADE = (600, 300), 62  # o card mostra 16:8 com ate ~390 px de largura (x2 em tela retina)
 
 

@@ -1,6 +1,7 @@
 import re
 from bs4 import BeautifulSoup
-import rede
+from naplanta.dominio.texto import cita_mcmv
+from naplanta.infra import rede
 
 BASE = 'https://www.cacengenharia.com.br'
 
@@ -47,7 +48,7 @@ def parse(url, html):
         'texto': f"{ficha(s, 'Produto') or ''} {ban.get_text(' ')}",
         'imagem': img[1] if img else None,
         'fonte': url,
-        'mcmv': rede.cita_mcmv(html),
+        'mcmv': cita_mcmv(html),
     }
 
 

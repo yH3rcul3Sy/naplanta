@@ -1,7 +1,8 @@
 import json, re
-from econ import rsc
-from eztec import dorms
-import rede
+from naplanta.fontes.econ import rsc
+from naplanta.fontes.eztec import dorms
+from naplanta.dominio.texto import cita_mcmv
+from naplanta.infra import rede
 
 BASE = 'https://www.metrocasa.com.br'
 ETAPA = {'coming_soon': 'Breve lançamento', 'pre_launch': 'Breve lançamento', 'launch': 'Lançamento',
@@ -28,7 +29,7 @@ def parse(url, html):
         'texto': f"{e['title']} {(e.get('technicalSheet') or {}).get('typology') or ''}",
         'imagem': f"{BASE}/facades/{e['slug']}.webp",  # as chaves de 'facades'/'gallery' dao 404 no CDN; o card do site usa esta
         'fonte': url,
-        'mcmv': rede.cita_mcmv(html),
+        'mcmv': cita_mcmv(html),
     }
 
 

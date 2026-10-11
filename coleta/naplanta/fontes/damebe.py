@@ -1,7 +1,8 @@
 import re
 from urllib.parse import unquote
 from bs4 import BeautifulSoup
-import rede
+from naplanta.dominio.texto import cita_mcmv
+from naplanta.infra import rede
 
 BASE = 'https://www.damebe.com.br'
 FORA = {'', 'quem-somos', 'contato', 'blog', 'politica-de-privacidade'}
@@ -43,7 +44,7 @@ def parse(url, html):
         'texto': texto[:600],
         'imagem': img,
         'fonte': url,
-        'mcmv': rede.cita_mcmv(html),
+        'mcmv': cita_mcmv(html),
     }
 
 
