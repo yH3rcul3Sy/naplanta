@@ -33,9 +33,10 @@ const pino = e => L.divIcon({ className: '', iconSize: [18, 18], iconAnchor: [9,
   html: `<div class="pino" style="background:${(ETAPA[e.etapa] || [, '#666'])[1]}"></div>` });
 let dados = [];
 
+let nVisiveis = 0;
 function verLista(sim) {
   document.body.classList.toggle('ver-lista', sim);
-  $('alternar').textContent = sim ? 'Ver mapa' : 'Ver lista';
+  $('alternar').textContent = sim ? 'Ver mapa' : `Ver lista · ${nVisiveis}`;
   if (!sim) mapa.invalidateSize();
 }
 $('alternar').onclick = () => verLista(!document.body.classList.contains('ver-lista'));
@@ -45,6 +46,17 @@ $('abrirFiltros').onclick = () => {
   mapa.invalidateSize();
 };
 const CAIXAS = ['prontos', 'mcmv'];
+// no celular os rotulos somem, entao a primeira opcao (e a do dorms/estacao) diz o que o campo e
+const TEXTO_CELULAR = { cidade: ['Todas as cidades'], tipo: ['Todos os tipos'], etapa: ['Todas as etapas'], construtora: ['Construtoras'],
+  dorms: ['Dormitórios', '1+ dorm.', '2+ dorms', '3+ dorms', '4+ dorms'], estacao: ['Estação: qualquer', 'Estação até 1 km', 'Estação até 2 km', 'Estação até 3 km'],
+  ordem: ['Ordenar'] };
+function rotular() {
+  for (const [id, textos] of Object.entries(TEXTO_CELULAR))
+    [...$(id).options].slice(0, textos.length).forEach((o, i) => { o.dataset.pc ??= o.text; o.text = celular.matches ? textos[i] : o.dataset.pc; });
+  $('m2').placeholder = celular.matches ? 'Área mín. (m²)' : 'm²';
+}
+rotular();
+celular.addEventListener('change', rotular);
 $('limpar').onclick = () => { CAMPOS.forEach(id => $(id).value = ''); CAIXAS.forEach(id => $(id).checked = false); render(); };
 [...CAMPOS, ...CAIXAS, 'ordem'].forEach(id => $(id).addEventListener('input', render));
 // ordem da lista; empates e quem nao tem o dado ficam na ordem padrao, no fim
@@ -146,6 +158,8 @@ function render() {
   const n = CAMPOS.filter(id => f[id]).length + CAIXAS.filter(id => $(id).checked).length;
   $('nFiltros').hidden = !n; $('nFiltros').textContent = n;
   $('total').textContent = `${vis.length} empreendimento${vis.length === 1 ? '' : 's'}${atualizado}`;
+  nVisiveis = vis.length;
+  if (!document.body.classList.contains('ver-lista')) $('alternar').textContent = `Ver lista · ${nVisiveis}`;
   const nNovidades = eventosVisiveis(DIAS_NOVO).length;
   $('nNovidades').hidden = !nNovidades; $('nNovidades').textContent = nNovidades;
   $('abrirNovidades').setAttribute('aria-label', `Novidades: ${nNovidades} na última semana`);

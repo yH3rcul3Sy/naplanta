@@ -73,6 +73,7 @@
     #rodape { margin-left:auto; }
   }
   #abrirFiltros, #alternar { display:none; }
+  .icone { display:none; width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
   .acoes { display:flex; flex-wrap:wrap; gap:4px 16px; }
   main { display:grid; grid-template-columns:390px 1fr; min-height:0; }
   #lista { overflow:auto; padding:12px; display:flex; flex-direction:column; gap:12px; }
@@ -139,37 +140,39 @@
   @media (hover: none) { .card:hover { transform:none; box-shadow:none; } .card:hover img { transform:none; } }
 
   @media (max-width: 800px) {
-    header { padding:10px 12px; gap:8px; }
-    h1 { margin-right:0; }
-    #abrirNovidades { margin-left:auto; }
-    #abrirNovidades, #abrirFiltros { padding:7px 10px; min-height:44px; }
-    #abrirFiltros { display:inline-flex; gap:6px; align-items:center; }
-    #abrirFiltros b { background:var(--accent); color:#fff; border-radius:99px; padding:0 7px; font-size:12px; }
-    #rodape { margin-left:0; width:100%; justify-content:space-between; }
-    #rodape { font-size:14px; white-space:normal; }
-    #total { min-width:0; }
-    #rodape .botao, #rodape button { min-height:44px; font-size:16px; white-space:nowrap; }
-    #filtros { order:0; display:none; width:100%; grid-template-columns:1fr 1fr; gap:10px; }
+    /* celular: uma linha so (marca + 3 icones); o total vai para o botao Ver lista e os filtros dispensam rotulos */
+    header { padding:8px 12px; gap:6px; flex-wrap:wrap; }
+    h1 { margin-right:auto; font-size:24px; }
+    .icone { display:block; }
+    .rotulo { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+    #abrirNovidades, #abrirFiltros, #comoFunciona { display:inline-grid; place-items:center; position:relative; width:44px; height:44px; padding:0; border-radius:12px; }
+    #abrirNovidades b, #abrirFiltros b { position:absolute; top:-5px; right:-5px; margin:0; min-width:20px; padding:0 5px; line-height:20px; border:2px solid #fff; }
+    body.filtros-abertos #abrirFiltros { background:var(--accent-bg); border-color:var(--accent); color:var(--accent); }
+    #rodape { display:none; }
+    #filtros { order:9; display:none; width:100%; grid-template-columns:1fr 1fr; gap:8px; padding:4px 0 2px; }
     body.filtros-abertos #filtros { display:grid; }
+    #filtros > label:not(.check) { font-size:0; gap:0; }  /* rotulo so para leitor de tela: o proprio campo diz o que e */
+    #filtros .check { order:1; } #limpar { order:2; grid-column:1 / -1; min-height:44px; }
     select, input { min-width:0; width:100%; min-height:44px; font-size:16px; }  /* menos que 16px o iPhone da zoom ao tocar */
-    #limpar { grid-column:1 / -1; min-height:44px; }
     main { grid-template-columns:1fr; position:relative; }
     #lista, #mapa { grid-area:1 / 1; }
     #lista { padding:12px 12px 90px; background:var(--bg); z-index:1001; }
     body:not(.ver-lista) #lista { visibility:hidden; }
     #alternar { display:flex; position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom)); transform:translateX(-50%); z-index:1100;
                 background:var(--ink); color:#fff; border:0; border-radius:99px; padding:12px 22px; min-height:48px; font-weight:600;
-                box-shadow:0 4px 14px rgba(0,0,0,.3); gap:8px; align-items:center; }
+                box-shadow:0 4px 14px rgba(0,0,0,.3); gap:8px; align-items:center; white-space:nowrap; }
     #alternar:hover, #alternar:active { background:var(--accent); color:#fff; }
-    .check { align-self:end; min-height:44px; font-size:14px; line-height:1.2; }
+    .check { min-height:44px; font-size:15px; line-height:1.2; padding:0 4px; }
   }
+
 </style>
 </head>
 <body>
 <header>
   <h1>Na<span>Planta</span></h1>
-  <button id="abrirNovidades" type="button" aria-haspopup="dialog">Novidades<b id="nNovidades" hidden></b></button>
-  <button id="abrirFiltros" aria-expanded="false" aria-controls="filtros">Filtros <b id="nFiltros" hidden></b></button>
+  <button id="abrirNovidades" type="button" aria-haspopup="dialog" title="Novidades"><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><span class="rotulo">Novidades</span><b id="nNovidades" hidden></b></button>
+  <button id="abrirFiltros" aria-expanded="false" aria-controls="filtros" title="Filtros"><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span class="rotulo">Filtros</span><b id="nFiltros" hidden></b></button>
+  <button id="comoFunciona" type="button" aria-haspopup="dialog" title="Como funciona"><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h0"/></svg><span class="rotulo">Como funciona</span></button>
   <div id="filtros">
     <label style="--w:150px">Cidade <select id="cidade"><option value="">Todas</option></select></label>
     <label style="--w:130px">Tipo <select id="tipo"><option value="">Todos</option></select></label>
@@ -183,7 +186,7 @@
     <label class="fixo" style="--w:120px">Ordenar <select id="ordem"><option value="">Padrão</option><option value="novos">Novos no site</option><option value="etapa">Etapa (breve 1º)</option><option value="estacao">Perto da estação</option><option value="area">Maior área</option></select></label>
     <button id="limpar" type="button">Limpar</button>
   </div>
-  <div id="rodape"><span id="total" aria-live="polite"></span><button id="comoFunciona" type="button">Como funciona</button></div>
+  <div id="rodape"><span id="total" aria-live="polite"></span></div>
 </header>
 <main>
   <section id="lista" aria-label="Empreendimentos"></section>
