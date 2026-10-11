@@ -15,26 +15,26 @@ if ($Agendar) {
 
 $copia = Join-Path $env:LOCALAPPDATA 'naplanta-coleta'
 $log = Join-Path $copia 'coleta-local.log'
-function Git { git -C $copia -c user.name=coleta-bot -c user.email=coleta-bot@users.noreply.github.com @args; if ($LASTEXITCODE) { throw "git $args falhou" } }
+function GitBot { git.exe -C $copia -c user.name=coleta-bot -c user.email=coleta-bot@users.noreply.github.com @args; if ($LASTEXITCODE) { throw "git $args falhou" } }
 
-if (-not (Test-Path $copia)) { git clone -q https://github.com/yH3rcul3Sy/naplanta $copia }
+if (-not (Test-Path $copia)) { git.exe clone -q https://github.com/yH3rcul3Sy/naplanta $copia }
 $env:PYTHONIOENCODING = 'utf-8'  # sem console (agendador) o print de acentos quebraria no cp1252
 $falhou = $false
 Start-Transcript -Path $log -Append | Out-Null
 try {
-    Git fetch -q origin
-    Git checkout -q main
-    Git reset -q --hard origin/main  # copia descartavel: parte sempre do que esta publicado
+    GitBot fetch -q origin
+    GitBot checkout -q main
+    GitBot reset -q --hard origin/main  # copia descartavel: parte sempre do que esta publicado
     if (-not (Test-Path "$copia\.venv")) { python -m venv "$copia\.venv" }
     & "$copia\.venv\Scripts\python.exe" -m pip install -q -r "$copia\coleta\requirements.txt"
     & "$copia\.venv\Scripts\python.exe" "$copia\coleta\coletar.py"
     if ($LASTEXITCODE) { throw 'coletar.py falhou' }
-    Git add site/dados.json site/mudancas.json site/status.json site/fotos coleta/geo_cache.json coleta/arredores_cache.json
+    GitBot add site/dados.json site/mudancas.json site/status.json site/fotos coleta/geo_cache.json coleta/arredores_cache.json
     git -C $copia diff --cached --quiet
     if ($LASTEXITCODE) {
-        Git commit -q -m 'Atualiza dados coletados (coleta local)'
-        Git pull -q --rebase  # a coleta do GitHub pode ter publicado enquanto esta rodava
-        Git push -q origin main
+        GitBot commit -q -m 'Atualiza dados coletados (coleta local)'
+        GitBot pull -q --rebase  # a coleta do GitHub pode ter publicado enquanto esta rodava
+        GitBot push -q origin main
         'publicado'
     } else { 'nada mudou' }
 } catch {

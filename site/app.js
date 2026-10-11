@@ -92,13 +92,15 @@ $('fecharNovidades').onclick = () => $('novidades').close();
 $('novidades').onclick = ev => { if (ev.target === $('novidades')) $('novidades').close(); };  // clique fora fecha
 
 // construtora -> dia da ultima coleta que deu certo, so para fontes paradas ha mais de um dia (status.json)
-let parados = {};
+let parados = {}, atualizado = '';
 Promise.all([
   fetch('dados.json').then(r => r.ok ? r.json() : Promise.reject(r.status)),
   fetch('mudancas.json').then(r => r.ok ? r.json() : mudancas).catch(() => mudancas),
   fetch('status.json').then(r => r.ok ? r.json() : { fontes: [] }).catch(() => ({ fontes: [] })),
 ]).then(([d, m, s]) => {
   dados = d; mudancas = m;
+  // confianca: o visitante ve na hora que os dados sao de hoje (data local: diasAtras usa UTC e erraria a noite)
+  if (s.coleta) atualizado = s.coleta.slice(0, 10) === new Date().toLocaleDateString('sv') ? ' · atualizado hoje' : ` · atualizado em ${dataBR(s.coleta.slice(0, 10))}`;
   parados = Object.fromEntries(s.fontes.filter(f => !f.ok && f.atualizada && f.atualizada < diasAtras(1)).map(f => [f.construtora, f.atualizada]));
   for (const k of ['cidade', 'tipo', 'etapa', 'construtora'])
     [...new Set(d.map(e => e[k]).filter(Boolean))].sort().forEach(v => $(k).add(new Option(v, v)));
@@ -128,7 +130,7 @@ function render() {
     (!f.estacao || (e.estacao && e.estacao.km <= +f.estacao)));
   const n = CAMPOS.filter(id => f[id]).length + $('prontos').checked;
   $('nFiltros').hidden = !n; $('nFiltros').textContent = n;
-  $('total').textContent = `${vis.length} empreendimento${vis.length === 1 ? '' : 's'}`;
+  $('total').textContent = `${vis.length} empreendimento${vis.length === 1 ? '' : 's'}${atualizado}`;
   const nNovidades = eventosVisiveis(DIAS_NOVO).length;
   $('nNovidades').hidden = !nNovidades; $('nNovidades').textContent = nNovidades;
   $('abrirNovidades').setAttribute('aria-label', `Novidades: ${nNovidades} na última semana`);
@@ -148,8 +150,8 @@ function render() {
       ${e.aprox ? '<p class="info aprox">Localização aproximada: o pino está no bairro, não no endereço exato</p>' : ''}
       ${parados[e.construtora] ? `<p class="info aprox">Dados de ${dataBR(parados[e.construtora])}: o site da ${esc(e.construtora)} não respondeu às últimas coletas</p>` : ''}
       ${arredores(e)}
-      <a class="fonte" href="${esc(e.fonte)}" target="_blank" rel="noopener">Ver na fonte original ↗</a>
-      ${e.pagina ? ` · <a class="fonte" href="e/${esc(e.pagina)}.html">Detalhes e compartilhar</a>` : ''}`;
+      <div class="acoes"><a class="fonte" href="${esc(e.fonte)}" target="_blank" rel="noopener">Ver na construtora ↗</a>
+      ${e.pagina ? `<a class="fonte" href="e/${esc(e.pagina)}.html">Detalhes e compartilhar</a>` : ''}</div>`;
     let card, m, abrir;
     const obterCard = () => {  // criado so quando entra na lista (ou quando o pino dele e clicado)
       if (card) return card;
