@@ -1,5 +1,5 @@
 {
- "coleta": "2026-10-10T20:03-03:00",
+ "coleta": "2026-10-10T21:44-03:00",
  "fontes": [
   {
    "site": "https://helbor.com.br",
@@ -76,7 +76,7 @@
    "construtora": "Vibra Residencial",
    "total": 20,
    "ok": false,
-   "erro": "The read operation timed out",
+   "erro": "nenhum empreendimento retornado (site fora do ar ou bloqueando o acesso)",
    "atualizada": "2026-10-09"
   }
  ]
