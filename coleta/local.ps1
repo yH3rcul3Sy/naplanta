@@ -29,11 +29,20 @@ try {
     & "$copia\.venv\Scripts\python.exe" -m pip install -q -r "$copia\coleta\requirements.txt"
     & "$copia\.venv\Scripts\python.exe" "$copia\coleta\coletar.py"
     if ($LASTEXITCODE) { throw 'coletar.py falhou' }
-    GitBot add site/dados.json site/mudancas.json site/status.json site/fotos coleta/cache
+    $dados = 'site/dados.json', 'site/mudancas.json', 'site/status.json', 'site/fotos', 'coleta/cache'
+    GitBot add @dados
     git -C $copia diff --cached --quiet
     if ($LASTEXITCODE) {
         GitBot commit -q -m 'Atualiza dados coletados (coleta local)'
-        GitBot pull -q --rebase  # a coleta do GitHub pode ter publicado enquanto esta rodava
+        git -C $copia pull -q --rebase  # a coleta do GitHub pode ter publicado enquanto esta rodava
+        if ($LASTEXITCODE) {
+            # conflito nos dados: esta coleta (com todas as fontes) prevalece. Parte da main atual e grava so os
+            # arquivos de dados, para nunca desfazer codigo que chegou no meio
+            git -C $copia rebase --abort
+            GitBot reset -q origin/main
+            GitBot add @dados
+            GitBot commit -q -m 'Atualiza dados coletados (coleta local)'
+        }
         GitBot push -q origin main
         'publicado'
     } else { 'nada mudou' }
