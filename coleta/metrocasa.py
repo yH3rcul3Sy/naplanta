@@ -28,6 +28,7 @@ def parse(url, html):
         'texto': f"{e['title']} {(e.get('technicalSheet') or {}).get('typology') or ''}",
         'imagem': f"{BASE}/facades/{e['slug']}.webp",  # as chaves de 'facades'/'gallery' dao 404 no CDN; o card do site usa esta
         'fonte': url,
+        'mcmv': rede.cita_mcmv(html),
     }
 
 

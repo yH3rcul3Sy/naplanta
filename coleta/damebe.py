@@ -43,6 +43,7 @@ def parse(url, html):
         'texto': texto[:600],
         'imagem': img,
         'fonte': url,
+        'mcmv': rede.cita_mcmv(html),
     }
 
 

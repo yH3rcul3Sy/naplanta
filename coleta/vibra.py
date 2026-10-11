@@ -37,6 +37,7 @@ def parse(url, html):
         'texto': f"{g['name']} apartamentos",
         'imagem': (g.get('image') or [{}])[0].get('url'),
         'fonte': url,
+        'mcmv': rede.cita_mcmv(html),
     }
 
 

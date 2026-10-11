@@ -47,6 +47,7 @@ def parse(url, html):
         'texto': f"{ficha(s, 'Produto') or ''} {ban.get_text(' ')}",
         'imagem': img[1] if img else None,
         'fonte': url,
+        'mcmv': rede.cita_mcmv(html),
     }
 
 

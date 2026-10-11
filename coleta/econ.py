@@ -37,6 +37,7 @@ def parse(url, html):
         'texto': f"{e['titulo']} apartamentos",
         'imagem': (e.get('new_thumb') or (e.get('fotos') or [{}])[0].get('path')),
         'fonte': url,
+        'mcmv': rede.cita_mcmv(html),
     }
 
 

@@ -88,7 +88,7 @@ def html_empreendimento(e, nome_arquivo):
     est, perto = e.get('estacao'), e.get('perto') or {}
     arredores = []
     if 'estacao' in e:
-        arredores.append(f"Estação {est['nome']} ({est['tipo']}) a {str(est['km']).replace('.', ',')} km em linha reta" if est
+        arredores.append(f"Estação {est['nome']} ({est['tipo']}) a {'menos de 100 m' if est['km'] < 0.1 else str(est['km']).replace('.', ',') + ' km'} em linha reta" if est
                          else 'Nenhuma estação de trem ou metrô a até 3 km')
     nomes = {'escolas': 'escolas', 'saude': 'serviços de saúde', 'mercados': 'mercados', 'parques': 'parques'}
     if servicos := [f'{n} {nomes[k]}' for k, n in perto.items() if n and k in nomes]:
@@ -111,6 +111,7 @@ def html_empreendimento(e, nome_arquivo):
 </div>
 <ul>{''.join(itens)}</ul>
 {'<p class="aviso">Localização aproximada: o pino está no bairro, não no endereço exato.</p>' if e.get('aprox') else ''}
+{'<p>A página da construtora cita o <strong>Minha Casa Minha Vida</strong>. Confira se você se enquadra no <a href="https://www.portaldeempreendimentos.caixa.gov.br/simulador/" rel="noopener">simulador da Caixa ↗</a>.</p>' if e.get('mcmv') else ''}
 {'<h2>Arredores</h2><ul>' + ''.join(f'<li>{escape(a)}</li>' for a in arredores) + '</ul><p class="info">Dados do OpenStreetMap.</p>' if arredores else ''}
 <p class="info">Informações coletadas do site da {escape(e['construtora'])}. Preço e disponibilidade: consulte a construtora.
 <a href="../transparencia.html">Sobre os dados</a> · <a href="./">Todos os empreendimentos</a></p>'''

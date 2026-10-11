@@ -63,6 +63,18 @@ Testado no navegador em 375 px (celular), 1024 px (notebook), 1280 px e 800 px.
 | O visitante não sabia se os dados eram de hoje | O total mostra "· atualizado hoje" |
 | Faltavam meta tags para Google e WhatsApp | Description, keywords, Open Graph, Twitter Card e canonical em todas as páginas |
 
+### Feito em 11/10
+| Item | Como ficou |
+|---|---|
+| Menu no iPhone saía da tela | O texto longo alargava a página. A coluna foi limitada à tela e o texto quebra |
+| A1 · Primeira visita | Janela de boas-vindas só na 1ª visita (e no botão "Como funciona"). **Sem landing separada**: ela atrasaria quem volta e quebraria links compartilhados |
+| A2 · "Cabe no bolso?" | Selo e filtro **MCMV** quando a página da construtora cita o programa, com link para o simulador da Caixa na página do empreendimento |
+| A3 · Ordenação | Padrão, novos no site, etapa, perto da estação, maior área |
+| A4 · Popup longo | Popup curto: selos, nome, construtora, fatos e 2 links |
+| A9 · Glossário de etapas | Dentro da janela de boas-vindas |
+| Filtros em monitor de 1280 px | Segunda linha até 1599 px |
+| "0 km" da estação | "menos de 100 m" |
+
 ### Pendências, em ordem de impacto para "clientes"
 | # | Problema | Sugestão | Esforço |
 |---|---|---|---|

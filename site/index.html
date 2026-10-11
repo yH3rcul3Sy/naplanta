@@ -32,7 +32,7 @@
   * { box-sizing:border-box; }
   html, body { height:100%; }
   body { margin:0; font:16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); background:var(--bg);
-         display:grid; grid-template-rows:auto 1fr; height:100dvh; overflow:hidden; }
+         display:grid; grid-template-rows:auto 1fr; grid-template-columns:minmax(0, 1fr); height:100dvh; overflow:hidden; }
   header { background:var(--card); border-bottom:1px solid var(--line); padding:10px 16px; display:flex; flex-wrap:wrap; gap:10px 12px; align-items:center; }
   h1 { margin:0 8px 0 0; font-size:25px; letter-spacing:-.3px; } h1 span { color:var(--accent); }
   #filtros { display:flex; flex-wrap:wrap; gap:10px 12px; align-items:flex-end; }
@@ -66,8 +66,8 @@
     #filtros select, #filtros input:not([type=checkbox]) { width:100%; min-width:0; }
     .check { white-space:nowrap; font-size:14px; }
   }
-  /* notebook (801 a 1279 px): os filtros nao cabem na linha da marca, entao descem para uma segunda linha */
-  @media (min-width: 801px) and (max-width: 1279px) {
+  /* notebook e monitor comum (801 a 1599 px): os filtros nao cabem na linha da marca, entao descem para uma segunda linha */
+  @media (min-width: 801px) and (max-width: 1599px) {
     header { flex-wrap:wrap; }
     #filtros { order:3; flex-basis:100%; justify-content:flex-start; }
     #rodape { margin-left:auto; }
@@ -106,8 +106,19 @@
   .legenda { background:#fff; padding:6px 10px; border-radius:8px; font-size:12px; box-shadow:0 1px 4px rgba(0,0,0,.2); line-height:1.7; }
   .legenda i { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align:-1px; }
   #abrirNovidades b, #abrirFiltros b { background:var(--accent); color:#fff; border-radius:99px; padding:0 7px; font-size:12px; margin-left:6px; }
+  .selo-mcmv { display:inline-block; font-size:12px; font-weight:700; padding:2px 9px; border-radius:99px; margin:0 0 6px 6px; background:var(--accent-bg); color:var(--accent); cursor:help; }
   .selo-novo { display:inline-block; font-size:12px; font-weight:700; padding:2px 9px; border-radius:99px; margin:0 0 6px 6px; background:var(--ink); color:#fff; }
   #novidades { width:min(560px, calc(100% - 24px)); max-height:min(80dvh, 720px); border:0; border-radius:14px; padding:0; box-shadow:0 12px 40px rgba(0,0,0,.3); }
+  #boasVindas { width:min(520px, calc(100% - 24px)); max-height:calc(100dvh - 32px); border:0; border-radius:16px; padding:22px 22px 18px; box-shadow:0 12px 40px rgba(0,0,0,.3); }
+  #boasVindas::backdrop { background:rgba(0,0,0,.45); }
+  #boasVindas h2 { margin:0 0 6px; font-size:24px; } #boasVindas h2 span { color:var(--accent); }
+  #boasVindas .lema { font-size:17px; margin:0 0 14px; }
+  #boasVindas ul { padding-left:20px; margin:0 0 14px; } #boasVindas li { margin:6px 0; }
+  #boasVindas h3 { font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin:14px 0 6px; }
+  #boasVindas .etapas { list-style:none; padding:0; font-size:14px; }
+  #boasVindas .etapas i { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:8px; }
+  #comecar { width:100%; min-height:48px; margin-top:8px; background:var(--accent); color:#fff; border-color:var(--accent); font-size:17px; }
+  #comecar:hover { background:#185a3c; color:#fff; }
   #novidades::backdrop { background:rgba(0,0,0,.4); }
   #novidades header { position:sticky; top:0; padding:16px 18px 12px; flex-wrap:nowrap; }
   #novidades h2 { margin:0; font-size:20px; }
@@ -135,8 +146,9 @@
     #abrirFiltros { display:inline-flex; gap:6px; align-items:center; }
     #abrirFiltros b { background:var(--accent); color:#fff; border-radius:99px; padding:0 7px; font-size:12px; }
     #rodape { margin-left:0; width:100%; justify-content:space-between; }
-    #rodape { font-size:14px; }
-    #rodape .botao { min-height:44px; font-size:16px; }
+    #rodape { font-size:14px; white-space:normal; }
+    #total { min-width:0; }
+    #rodape .botao, #rodape button { min-height:44px; font-size:16px; white-space:nowrap; }
     #filtros { order:0; display:none; width:100%; grid-template-columns:1fr 1fr; gap:10px; }
     body.filtros-abertos #filtros { display:grid; }
     select, input { min-width:0; width:100%; min-height:44px; font-size:16px; }  /* menos que 16px o iPhone da zoom ao tocar */
@@ -167,15 +179,35 @@
     <label class="fixo" style="--w:88px">Estação <select id="estacao" title="Distância até a estação de trem ou metrô"><option value="">Todas</option><option value="1">até 1 km</option><option value="2">até 2 km</option><option value="3">até 3 km</option></select></label>
     <label class="fixo" style="--w:70px">Área mín. <input id="m2" type="number" inputmode="numeric" min="0" step="10" placeholder="m²"></label>
     <label class="check" title="Incluir empreendimentos prontos para morar"><input id="prontos" type="checkbox"> Prontos</label>
+    <label class="check" title="Só os que têm a página da construtora citando o Minha Casa Minha Vida"><input id="mcmv" type="checkbox"> MCMV</label>
+    <label class="fixo" style="--w:120px">Ordenar <select id="ordem"><option value="">Padrão</option><option value="novos">Novos no site</option><option value="etapa">Etapa (breve 1º)</option><option value="estacao">Perto da estação</option><option value="area">Maior área</option></select></label>
     <button id="limpar" type="button">Limpar</button>
   </div>
-  <div id="rodape"><span id="total" aria-live="polite"></span><a class="botao" href="transparencia.html">Sobre os dados</a></div>
+  <div id="rodape"><span id="total" aria-live="polite"></span><button id="comoFunciona" type="button">Como funciona</button></div>
 </header>
 <main>
   <section id="lista" aria-label="Empreendimentos"></section>
   <div id="mapa" role="region" aria-label="Mapa dos empreendimentos"></div>
 </main>
 <button id="alternar" type="button">Ver lista</button>
+<dialog id="boasVindas" aria-labelledby="tituloBoasVindas">
+  <h2 id="tituloBoasVindas">Bem-vindo ao Na<span>Planta</span></h2>
+  <p class="lema">Todos os lançamentos na planta da região num mapa só, direto dos sites das incorporadoras.</p>
+  <ul>
+    <li><strong>Sem corretor e sem anúncio pago:</strong> cada imóvel leva ao site oficial da construtora.</li>
+    <li><strong>Atualizado todo dia:</strong> em <em>Novidades</em> você vê o que lançou, mudou de etapa ou esgotou.</li>
+    <li><strong>O bairro em volta:</strong> estação de trem ou metrô, escolas e mercados por perto.</li>
+  </ul>
+  <h3>O que cada cor quer dizer</h3>
+  <ul class="etapas">
+    <li><i style="background:#c58a1a"></i><strong>Breve lançamento:</strong> anunciado, as vendas ainda vão começar</li>
+    <li><i style="background:#d0582a"></i><strong>Lançamento:</strong> vendas abertas, obra ainda não começou</li>
+    <li><i style="background:#2f6fc4"></i><strong>Em obras:</strong> em construção</li>
+    <li><i style="background:#1f8a58"></i><strong>Pronto para morar</strong> (aparece marcando "Prontos")</li>
+  </ul>
+  <p class="info">Preços não são coletados: confira com a construtora. <a href="transparencia.html">De onde vêm os dados</a></p>
+  <button id="comecar" type="button">Ver lançamentos</button>
+</dialog>
 <dialog id="novidades" aria-labelledby="tituloNovidades">
   <header>
     <div>

@@ -30,6 +30,7 @@ def parse(url, html):
         'texto': sobre,
         'imagem': img[0] if img else None,
         'fonte': url,
+        'mcmv': rede.cita_mcmv(html),
     }
 
 

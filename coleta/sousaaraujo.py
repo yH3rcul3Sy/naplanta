@@ -35,6 +35,7 @@ def parse(url, html):
         'texto': topo,
         'imagem': img[0] if img else None,
         'fonte': url,
+        'mcmv': rede.cita_mcmv(html),
     }
 
 

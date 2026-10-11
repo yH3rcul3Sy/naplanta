@@ -44,6 +44,7 @@ def parse(url, html):
         'texto': f"{d.get('tipo') or ''} {d.get('descricao') or ''}",
         'imagem': ref(d.get('foto_card')),
         'fonte': url,
+        'mcmv': rede.cita_mcmv(html),
     }
 
 
