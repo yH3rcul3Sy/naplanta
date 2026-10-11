@@ -1,6 +1,7 @@
 """Uma pagina HTML por empreendimento, a lista de todos e o sitemap.xml, para o Google indexar e para compartilhar um imovel.
 Roda na publicacao (job publicar), sobre o dados.json; so biblioteca padrao. As paginas nao vao para o git."""
 import hashlib, json, pathlib, re, unicodedata
+from urllib.parse import quote
 from html import escape
 from itertools import groupby
 
@@ -22,19 +23,38 @@ assert pagina({'nome': 'Vila Itapety', 'cidade': 'Mogi das Cruzes', 'fonte': 'ht
 assert pagina({'nome': 'A', 'cidade': 'B', 'fonte': 'https://x.com/a'}) != pagina({'nome': 'A', 'cidade': 'B', 'fonte': 'https://x.com/b'})
 assert pagina({'nome': 'A', 'cidade': None, 'fonte': 'https://x.com/a'}).count('--') == 0
 
+ETAPA_CLASSE = {'Breve lançamento': 'e-breve', 'Lançamento': 'e-lanc', 'Em obras': 'e-obras', 'Pronto para morar': 'e-pronto'}
+
 ESTILO = '''<style>
-  body { margin:0; font:16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color:#1d1d1b; background:#f6f5f2; }
-  header { background:#fff; border-bottom:1px solid #e3e1dc; padding:10px 16px; display:flex; align-items:center; gap:12px; }
-  .marca { font-size:25px; font-weight:700; color:inherit; text-decoration:none; } .marca span { color:#1f6f4a; }
-  main { max-width:760px; margin:0 auto; padding:20px 16px 48px; }
-  h1 { font-size:28px; line-height:1.2; margin:8px 0; } h2 { font-size:20px; margin:28px 0 8px; }
-  img { width:100%; height:auto; border-radius:12px; display:block; background:#e3e1dc; }
-  .etapa { display:inline-block; font-size:13px; font-weight:600; padding:2px 10px; border-radius:99px; background:#e7f2ec; color:#1f6f4a; }
-  .info { color:#6b6a66; } .aviso { color:#8a5a00; } a { color:#1f6f4a; }
-  .botoes { display:flex; flex-wrap:wrap; gap:10px; margin:16px 0; }
-  .botao { font-weight:600; color:#1d1d1b; text-decoration:none; border:1px solid #e3e1dc; background:#fff; border-radius:10px; padding:10px 14px; }
-  .botao:hover { border-color:#1f6f4a; color:#1f6f4a; } a:focus-visible { outline:2px solid #1f6f4a; outline-offset:2px; }
-  ul { padding-left:20px; } li { margin:4px 0; }
+  :root { --bg:#f6f5f2; --card:#fff; --ink:#1d1d1b; --muted:#6b6a66; --line:#e3e1dc; --accent:#1f6f4a; --accent-bg:#e7f2ec; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); background:var(--bg); }
+  header { background:var(--card); border-bottom:1px solid var(--line); padding:8px 16px; display:flex; align-items:center; gap:12px; position:sticky; top:0; z-index:1; }
+  .marca { font-size:24px; font-weight:700; color:inherit; text-decoration:none; } .marca span { color:var(--accent); }
+  main { max-width:760px; margin:0 auto; padding:16px 16px 48px; }
+  h1 { font-size:clamp(24px, 6vw, 32px); line-height:1.15; margin:10px 0 4px; } h2 { font-size:18px; margin:0 0 10px; }
+  .foto { width:100%; height:auto; aspect-ratio:2/1; object-fit:cover; border-radius:16px; display:block; background:var(--line); }
+  .selos { display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
+  .selo { font-size:13px; font-weight:600; padding:3px 10px; border-radius:99px; background:var(--accent-bg); color:var(--accent); }
+  .e-breve { color:#8a5a00; background:#fbefd6; } .e-lanc { color:#9a3b12; background:#fbe3d8; }
+  .e-obras { color:#1d4f91; background:#dde8f7; } .e-pronto { color:#1f6f4a; background:#e0f0e7; }
+  .sub { color:var(--muted); margin:0; }
+  .fatos { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:8px; margin:18px 0; }
+  .fato { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; }
+  .fato small { display:block; color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.05em; }
+  .fato strong { font-size:17px; }
+  .bloco { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin:12px 0; }
+  .bloco ul { margin:0; padding-left:20px; } .bloco li { margin:4px 0; }
+  .botoes { display:flex; flex-wrap:wrap; gap:8px; margin:18px 0; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:46px; padding:10px 16px; border-radius:12px;
+         font-weight:600; text-decoration:none; border:1px solid var(--line); background:var(--card); color:var(--ink); flex:1 1 180px; }
+  .btn:hover { border-color:var(--accent); color:var(--accent); }
+  .btn.primario { background:var(--accent); border-color:var(--accent); color:#fff; } .btn.primario:hover { background:#185a3c; color:#fff; }
+  .btn.zap { border-color:#25d366; color:#128c4a; }
+  .voltar { margin-left:auto; flex:0 0 auto; min-height:40px; padding:6px 12px; }
+  .info { color:var(--muted); font-size:14px; } .aviso { color:#8a5a00; }
+  a { color:var(--accent); text-underline-offset:3px; } a:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  ul.lista { padding-left:20px; } ul.lista li { margin:6px 0; }
 </style>'''
 
 
@@ -61,7 +81,7 @@ def _documento(titulo, descricao, canonica, corpo, imagem=None, extra='', palavr
 {extra}{ESTILO}
 </head>
 <body>
-<header><a class="marca" href="../">Na<span>Planta</span></a></header>
+<header><a class="marca" href="../">Na<span>Planta</span></a><a class="btn voltar" href="../">← Mapa</a></header>
 <main>
 {corpo}
 </main>
@@ -79,12 +99,6 @@ def html_empreendimento(e, nome_arquivo):
     fatos = ' · '.join(filter(None, [_faixa(e.get('dorms'), ' dormitórios'), _faixa(e.get('m2'), ' m²')]))
     descricao = f"{e['nome']}: {(e.get('tipo') or 'empreendimento').lower()} da {e['construtora']} em {lugar or 'local não informado'}, " \
                 f"{(e.get('etapa') or '').lower()}{'. ' + fatos if fatos else ''}."
-    itens = [f'<li>{escape(x)}</li>' for x in [
-        f"Tipo: {e.get('tipo')}" if e.get('tipo') else None,
-        f'Endereço: {e["endereco"]}' if e.get('endereco') else None,
-        fatos or None,
-        f"Entrega: {e['entrega']}" if e.get('entrega') else None,
-        f"No site da construtora desde {'/'.join(reversed(e['desde'].split('-')))}" if e.get('desde') else None] if x]
     est, perto = e.get('estacao'), e.get('perto') or {}
     arredores = []
     if 'estacao' in e:
@@ -101,19 +115,23 @@ def html_empreendimento(e, nome_arquivo):
         dados['geo'] = {'@type': 'GeoCoordinates', 'latitude': e['lat'], 'longitude': e['lng']}
     # < escapado: texto da fonte com </script> ou <!-- quebraria o bloco
     ld = '<script type="application/ld+json">' + json.dumps(dados, ensure_ascii=False).replace('<', '\\u003c') + '</script>\n'
-    corpo = f'''<span class="etapa">{escape(e.get('etapa') or '')}</span>
+    fato = lambda rotulo, valor: f'<div class="fato"><small>{rotulo}</small><strong>{escape(valor)}</strong></div>' if valor else ''
+    zap = 'https://wa.me/?text=' + quote(f"{e['nome']} ({e['construtora']}, {lugar or 'NaPlanta'}): {canonica}")
+    corpo = f'''{f'<img class="foto" src="../{escape(e["imagem"])}" alt="Foto de {escape(e["nome"])}" width="600" height="300">' if e.get('imagem') else ''}
+<div class="selos"><span class="selo {ETAPA_CLASSE.get(e.get('etapa'), '')}">{escape(e.get('etapa') or '')}</span>{'<span class="selo">MCMV</span>' if e.get('mcmv') else ''}</div>
 <h1>{escape(e['nome'])}</h1>
-<p class="info">{escape(e['construtora'])}{' · ' + escape(lugar) if lugar else ''}</p>
-{f'<img src="../{escape(e["imagem"])}" alt="Foto de {escape(e["nome"])}" width="600" height="300">' if e.get('imagem') else ''}
+<p class="sub">{escape(e['construtora'])}{' · ' + escape(lugar) if lugar else ''}</p>
+<div class="fatos">{fato('Dormitórios', _faixa(e.get('dorms'), ''))}{fato('Área', _faixa(e.get('m2'), ' m²'))}{fato('Tipo', e.get('tipo'))}{fato('Entrega', e.get('entrega'))}</div>
 <div class="botoes">
-  <a class="botao" href="{escape(e['fonte'])}" rel="noopener">Ver no site da {escape(e['construtora'])} ↗</a>
-  <a class="botao" href="../?e={escape(nome_arquivo)}">Ver no mapa</a>
+  <a class="btn primario" href="../?e={escape(nome_arquivo)}">Ver no mapa</a>
+  <a class="btn" href="{escape(e['fonte'])}" rel="noopener">Site da {escape(e['construtora'])} ↗</a>
+  <a class="btn zap" href="{escape(zap)}" rel="noopener">Compartilhar no WhatsApp</a>
 </div>
-<ul>{''.join(itens)}</ul>
+{f'<p class="info">📍 {escape(e["endereco"])}</p>' if e.get('endereco') else ''}
 {'<p class="aviso">Localização aproximada: o pino está no bairro, não no endereço exato.</p>' if e.get('aprox') else ''}
-{'<p>A página da construtora cita o <strong>Minha Casa Minha Vida</strong>. Confira se você se enquadra no <a href="https://www.portaldeempreendimentos.caixa.gov.br/simulador/" rel="noopener">simulador da Caixa ↗</a>.</p>' if e.get('mcmv') else ''}
-{'<h2>Arredores</h2><ul>' + ''.join(f'<li>{escape(a)}</li>' for a in arredores) + '</ul><p class="info">Dados do OpenStreetMap.</p>' if arredores else ''}
-<p class="info">Informações coletadas do site da {escape(e['construtora'])}. Preço e disponibilidade: consulte a construtora.
+{'<div class="bloco"><h2>Minha Casa Minha Vida</h2><p style="margin:0">A página da construtora cita o programa. Veja se você se enquadra no <a href="https://www.portaldeempreendimentos.caixa.gov.br/simulador/" rel="noopener">simulador da Caixa ↗</a>.</p></div>' if e.get('mcmv') else ''}
+{'<div class="bloco"><h2>Arredores</h2><ul>' + ''.join(f'<li>{escape(a)}</li>' for a in arredores) + '</ul><p class="info" style="margin:8px 0 0">Dados do OpenStreetMap, distâncias em linha reta.</p></div>' if arredores else ''}
+<p class="info">{f"No site da construtora desde {'/'.join(reversed(e['desde'].split('-')))}. " if e.get('desde') else ''}Informações do site da {escape(e['construtora'])}; preço e disponibilidade, consulte a construtora.<br>
 <a href="../transparencia.html">Sobre os dados</a> · <a href="./">Todos os empreendimentos</a></p>'''
     return _documento(f"{e['nome']} · {e['construtora']}{' · ' + e['cidade'] if e.get('cidade') else ''} | NaPlanta",
                       descricao, canonica, corpo, e.get('imagem'), ld,
@@ -124,7 +142,7 @@ def html_lista(dados):
     por_cidade = groupby(sorted(dados, key=lambda e: (e.get('cidade') or '~', e['nome'])), key=lambda e: e.get('cidade') or 'Cidade não informada')
     corpo = '<h1>Todos os empreendimentos</h1>\n<p class="info">Lançamentos, obras e prontos de ' \
             f'{len({e["construtora"] for e in dados})} incorporadoras. <a href="../">Ver no mapa</a></p>\n' + ''.join(
-        f'<h2>{escape(cidade)}</h2><ul>' + ''.join(
+        f'<h2 style="margin-top:24px">{escape(cidade)}</h2><ul class="lista">' + ''.join(
             f'<li><a href="{e["pagina"]}.html">{escape(e["nome"])}</a> <span class="info">· {escape(e["construtora"])} · {escape(e.get("etapa") or "")}</span></li>'
             for e in grupo) + '</ul>\n' for cidade, grupo in por_cidade)
     return _documento('Todos os empreendimentos | NaPlanta', 'Lista de lançamentos imobiliários na planta por cidade, com dados das incorporadoras.',

@@ -1,4 +1,4 @@
-import json, pathlib, re
+import json, pathlib, re, unicodedata
 from datetime import datetime, timedelta, timezone
 import arredores, cac, cury, damebe, econ, eztec, fotos, geo, helbor, integra, metrocasa, sousaaraujo, tenda, vibra
 
@@ -32,6 +32,20 @@ def tipo(texto):
 assert tipo('Loteamento fechado de alto padrão') == 'Lote'
 assert tipo('Casas em Condomínio Fechado de 2 e 3 dorms.') == 'Casa em condomínio'
 assert tipo('Casa Piauí, studios de 30 m²') == 'Apartamento'
+
+
+INVISIVEIS = re.compile(r'[\u200b-\u200f\u2060\ufeff]')
+
+
+def limpo(e):
+    """Texto das fontes vem com caractere invisivel e espaco sobrando ('Sao Paulo' + zero-width da Cury duplicava a cidade no filtro)."""
+    for k, v in e.items():
+        if isinstance(v, str):
+            e[k] = ' '.join(unicodedata.normalize('NFC', INVISIVEIS.sub('', v)).split())
+    return e
+
+
+assert limpo({'cidade': 'São Paulo​', 'nome': ' Walk -  Guarulhos ', 'n': 2}) == {'cidade': 'São Paulo', 'nome': 'Walk - Guarulhos', 'n': 2}
 
 
 def problemas(e, base):
@@ -104,7 +118,7 @@ if __name__ == '__main__':
         seguidas = 0
         try:
             novos = []
-            for e in f.coletar():
+            for e in map(limpo, f.coletar()):
                 if ruins := problemas(e, f.BASE):
                     if {'nome', 'fonte'} & set(ruins):  # sem nome ou link de origem nao da para mostrar
                         print(f'{f.__name__}: descartado, campos invalidos {ruins}: {str(e)[:150]}')
@@ -124,7 +138,7 @@ if __name__ == '__main__':
                 print(f'{f.__name__}: queda para {len(novos)} repetida em {seguidas} coletas seguidas -> aceita como real')
         except Exception as erro:  # mantem os dados da ultima coleta dessa fonte
             print(f'falha em {f.__name__}: {erro} -> mantendo {len(velhos)} da coleta anterior')
-            dados += [geo.completar(e) for e in velhos]
+            dados += [geo.completar(limpo(e)) for e in velhos]
             fontes.append({'site': f.BASE, 'construtora': velhos[0]['construtora'] if velhos else f.__name__, 'total': len(velhos),
                            'ok': False, 'erro': str(erro), 'atualizada': antes.get(f.BASE, {}).get('atualizada'),
                            **({'quedas': seguidas} if seguidas else {})})

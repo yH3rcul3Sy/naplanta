@@ -74,7 +74,7 @@
   }
   #abrirFiltros, #alternar { display:none; }
   .icone { display:none; width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
-  .acoes { display:flex; flex-wrap:wrap; gap:4px 16px; }
+  .acoes { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
   main { display:grid; grid-template-columns:390px 1fr; min-height:0; }
   #lista { overflow:auto; padding:12px; display:flex; flex-direction:column; gap:12px; }
   .card { flex-shrink:0; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; cursor:pointer;
@@ -91,8 +91,15 @@
   .info { color:var(--muted); font-size:13px; margin:2px 0; }
   .fatos { color:var(--ink); font-weight:600; margin:6px 0; }
   a { color:var(--accent); }
-  .fonte { display:inline-block; padding:6px 0; font-weight:600; text-underline-offset:3px; }
-  .fonte:hover { color:var(--ink); }
+  a { text-underline-offset:3px; }
+  .btn { display:inline-flex; align-items:center; justify-content:center; min-height:40px; padding:8px 14px; border-radius:10px; font-weight:600; font-size:14px;
+         text-decoration:none; border:1px solid var(--line); background:#fff; color:var(--ink); transition:background-color .15s, border-color .15s, color .15s; }
+  .btn:hover { border-color:var(--accent); color:var(--accent); }
+  .btn.primario, .leaflet-container a.btn.primario { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .btn.primario:hover, .leaflet-container a.btn.primario:hover { background:#185a3c; color:#fff; }
+  .leaflet-container a.btn { color:var(--ink); }
+  .acoes .btn { flex:1 1 auto; }
+  .leaflet-popup-content .acoes { margin-top:8px; } .leaflet-popup-content .btn { width:100%; }
   .aprox { color:var(--breve); }
   .vazio { text-align:center; color:var(--muted); padding:40px 16px; }
   #mapa { min-height:0; }
@@ -118,6 +125,9 @@
   #boasVindas h3 { font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin:14px 0 6px; }
   #boasVindas .etapas { list-style:none; padding:0; font-size:14px; }
   #boasVindas .etapas i { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:8px; }
+  #boasVindas .uso { list-style:none; padding:0; } #boasVindas .uso li { display:flex; gap:10px; align-items:flex-start; }
+  #boasVindas .icone { display:block; flex:0 0 20px; width:20px; height:20px; margin-top:2px; color:var(--accent); }
+  #boasVindas .etapas li { margin:4px 0; }
   #comecar { width:100%; min-height:48px; margin-top:8px; background:var(--accent); color:#fff; border-color:var(--accent); font-size:17px; }
   #comecar:hover { background:#185a3c; color:#fff; }
   #novidades::backdrop { background:rgba(0,0,0,.4); }
@@ -198,8 +208,14 @@
   <p class="lema">Todos os lançamentos na planta da região num mapa só, direto dos sites das incorporadoras.</p>
   <ul>
     <li><strong>Sem corretor e sem anúncio pago:</strong> cada imóvel leva ao site oficial da construtora.</li>
-    <li><strong>Atualizado todo dia:</strong> em <em>Novidades</em> você vê o que lançou, mudou de etapa ou esgotou.</li>
-    <li><strong>O bairro em volta:</strong> estação de trem ou metrô, escolas e mercados por perto.</li>
+    <li><strong>Atualizado todo dia</strong>, com estação, escolas e mercados por perto.</li>
+  </ul>
+  <h3>Como usar</h3>
+  <ul class="uso">
+    <li><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>Toque num <strong>pino</strong> e em <strong>Ver detalhes</strong> para ver tudo e compartilhar.</span></li>
+    <li><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span><strong>Filtros:</strong> cidade, etapa, dormitórios, MCMV e ordenação.</span></li>
+    <li><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><span><strong>Novidades:</strong> o que lançou, mudou de etapa ou esgotou.</span></li>
+    <li><svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h0"/></svg><span>Reveja esta explicação quando quiser.</span></li>
   </ul>
   <h3>O que cada cor quer dizer</h3>
   <ul class="etapas">

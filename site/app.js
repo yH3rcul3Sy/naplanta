@@ -9,7 +9,8 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // balao com numero so para empreendimentos no mesmo lugar de fato (a ate ~3 m, como Mirage e Solare), em qualquer zoom:
 // o raio em pixels acompanha o zoom (metros por pixel ~ 156543 * cos(23°) / 2^z). O balao abre em leque no clique
 const METROS_JUNTOS = 3;
-const camada = L.markerClusterGroup({ maxClusterRadius: z => METROS_JUNTOS / (144000 / 2 ** z), showCoverageOnHover: false, animate: false,
+// longe (zoom 11 ou menos, ex.: todas as cidades) agrupa de verdade: ~900 pinos soltos travavam o celular ao arrastar
+const camada = L.markerClusterGroup({ maxClusterRadius: z => z <= 11 ? 60 : METROS_JUNTOS / (144000 / 2 ** z), showCoverageOnHover: false, animate: false,
   iconCreateFunction: g => L.divIcon({ className: 'grupo', html: g.getChildCount(), iconSize: [34, 34] }) }).addTo(mapa);
 const legenda = L.control({ position: 'bottomleft' });
 legenda.onAdd = () => Object.assign(L.DomUtil.create('div', 'legenda'), {
@@ -173,8 +174,8 @@ function render() {
     const novo = e.desde && e.desde >= novoDesde ? `<span class="selo-novo" title="No site desde ${dataBR(e.desde)}">Novo</span>` : '';
     const mcmv = e.mcmv ? '<span class="selo-mcmv" title="A página da construtora cita o Minha Casa Minha Vida. Confira as condições no simulador da Caixa.">MCMV</span>' : '';
     const selos = `<span class="etapa ${cls}">${esc(e.etapa)}</span>${novo}${mcmv}`;
-    const linkFonte = `<a class="fonte" href="${esc(e.fonte)}" target="_blank" rel="noopener">Ver na construtora ↗</a>`;
-    const linkPagina = e.pagina ? `<a class="fonte" href="e/${esc(e.pagina)}.html">Detalhes e compartilhar</a>` : '';
+    const linkFonte = `<a class="btn" href="${esc(e.fonte)}" target="_blank" rel="noopener">Construtora ↗</a>`;
+    const linkPagina = e.pagina ? `<a class="btn primario" href="e/${esc(e.pagina)}.html">Ver detalhes</a>` : '';
     const html = `${selos}<h2>${esc(e.nome)}</h2>
       <p class="info">${esc(e.tipo)} · ${esc(e.construtora)} · ${esc(e.cidade ?? '')}${e.uf ? ' - ' + esc(e.uf) : ''}</p>
       ${e.endereco ? `<p class="info">${esc(e.endereco)}</p>` : ''}
@@ -183,10 +184,10 @@ function render() {
       ${e.aprox ? '<p class="info aprox">Localização aproximada: o pino está no bairro, não no endereço exato</p>' : ''}
       ${parados[e.construtora] ? `<p class="info aprox">Dados de ${dataBR(parados[e.construtora])}: o site da ${esc(e.construtora)} não respondeu às últimas coletas</p>` : ''}
       ${arredores(e)}
-      <div class="acoes">${linkFonte}${linkPagina}</div>`;
+      <div class="acoes">${linkPagina}${linkFonte}</div>`;
     // popup curto: o card completo fica na lista e na pagina do empreendimento
     const popup = `${selos}<h2>${esc(e.nome)}</h2><p class="info">${esc(e.construtora)} · ${esc(e.cidade ?? '')}</p>
-      ${fatos ? `<p class="fatos">${esc(fatos)}</p>` : ''}<div class="acoes">${linkPagina || linkFonte}${linkPagina ? linkFonte : ''}</div>`;
+      ${fatos ? `<p class="fatos">${esc(fatos)}</p>` : ''}<div class="acoes">${linkPagina || linkFonte}</div>`;
     let card, m, abrir;
     const obterCard = () => {  // criado so quando entra na lista (ou quando o pino dele e clicado)
       if (card) return card;
@@ -216,7 +217,7 @@ function render() {
   camada.addLayers(marcadores);  // em lote: bem mais rapido que um por um
   mostrarAte(LOTE);
   mapa.invalidateSize();
-  if (marcadores.length) mapa.fitBounds(camada.getBounds(), { padding: [30, 30], maxZoom: 15 });
+  if (marcadores.length) mapa.fitBounds(camada.getBounds(), { padding: [30, 30], maxZoom: 15, animate: false });  // animado, o fim da animacao desfazia o foco no pino (link ?e=)
 }
 
 // a lista cresce de LOTE em LOTE conforme a rolagem chega perto do fim
