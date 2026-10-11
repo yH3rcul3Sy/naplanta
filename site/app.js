@@ -9,8 +9,8 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // balao com numero so para empreendimentos no mesmo lugar de fato (a ate ~3 m, como Mirage e Solare), em qualquer zoom:
 // o raio em pixels acompanha o zoom (metros por pixel ~ 156543 * cos(23°) / 2^z). O balao abre em leque no clique
 const METROS_JUNTOS = 3;
-// longe (zoom 11 ou menos, ex.: todas as cidades) agrupa de verdade: ~900 pinos soltos travavam o celular ao arrastar
-const camada = L.markerClusterGroup({ maxClusterRadius: z => z <= 11 ? 60 : METROS_JUNTOS / (144000 / 2 ** z), showCoverageOnHover: false, animate: false,
+// sem cidade escolhida e de longe (zoom 11 ou menos) agrupa de verdade: ~900 pinos soltos travavam o celular ao arrastar
+const camada = L.markerClusterGroup({ maxClusterRadius: z => !$('cidade').value && z <= 11 ? 60 : METROS_JUNTOS / (144000 / 2 ** z), showCoverageOnHover: false, animate: false,
   iconCreateFunction: g => L.divIcon({ className: 'grupo', html: g.getChildCount(), iconSize: [34, 34] }) }).addTo(mapa);
 const legenda = L.control({ position: 'bottomleft' });
 legenda.onAdd = () => Object.assign(L.DomUtil.create('div', 'legenda'), {
@@ -165,7 +165,10 @@ function render() {
   $('nNovidades').hidden = !nNovidades; $('nNovidades').textContent = nNovidades;
   $('abrirNovidades').setAttribute('aria-label', `Novidades: ${nNovidades} na última semana`);
   const novoDesde = diasAtras(DIAS_NOVO);
-  camada.clearLayers(); $('lista').innerHTML = ''; abrirPor.clear(); fila = []; mostrados = 0;
+  camada.clearLayers();
+  // shortcut: API interna do markercluster 1.5.3 (recalcula o raio, que depende da cidade); rever ao trocar de versao
+  camada._generateInitialClusters();
+  $('lista').innerHTML = ''; abrirPor.clear(); fila = []; mostrados = 0;
   if (!vis.length) $('lista').innerHTML = '<p class="vazio">Nenhum empreendimento com esses filtros.<br>Tente limpar algum deles.</p>';
   const marcadores = [];
   vis.forEach((e, i) => {
@@ -184,7 +187,7 @@ function render() {
       ${e.aprox ? '<p class="info aprox">Localização aproximada: o pino está no bairro, não no endereço exato</p>' : ''}
       ${parados[e.construtora] ? `<p class="info aprox">Dados de ${dataBR(parados[e.construtora])}: o site da ${esc(e.construtora)} não respondeu às últimas coletas</p>` : ''}
       ${arredores(e)}
-      <div class="acoes">${linkPagina}${linkFonte}</div>`;
+      <div class="acoes">${linkPagina || linkFonte}</div>`;
     // popup curto: o card completo fica na lista e na pagina do empreendimento
     const popup = `${selos}<h2>${esc(e.nome)}</h2><p class="info">${esc(e.construtora)} · ${esc(e.cidade ?? '')}</p>
       ${fatos ? `<p class="fatos">${esc(fatos)}</p>` : ''}<div class="acoes">${linkPagina || linkFonte}</div>`;
