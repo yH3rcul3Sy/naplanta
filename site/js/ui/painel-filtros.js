@@ -29,6 +29,10 @@ export function criarPainelFiltros({ celular, aoMudar }) {
         [...new Set(dados.map(e => e[k]).filter(Boolean))].sort().forEach(v => $(k).add(new Option(v, v)));
       if ([...$('cidade').options].some(o => o.value === 'Mogi das Cruzes')) $('cidade').value = 'Mogi das Cruzes';
     },
+    // link ?cidade=: so aceita uma cidade que existe nas opcoes
+    escolherCidade(cidade) {
+      if ([...$('cidade').options].some(o => o.value === cidade)) $('cidade').value = cidade;
+    },
     // para focar um empreendimento escondido pelos filtros: a cidade dele com tudo
     mostrarTudoEm(cidade) {
       CAMPOS.forEach(id => $(id).value = '');

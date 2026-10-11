@@ -54,9 +54,11 @@ carregar().then(r => {
   ({ dados, mudancas } = r);
   situacao = resumirStatus(r.status);
   filtros.preencher(dados);
+  const params = new URLSearchParams(location.search);
+  if (params.get('cidade')) filtros.escolherCidade(params.get('cidade'));  // "Ver no mapa" das paginas de cidade
   render();
   // link "Ver no mapa" das paginas de empreendimento: ?e=<pagina>
-  const alvo = dados.find(e => e.pagina && e.pagina === new URLSearchParams(location.search).get('e'));
+  const alvo = dados.find(e => e.pagina && e.pagina === params.get('e'));
   if (alvo) focar(alvo); else boasVindas.mostrarSePrimeiraVisita();
 }).catch(() => {
   document.getElementById('lista').innerHTML = '<p class="vazio">Não foi possível carregar os empreendimentos.<br>Confira a conexão e recarregue a página.</p>';

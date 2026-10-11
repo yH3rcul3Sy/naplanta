@@ -8,4 +8,6 @@ __pycache__/
 graphify-out/
 # gerados na publicacao por coleta/paginas.py
 site/e/
+site/lancamentos/
 site/sitemap.xml
+site/llms.txt

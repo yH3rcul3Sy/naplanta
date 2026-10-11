@@ -32,12 +32,13 @@ coleta/                              backend em lote (Python 3.12)
     app/
       coleta_diaria.py               caso de uso: orquestra fontes, domínio e infra
     publicacao/
-      paginas.py                     HTML por empreendimento, lista e sitemap
+      paginas.py                     páginas por empreendimento e por cidade, lista, sitemap e llms.txt
 
 site/                                front-end estático (GitHub Pages)
   index.html · transparencia.html
   dados.json · mudancas.json · status.json · fotos/      gerados pela coleta
-  e/ · sitemap.xml                                       gerados na publicação (fora do git)
+  e/ · lancamentos/ · sitemap.xml · llms.txt             gerados na publicação (fora do git)
+  404.html · privacidade.html · compartilhar.png         páginas fixas e imagem de compartilhamento
   js/
     main.js                          composição: liga as peças e coordena o render
     dados.js                         busca os JSON
