@@ -94,6 +94,10 @@ Cury e Sousa Araujo não respondem às coletas feitas pelos servidores do GitHub
 
 </details>
 
+## Documentação
+
+[PRD](docs/PRD.md) · [TRD](docs/TRD.md) · [Fluxos](docs/fluxos.md) · [Backend](docs/backend.md) · [Design](docs/design.md) · [Plano](docs/plano-implementacao.md) · [Futuro e escala](docs/futuro.md)
+
 ## Rodar localmente
 
 Requer **Python 3.12** ou mais novo.

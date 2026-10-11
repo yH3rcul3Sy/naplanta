@@ -39,7 +39,7 @@ ESTILO = '''<style>
 
 
 # todas as paginas geradas moram em site/e/, dai os ../
-def _documento(titulo, descricao, canonica, corpo, imagem=None, extra=''):
+def _documento(titulo, descricao, canonica, corpo, imagem=None, extra='', palavras='lançamentos imobiliários, imóveis na planta'):
     og = f'<meta property="og:image" content="{escape(URL + imagem)}">' if imagem else ''
     return f'''<!doctype html>
 <html lang="pt-BR">
@@ -49,10 +49,13 @@ def _documento(titulo, descricao, canonica, corpo, imagem=None, extra=''):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{escape(titulo)}</title>
 <meta name="description" content="{escape(descricao)}">
+<meta name="keywords" content="{escape(palavras)}">
 <link rel="canonical" href="{escape(canonica)}">
 <meta property="og:title" content="{escape(titulo)}">
 <meta property="og:description" content="{escape(descricao)}">
 <meta property="og:url" content="{escape(canonica)}">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="{'summary_large_image' if imagem else 'summary'}">
 {og}
 <link rel="icon" type="image/png" href="../favicon.png">
 {extra}{ESTILO}
@@ -112,7 +115,8 @@ def html_empreendimento(e, nome_arquivo):
 <p class="info">Informações coletadas do site da {escape(e['construtora'])}. Preço e disponibilidade: consulte a construtora.
 <a href="../transparencia.html">Sobre os dados</a> · <a href="./">Todos os empreendimentos</a></p>'''
     return _documento(f"{e['nome']} · {e['construtora']}{' · ' + e['cidade'] if e.get('cidade') else ''} | NaPlanta",
-                      descricao, canonica, corpo, e.get('imagem'), ld)
+                      descricao, canonica, corpo, e.get('imagem'), ld,
+                      ', '.join(filter(None, [e['nome'], e['construtora'], e.get('cidade'), e.get('etapa'), e.get('tipo'), 'imóvel na planta'])))
 
 
 def html_lista(dados):

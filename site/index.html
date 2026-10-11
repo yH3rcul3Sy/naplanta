@@ -13,6 +13,11 @@
 <meta property="og:description" content="Mapa gratuito de lançamentos imobiliários na planta, atualizado todo dia direto dos sites das incorporadoras.">
 <meta property="og:image" content="https://yh3rcul3sy.github.io/naplanta/icone-512.png">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://yh3rcul3sy.github.io/naplanta/">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary">
+<meta name="keywords" content="lançamentos imobiliários, imóveis na planta, apartamento na planta, Mogi das Cruzes, Alto Tietê, Suzano, Grande São Paulo, breve lançamento, imóvel novo, Minha Casa Minha Vida, mapa de lançamentos">
+<link rel="canonical" href="https://yh3rcul3sy.github.io/naplanta/">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
@@ -61,7 +66,14 @@
     #filtros select, #filtros input:not([type=checkbox]) { width:100%; min-width:0; }
     .check { white-space:nowrap; font-size:14px; }
   }
+  /* notebook (801 a 1279 px): os filtros nao cabem na linha da marca, entao descem para uma segunda linha */
+  @media (min-width: 801px) and (max-width: 1279px) {
+    header { flex-wrap:wrap; }
+    #filtros { order:3; flex-basis:100%; justify-content:flex-start; }
+    #rodape { margin-left:auto; }
+  }
   #abrirFiltros, #alternar { display:none; }
+  .acoes { display:flex; flex-wrap:wrap; gap:4px 16px; }
   main { display:grid; grid-template-columns:390px 1fr; min-height:0; }
   #lista { overflow:auto; padding:12px; display:flex; flex-direction:column; gap:12px; }
   .card { flex-shrink:0; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; cursor:pointer;
@@ -75,7 +87,7 @@
   .etapa { display:inline-block; font-size:12px; font-weight:600; padding:2px 9px; border-radius:99px; margin-bottom:6px; }
   .e-breve { color:var(--breve); background:var(--breve-bg); } .e-lanc { color:var(--lanc); background:var(--lanc-bg); }
   .e-obras { color:var(--obras); background:var(--obras-bg); } .e-pronto { color:var(--pronto); background:var(--pronto-bg); }
-  .info { color:var(--muted); font-size:12px; margin:2px 0; }
+  .info { color:var(--muted); font-size:13px; margin:2px 0; }
   .fatos { color:var(--ink); font-weight:600; margin:6px 0; }
   a { color:var(--accent); }
   .fonte { display:inline-block; padding:6px 0; font-weight:600; text-underline-offset:3px; }
