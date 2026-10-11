@@ -7,7 +7,7 @@
 **Mapa gratuito de lançamentos imobiliários na planta**<br>
 Foco em Mogi das Cruzes e no Alto Tietê, cobrindo também a Grande São Paulo e outras capitais.
 
-[![Site](https://img.shields.io/badge/site-no%20ar-1f6f4a?style=for-the-badge)](https://yh3rcul3sy.github.io/naplanta/)
+[![Site](https://img.shields.io/badge/site-no%20ar-1f6f4a?style=for-the-badge)](https://naplanta.app.br/)
 [![Coleta diária](https://img.shields.io/github/actions/workflow/status/yH3rcul3Sy/naplanta/coleta.yml?branch=main&label=coleta%20di%C3%A1ria&style=for-the-badge)](https://github.com/yH3rcul3Sy/naplanta/actions/workflows/coleta.yml)
 
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
@@ -15,7 +15,7 @@ Foco em Mogi das Cruzes e no Alto Tietê, cobrindo também a Grande São Paulo e
 ![OpenStreetMap](https://img.shields.io/badge/OpenStreetMap-dados%20abertos-7EBC6F?logo=openstreetmap&logoColor=white)
 ![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-hospedagem-222222?logo=github&logoColor=white)
 
-**[Acessar o site](https://yh3rcul3sy.github.io/naplanta/)** · [Sobre os dados](https://yh3rcul3sy.github.io/naplanta/transparencia.html) · [Como funciona](#como-funciona)
+**[Acessar o site](https://naplanta.app.br/)** · [Sobre os dados](https://naplanta.app.br/transparencia.html) · [Como funciona](#como-funciona)
 
 </div>
 

@@ -6,7 +6,7 @@ RAIZ = pathlib.Path(__file__).resolve().parents[2]  # coleta/naplanta/config.py 
 SITE = RAIZ / 'site'
 FOTOS = SITE / 'fotos'
 CACHE = RAIZ / 'coleta' / 'cache'
-URL_SITE = 'https://yh3rcul3sy.github.io/naplanta/'
+URL_SITE = 'https://naplanta.app.br/'
 
 FUSO = timezone(timedelta(hours=-3))  # Brasil sem horario de verao desde 2019
 UA_ROBO = 'NaPlantaBot/0.1 (projeto academico UMC)'  # sites das incorporadoras e fotos
