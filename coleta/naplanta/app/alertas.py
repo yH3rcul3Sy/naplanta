@@ -1,27 +1,42 @@
-"""Caso de uso: alerta diario por e-mail para quem se inscreveu numa cidade (lista "Alertas · <Cidade>" na Brevo).
+"""Caso de uso: alerta diario por e-mail para quem se inscreveu numa cidade.
+A inscricao (site/alertas.html) cai na lista "Alertas · Inscritos" com o atributo CIDADES ("Mogi das Cruzes; Suzano").
+No dia com novidade, a lista "Alertas · <Cidade>" e sincronizada com quem pediu a cidade e recebe a campanha.
 Manda so lancamentos novos e trocas de etapa do dia; empreendimento que saiu do site nao vira alerta."""
 from html import escape
 from naplanta.config import URL_SITE
 from naplanta.publicacao.paginas import pagina, pagina_cidade
 
-# cidades com lista de alertas: o foco do projeto (Alto Tiete) e as maiores da regiao
-CIDADES = ('Mogi das Cruzes', 'Suzano', 'Poá', 'Itaquaquecetuba', 'Arujá', 'Guarulhos', 'São Paulo')
 PREFIXO = 'Alertas · '
+INSCRITOS = PREFIXO + 'Inscritos'
 REMETENTE = {'name': 'NaPlanta', 'email': 'contato@naplanta.app.br'}
 
 
 def eventos_do_dia(historico, dia):
-    """{cidade: [eventos novo/etapa do dia]} so das cidades com lista."""
+    """{cidade: [eventos novo/etapa do dia]}."""
     por_cidade = {}
     for ev in historico['eventos']:
-        if ev['data'] == dia and ev['tipo'] in ('novo', 'etapa') and ev.get('cidade') in CIDADES:
+        if ev['data'] == dia and ev['tipo'] in ('novo', 'etapa') and ev.get('cidade'):
             por_cidade.setdefault(ev['cidade'], []).append(ev)
     return por_cidade
 
 
 _h = {'eventos': [{'data': '2026-10-12', 'tipo': 'novo', 'cidade': 'Suzano'}, {'data': '2026-10-12', 'tipo': 'saiu', 'cidade': 'Suzano'},
-                  {'data': '2026-10-11', 'tipo': 'novo', 'cidade': 'Suzano'}, {'data': '2026-10-12', 'tipo': 'etapa', 'cidade': 'Natal'}]}
+                  {'data': '2026-10-11', 'tipo': 'novo', 'cidade': 'Suzano'}, {'data': '2026-10-12', 'tipo': 'etapa'}]}
 assert {c: len(e) for c, e in eventos_do_dia(_h, '2026-10-12').items()} == {'Suzano': 1}
+
+
+def interessados(contatos):
+    """{cidade: {e-mails}} a partir do atributo CIDADES de cada inscrito."""
+    out = {}
+    for c in contatos:
+        for cidade in str((c.get('attributes') or {}).get('CIDADES') or '').split(';'):
+            if cidade.strip():
+                out.setdefault(cidade.strip(), set()).add(c['email'].lower())
+    return out
+
+
+assert interessados([{'email': 'A@x.com', 'attributes': {'CIDADES': 'Suzano; Poá'}}, {'email': 'b@x.com', 'attributes': {}},
+                     {'email': 'c@x.com', 'attributes': {'CIDADES': 'Suzano'}}]) == {'Suzano': {'a@x.com', 'c@x.com'}, 'Poá': {'a@x.com'}}
 
 
 def email(cidade, eventos, dados):
@@ -56,15 +71,39 @@ assert 'naplanta.app.br/e/y-suzano-' in _html and 'href="https://c.com/x"' in _h
 
 
 def executar(dia, historico, dados, brevo, enviar=True):
-    """Garante as listas e manda o alerta do dia de cada cidade com novidade. Devolve o que mandou (ou mandaria)."""
+    """Manda o alerta do dia de cada cidade com novidade e com inscrito. Devolve o que mandou (ou mandaria)."""
+    eventos = eventos_do_dia(historico, dia)
+    if not eventos:
+        return []
     existentes = brevo.listas()
-    for cidade in CIDADES:
-        if PREFIXO + cidade not in existentes:
-            existentes[PREFIXO + cidade] = brevo.criar_lista(PREFIXO + cidade)
+    quer = interessados(brevo.contatos(existentes[INSCRITOS])) if INSCRITOS in existentes else {}
     feito = []
-    for cidade, eventos in eventos_do_dia(historico, dia).items():
-        assunto, html = email(cidade, eventos, dados)
+    for cidade, evs in eventos.items():
+        if not (emails := quer.get(cidade)):
+            continue
+        assunto, html = email(cidade, evs, dados)
         if enviar:
-            brevo.enviar_campanha(existentes[PREFIXO + cidade], f'Alerta {cidade} {dia}', assunto, html, REMETENTE)
+            if (lista := existentes.get(PREFIXO + cidade)) is None:
+                lista = existentes[PREFIXO + cidade] = brevo.criar_lista(PREFIXO + cidade)
+            # a lista da cidade espelha o atributo: entra quem pediu, sai quem tirou a cidade
+            atuais = {c['email'].lower() for c in brevo.contatos(lista)}
+            brevo.ajustar_lista(lista, emails - atuais, atuais - emails)
+            brevo.enviar_campanha(lista, f'Alerta {cidade} {dia}', assunto, html, REMETENTE)
         feito.append(assunto)
     return feito
+
+
+class _BrevoFalsa:
+    def __init__(self):
+        self.lists, self.membros, self.enviadas = {INSCRITOS: 1, PREFIXO + 'Suzano': 2}, {1: [], 2: [{'email': 'velho@x.com'}]}, []
+        self.membros[1] = [{'email': 'a@x.com', 'attributes': {'CIDADES': 'Suzano; Poá'}}]
+    def listas(self): return dict(self.lists)
+    def criar_lista(self, nome): self.lists[nome] = len(self.lists) + 1; self.membros[self.lists[nome]] = []; return self.lists[nome]
+    def contatos(self, i): return self.membros[i]
+    def ajustar_lista(self, i, entrar, sair): self.membros[i] = [m for m in self.membros[i] if m['email'] not in sair] + [{'email': e} for e in entrar]
+    def enviar_campanha(self, i, *a): self.enviadas.append(i)
+
+
+_b = _BrevoFalsa()
+_hist = {'eventos': [{**_ev[0], 'data': 'd'}, {**_ev[0], 'cidade': 'Poá', 'data': 'd'}, {**_ev[0], 'cidade': 'Natal', 'data': 'd'}]}
+assert len(executar('d', _hist, [], _b)) == 2 and _b.enviadas == [2, 3] and _b.membros[2] == [{'email': 'a@x.com'}]
