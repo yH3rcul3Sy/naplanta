@@ -1,0 +1,23 @@
+{
+ "url": "https://cury.net/imovel/RJ/centro/epicentro",
+ "esperado": [
+  {
+   "nome": "Epicentro",
+   "construtora": "Cury",
+   "etapa": "Em Obras",
+   "endereco": "Avenida Professor Pereira Reis, 42, Porto Maravilha. Rio de Janeiro - RJ",
+   "lat": -22.896748,
+   "lng": -43.203118,
+   "dorms": [
+    1,
+    3
+   ],
+   "m2": null,
+   "plantas": [],
+   "texto": "Studio                                    ,\n                                                                                            1 dorm.                                    ,\n                                                                                            2 dorms.                                    ,\n                                                                                            3 dorms.",
+   "imagem": "https://cury.net/storage/images_webp/products/gallery/63f78242b470d.jpeg.webp",
+   "fonte": "https://cury.net/imovel/RJ/centro/epicentro",
+   "mcmv": false
+  }
+ ]
+}

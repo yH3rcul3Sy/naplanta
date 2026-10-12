@@ -1,0 +1,104 @@
+{
+ "url": "https://www.eztec.com.br/imoveis",
+ "esperado": [
+  {
+   "nome": "Town Residences by Lindenberg",
+   "construtora": "EZTEC",
+   "etapa": "Breve lançamento",
+   "endereco": "Brooklin, São Paulo",
+   "cidade": "São Paulo",
+   "uf": "SP",
+   "lat": -23.6251526,
+   "lng": -46.6937203,
+   "dorms": [
+    1,
+    3
+   ],
+   "m2": [
+    26,
+    100
+   ],
+   "texto": "Town Residences by Lindenberg Studios*, 1, 2 e 3 dormitórios",
+   "imagem": "https://hub.eztec.com.br/wp-content/uploads/2026/09/town-residences-by-lindenberg-card.jpg",
+   "fonte": "https://www.eztec.com.br/imoveis/town-by-lindenberg"
+  },
+  {
+   "nome": "Roque Petroni",
+   "construtora": "EZTEC",
+   "etapa": "Breve lançamento",
+   "endereco": "Brooklin, São Paulo",
+   "cidade": "São Paulo",
+   "uf": "SP",
+   "lat": -23.6251526,
+   "lng": -46.6937203,
+   "dorms": [
+    1,
+    3
+   ],
+   "m2": null,
+   "texto": "Roque Petroni Studios a 3 dorms.",
+   "imagem": "https://hub.eztec.com.br/wp-content/uploads/2026/09/banner-town-720x405-1.jpg",
+   "fonte": "https://www.eztec.com.br/imoveis/roque-petroni"
+  },
+  {
+   "nome": "Autonomistas Osasco",
+   "construtora": "EZTEC",
+   "etapa": "Breve lançamento",
+   "endereco": "Osasco",
+   "cidade": "Osasco",
+   "uf": "SP",
+   "lat": -23.5367654,
+   "lng": -46.7635826,
+   "dorms": [
+    2,
+    3
+   ],
+   "m2": null,
+   "texto": "Autonomistas Osasco  2 e 3 dorms.",
+   "imagem": "https://hub.eztec.com.br/wp-content/uploads/2026/08/autonomistas-thumb.jpg",
+   "fonte": "https://www.eztec.com.br/imoveis/teaser-autonomistas-osasco"
+  },
+  {
+   "nome": "Casa Nacional Eztec",
+   "construtora": "EZTEC",
+   "etapa": "Lançamento",
+   "endereco": "Brooklin, São Paulo",
+   "cidade": "São Paulo",
+   "uf": "SP",
+   "lat": -23.625601223699125,
+   "lng": -46.69479111606906,
+   "dorms": [
+    2,
+    3
+   ],
+   "m2": [
+    114,
+    136
+   ],
+   "texto": "Casa Nacional Eztec 2 e 3 suítes",
+   "imagem": "https://hub.eztec.com.br/wp-content/uploads/2026/08/casa_nacioal_recomendado.jpg",
+   "fonte": "https://www.eztec.com.br/imoveis/casanacional"
+  },
+  {
+   "nome": "Sophis Santana",
+   "construtora": "EZTEC",
+   "etapa": null,
+   "endereco": "Santana, São Paulo",
+   "cidade": "São Paulo",
+   "uf": "SP",
+   "lat": -23.4955899,
+   "lng": -46.6367147,
+   "dorms": [
+    4,
+    4
+   ],
+   "m2": [
+    264,
+    264
+   ],
+   "texto": "Sophis Santana 4 suítes",
+   "imagem": "https://hub.eztec.com.br/wp-content/uploads/2026/08/sophis_santana_recomendado.jpg",
+   "fonte": "https://www.eztec.com.br/imoveis/sophis-santana"
+  }
+ ]
+}

@@ -40,6 +40,22 @@ def limpo(e):
 assert limpo({'cidade': 'São Paulo​', 'nome': ' Walk -  Guarulhos ', 'n': 2}) == {'cidade': 'São Paulo', 'nome': 'Walk - Guarulhos', 'n': 2}
 
 
+CAMPOS_VIGIADOS = ('cidade', 'lat', 'dorms', 'm2', 'imagem', 'endereco', 'entrega')
+
+
+def campos_sumidos(velhos, novos):
+    """Campos que a fonte trazia em pelo menos metade dos empreendimentos e quase sumiram (menos de 10%):
+    sinal de que o site mudou de layout e o coletor parou de achar a informacao."""
+    if not velhos or not novos:
+        return []
+    taxa = lambda lista, k: sum(e.get(k) not in (None, '', []) for e in lista) / len(lista)
+    return [k for k in CAMPOS_VIGIADOS if taxa(velhos, k) >= 0.5 and taxa(novos, k) < 0.1]
+
+
+assert campos_sumidos([{'m2': [1, 2], 'dorms': [2, 2]}] * 4, [{'m2': None, 'dorms': [2, 2]}] * 4) == ['m2']
+assert campos_sumidos([{'m2': None}] * 4, [{'m2': None}] * 4) == [] and campos_sumidos([], [{'m2': 1}]) == []
+
+
 def problemas(e, base):
     """Campos fora do formato que o site espera: o HTML das incorporadoras e entrada de terceiros."""
     num = lambda v: isinstance(v, (int, float)) and not isinstance(v, bool)

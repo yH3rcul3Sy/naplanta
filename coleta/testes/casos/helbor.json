@@ -1,0 +1,32 @@
+{
+ "url": "https://helbor.com.br/empreendimentos/americas-19",
+ "esperado": [
+  {
+   "nome": "Américas 19",
+   "construtora": "Helbor",
+   "etapa": "Em obras",
+   "endereco": "Avenida das Américas, 19000, Recreio dos Bandeirantes. Rio de Janeiro - RJ",
+   "lat": -23.01382,
+   "lng": -43.4666129,
+   "dorms": [
+    2,
+    3
+   ],
+   "m2": [
+    54.0,
+    136.0
+   ],
+   "plantas": [
+    "Planta 103m² | 2 Dorms (01 Suíte)",
+    "Planta 136m² | 3 Dorms (01 Suíte)",
+    "Planta 54m² | 2 Dorms (01 Suíte)",
+    "Planta 64m² | 3 Dorms (01 Suíte)",
+    "Planta 99m² | 3 Dorms (01 Suíte)"
+   ],
+   "texto": "No melhor quilômetro da Américas, o melhor estilo de vida. Uma parceria entre Helbor e Cury Construtora Avenida das Américas, 19000, Recreio dos Bandeirantes. Rio de Janeiro - RJ Preencha o formulário e aguarde o contato de um especialista Nome completo [if BLOCK]><![endif] [if ENDBLOCK]><![endif]",
+   "imagem": "https://helbor.com.br/storage/media/development/galeria/2026/06/23/120216-555.jpg",
+   "fonte": "https://helbor.com.br/empreendimentos/americas-19",
+   "mcmv": false
+  }
+ ]
+}

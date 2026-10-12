@@ -34,10 +34,13 @@ def parse(e):
     }
 
 
+def lista(html):
+    """Todos os empreendimentos da pagina /imoveis (separado do download para o teste usar a pagina gravada)."""
+    p = rsc(html)
+    return [parse(e) for e in json.JSONDecoder().raw_decode(p, p.index('"empreendimentos":[') + len('"empreendimentos":'))[0]]
+
+
 def coletar():
     # a pagina de imoveis ja traz a lista completa com etapa e coordenadas; nao precisa abrir um por um
     with rede.cliente() as c:
-        html = c.get(f'{BASE}/imoveis').text
-    p = rsc(html)
-    lista = json.JSONDecoder().raw_decode(p, p.index('"empreendimentos":[') + len('"empreendimentos":'))[0]
-    return [parse(e) for e in lista]
+        return lista(c.get(f'{BASE}/imoveis').text)

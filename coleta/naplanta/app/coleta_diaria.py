@@ -1,7 +1,7 @@
 """Caso de uso: a coleta diaria. Orquestra fontes, regras do dominio e servicos de infra; nao conhece HTML nem caminhos."""
 from datetime import datetime
 from naplanta.config import FUSO, SITE
-from naplanta.dominio.empreendimento import etapa, limpo, problemas, tipo
+from naplanta.dominio.empreendimento import campos_sumidos, etapa, limpo, problemas, tipo
 from naplanta.dominio.mudancas import COLETAS_PARA_ACEITAR_QUEDA, comparar, historico_recente, quedas
 from naplanta.fontes import FONTES
 from naplanta.infra import arredores, fotos, geo, repositorio
@@ -81,7 +81,11 @@ def executar():
         print(f'{nome(f)}: {len(novos)} coletados')
         eventos += comparar(velhos, novos, dia)
         dados += [geo.completar(e) for e in novos]
-        fontes.append({'site': f.BASE, 'construtora': novos[0]['construtora'], 'total': len(novos), 'ok': True, 'atualizada': dia})
+        # comparado depois do geo, que tambem completa cidade e posicao dos dois lados
+        if sumidos := campos_sumidos(velhos, novos):
+            print(f"::warning::{nome(f)}: campos {sumidos} sumiram da maioria dos empreendimentos (o site pode ter mudado)")
+        fontes.append({'site': f.BASE, 'construtora': novos[0]['construtora'], 'total': len(novos), 'ok': True, 'atualizada': dia,
+                       **({'sumidos': sumidos} if sumidos else {})})
     enriquecer(dados)
     historico['eventos'] = historico_recente(eventos + historico['eventos'], dia)
     repositorio.gravar(dados, historico, {'coleta': datetime.now(FUSO).isoformat(timespec='minutes'), 'fontes': fontes})

@@ -1,0 +1,27 @@
+{
+ "url": "https://www.damebe.com.br/inspiratto/",
+ "esperado": [
+  {
+   "nome": "Inspiratto",
+   "construtora": "Damebe",
+   "etapa": "Em obras",
+   "endereco": "Av. Braz De Pina, 920, Alto do Ipiranga, Mogi das Cruzes, SP – CEP 08730-020",
+   "cidade": "Mogi das Cruzes",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    3,
+    4
+   ],
+   "m2": [
+    118.97,
+    118.97
+   ],
+   "texto": "Inspiratto - Damebe Construtora Planejado, concebido e apurado para perfeição na avenida mais charmosa de Mogi das Cruzes alto do ipiranga Um produto com a qualidade e confiança Planejado, concebido e apurado para perfeição na avenida mais charmosa de Mogi das Cruzes alto do ipiranga Um produto com a qualidade e confiança PREENCHA O FORMULÁRIO ABAIXO PARA QUE UM DE NOSSOS CONSULTORES ENTRE EM CONTATO PARA TE PASSAR MAIS DETALHES ! Nome WhatsApp E-mail QUERO MAIS DETALHES Ambiente seguro 118 m² 3 e 4 dormitórios sendo 2 suítes 2 vagas cobertas 80 unidades em 1 torre exclusiva 16.065 m² de área ",
+   "imagem": "https://www.damebe.com.br/wp-content/uploads/2026/01/Inspiratto-fachada-thumb.webp",
+   "fonte": "https://www.damebe.com.br/inspiratto/",
+   "mcmv": false
+  }
+ ]
+}

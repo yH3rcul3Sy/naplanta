@@ -1,0 +1,28 @@
+{
+ "url": "https://tenda.com/apartamentos-a-venda/ba/camacari/camacari-park-f2",
+ "esperado": [
+  {
+   "nome": "Camaçari Park F2",
+   "construtora": "Tenda",
+   "etapa": "Em obras",
+   "endereco": "Avenida Jorge Amado, s/n, Jardim Limoeiro",
+   "cidade": "Camaçari",
+   "uf": "BA",
+   "lat": -12.715082,
+   "lng": -38.308045,
+   "dorms": [
+    1,
+    1
+   ],
+   "m2": null,
+   "plantas": [
+    "1 quarto - planta meio",
+    "1 quarto - planta ponta"
+   ],
+   "texto": "apartamento Conquiste seu apartamento em Jardim Limoeiro! More próximo ao Boulevard Shopping Camaçari.",
+   "imagem": "https://tenda-admin-api.s3.amazonaws.com/legacy/14272.png?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEMD%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJHMEUCIHvoVd%2FTBRjXBPzUwGUB7CJdm%2FUxrwAI%2BSHSe7dcRp6jAiEAkbMad0j24lzQ%2BppE3G1WfeCDHzZe2TUEywJXwb2B98cqkgUIiP%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARADGgw1MzcwNzQyNzY5MzMiDInlWRBURDhiphfs7SrmBBwTjLQTfjWPgrC7D2aC0RUP2yss%2Fg2U%2BrAu3qFppz4jVikAcmubPS7woZ6hwbOJPbn%2BLJcJxbhOPBAqXPuf7KKzJJEcxY5l95AlWXxLtY5a7p4elkM20IDi29MF7Mk7GSjX9oFNxLd4tvgW3nMswYdeFevJY0tp57Nyyjj8iIoX1rKFJEczxzi4cO6llv5sTTLsnkWncICWw0iUFkzRPbKjn7rG9L0%2FgMm2YBSvDG0Oi1jWx4LhqUQc0jXJapv9sGx2S1xn0AHUvbVrtRx2div9kjb6w50%2FmD7%2FPnebuoKxdJ1O66nUUI8fsAd624%2FYN2fbzsGiB2xnfpf7UXAdrR5UvBqV4TnzRZ12XBihPd2o0ZG%2B2cvBFy5hyFkvr1JP54VCDAw6qfyzpWwQhGXBrQWCIvVXESc0Y%2BPdo1zBJqloplwRntTd0uTdz7pdA2TB9QIN9uHj3QpBh%2F%2Bj3ybvVQhn5eypcvgSP%2FOEuECUVxImdEwyVkj65e6ToFonxfgSnjPUcZhz8MoZWuAyrZbiR9DlEnUHgyaTrrzUMZZ5TNb261NT%2FXhk7wwe%2Bu2lUFozNXmX7%2B7f5jwDF6B2Ult09IXoLHxB%2FRzwJZnrbSDpqc2ch%2FmiDaEXPgkIF5wX27Mn9mRMVj8ZN53X2IMoA8wQ2%2BJROi8WDH%2BrsEXVRrPky9htHZ4roCbRnUYrbdfz9vxpqmajKlWcJcsa7mRJ5yCy9SAQqlYF2eDt%2BRlc0omUyGnXaA%2F5zg7OCKxlOVpwwS3nxNUJ25MG%2F6v2WlVSiWtb%2BHpS%2B5815uavUxR3pnqfi71h3GthS8CuMOL1s9YGOpkBpO4kP9%2FNfQ40qyNakiSG%2FrqcNkGZ5iMBFitVnd2bpbcZgmx%2BUrma5NFWdKbJMG9F3DzAkD0BPJkT%2B6jZRvtkka0pV14SXqDb6%2BhvBPXxkpx4nrYlPQFSqPKH05BxD%2B52bbtWCJVftKOvy9J70oHhLvrRuntn1EyZOG1QEyP2vFPGs1JKTbEkEZyiv9oMIfjiIm6eEHEHKcaF&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAX2DA7DJC6HTEEFVR%2F20261012%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20261012T152106Z&X-Amz-SignedHeaders=host&X-Amz-Expires=604800&X-Amz-Signature=4accafdd93215178dee0476c5b151f0c350e42970cf7a5a881dad14a36883bb9",
+   "fonte": "https://tenda.com/apartamentos-a-venda/ba/camacari/camacari-park-f2",
+   "mcmv": true
+  }
+ ]
+}

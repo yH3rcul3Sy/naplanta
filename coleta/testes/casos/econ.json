@@ -1,0 +1,28 @@
+{
+ "url": "https://econconstrutora.com.br/imovel/centro/buono-bom-retiro",
+ "esperado": [
+  {
+   "nome": "Buono Bom Retiro",
+   "construtora": "Econ",
+   "etapa": "Em obras",
+   "endereco": "Rua Neves de Carvalho, 30, Bom Retiro, São Paulo",
+   "cidade": "São Paulo",
+   "uf": "SP",
+   "lat": -23.5852963,
+   "lng": -46.4949764,
+   "dorms": [
+    2,
+    2
+   ],
+   "m2": [
+    50,
+    50
+   ],
+   "entrega": "2025",
+   "texto": "Buono Bom Retiro apartamentos",
+   "imagem": "https://econ-portal-static.s3.sa-east-1.amazonaws.com/empreendimentos/buono-bom-retiro/1776856129373.webp",
+   "fonte": "https://econconstrutora.com.br/imovel/centro/buono-bom-retiro",
+   "mcmv": true
+  }
+ ]
+}

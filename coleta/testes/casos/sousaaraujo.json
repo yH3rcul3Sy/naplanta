@@ -1,0 +1,27 @@
+{
+ "url": "https://sousaaraujo.com.br/empreendimentos/safira",
+ "esperado": [
+  {
+   "nome": "Safira",
+   "construtora": "Sousa Araujo",
+   "etapa": "Em Construção",
+   "endereco": "Avenida Minas Gerais, 4330, Jardim Nova Veneza, Sumaré/SP",
+   "cidade": "Sumaré",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    2,
+    2
+   ],
+   "m2": [
+    51.0,
+    53.0
+   ],
+   "texto": "Apartamentos em Sumaré - SP 51 m² e 53 m² 2 dormitórios e varanda 1 vaga(s) Sumaré - SP",
+   "imagem": "https://cdnm.com.br/sousaaraujo/media/55/05/71/3710/conversions/safira-20250725164806000-min-width-1366.jpg",
+   "fonte": "https://sousaaraujo.com.br/empreendimentos/safira",
+   "mcmv": true
+  }
+ ]
+}

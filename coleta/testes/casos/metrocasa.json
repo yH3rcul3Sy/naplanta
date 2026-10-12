@@ -1,0 +1,27 @@
+{
+ "url": "https://www.metrocasa.com.br/imoveis/alto-da-boa-vista",
+ "esperado": [
+  {
+   "nome": "Metrocasa Alto da Boa Vista",
+   "construtora": "Metrocasa",
+   "etapa": "Em obras",
+   "endereco": "Rua Nove de Julho, 220, Santo Amaro, São Paulo",
+   "cidade": "São Paulo",
+   "uf": "SP",
+   "lat": -23.6441391,
+   "lng": -46.7006713,
+   "dorms": [
+    1,
+    1
+   ],
+   "m2": [
+    24.0,
+    27.0
+   ],
+   "texto": "Alto da Boa Vista Studios, 1 Dorm. e 1 Dorm. + Office",
+   "imagem": "https://www.metrocasa.com.br/facades/alto-da-boa-vista.webp",
+   "fonte": "https://www.metrocasa.com.br/imoveis/alto-da-boa-vista",
+   "mcmv": true
+  }
+ ]
+}

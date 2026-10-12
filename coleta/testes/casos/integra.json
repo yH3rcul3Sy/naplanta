@@ -1,0 +1,27 @@
+{
+ "url": "https://integraurbano.com.br/empreendimento/apartamento-bosque-urbano",
+ "etapa": "Lançamento",
+ "esperado": [
+  {
+   "nome": "Bosque Urbano",
+   "construtora": "Integra Urbano",
+   "etapa": "Lançamento",
+   "endereco": "R. Osiris Magalhães de Almeida, 300 - Jardim Monte Kemel, São Paulo - SP, 05634-020",
+   "lat": -23.6039531,
+   "lng": -46.7440965,
+   "dorms": [
+    1,
+    2
+   ],
+   "m2": [
+    29.0,
+    44.0
+   ],
+   "entrega": "2029",
+   "texto": "Integra Urbano Home Sobre Empreendimentos Integra News Fale Conosco Portal do Cliente Canal de Venda Whats Home Sobre Empreendimentos Integra News Fale Conosco Portal do Cliente Siga-nos Integra Urbano 2025 Scroll Down Empreendimentos Residenciais Bosque Urbano O PROJETO RESIDENCIAL LANÇAMENTO O verde do parque na sua janela. A linha amarela a seus pés. Um refúgio urbano com bosque privativo, lazer de clube e mobilidade garantida em uma das regiões mais desejadas da zona Oeste. No coração da Chácara do Jockey, o Bosque Urbano oferece qualidade de vida, contato com a natureza e facilidades do M",
+   "imagem": "https://integraurbano.com.br/public/uploads/9a7283b501ccbb91cedc30f7ffb95daa.webp",
+   "fonte": "https://integraurbano.com.br/empreendimento/apartamento-bosque-urbano",
+   "mcmv": true
+  }
+ ]
+}

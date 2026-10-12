@@ -1,0 +1,31 @@
+{
+ "url": "https://www.cacengenharia.com.br/empreendimento/villa-real-residence/",
+ "esperado": [
+  {
+   "nome": "Villa Real Residence",
+   "construtora": "C.A.C Engenharia",
+   "etapa": "Em obras",
+   "endereco": null,
+   "cidade": "Nova Lima",
+   "uf": "MG",
+   "lat": -20.000389440502765,
+   "lng": -43.89336892555839,
+   "dorms": [
+    2,
+    3
+   ],
+   "m2": [
+    48.85,
+    78.44
+   ],
+   "plantas": [
+    "02 e 03 quartos com plantas de 48,85 m² a 78,44 m²"
+   ],
+   "entrega": "36 meses após assinatura contrato CAIXA",
+   "texto": "Villa Real Residence \n \n \n Em obras \n \n \n Nova Lima  -\n                                         MG \n \n Villa Real Residence \n \n \n \n \n 2 ou 3 quartos e varanda \n \n \n \n Opção de suíte e área privativa \n \n \n \n Lazer completo \n \n \n \n \n \n \n \n \n \n  Fale agora com\n                                um consultor\n                             \n \n \n  Fotos\n                     \n \n  Vídeo\n                     \n \n  Plantas\n                     \n \n  Mapa\n                     \n \n  Tour área externa\n                     \n \n \n \n",
+   "imagem": "https://www.cacengenharia.com.br/wp-content/uploads/2024/06/Banner-Villa.jpg",
+   "fonte": "https://www.cacengenharia.com.br/empreendimento/villa-real-residence/",
+   "mcmv": false
+  }
+ ]
+}
