@@ -107,7 +107,7 @@ def _documento(titulo, descricao, canonica, corpo, imagem=None, extra='', palavr
 {extra}{ESTILO}
 </head>
 <body>
-<header><a class="marca" href="../">Na<span>Planta</span></a><a class="btn voltar" href="../">← Mapa</a></header>
+<header><a class="marca" href="../"><img src="../logo.svg" alt="" width="34" height="24" style="height:.95em;width:auto;vertical-align:-.1em;margin-right:.3em">Na<span>Planta</span></a><a class="btn voltar" href="../">← Mapa</a></header>
 <main>
 {corpo}
 </main>

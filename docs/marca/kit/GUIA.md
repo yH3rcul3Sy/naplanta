@@ -19,14 +19,14 @@ Apresentação com aplicações: `apresentacao.html` (ou as imagens em `slides/`
 
 ## Cores
 
-| Nome | HEX | RGB | Uso |
-|---|---|---|---|
-| Verde NaPlanta | `#1f6f4a` | 31, 111, 74 | P, "Planta", fundo do ícone do app |
-| Tinta | `#1d1d1b` | 29, 29, 27 | N, "Na" |
-| Verde claro | `#8fd3ae` | 143, 211, 174 | P e "Planta" em fundo escuro |
-| Papel | `#f6f5f2` | 246, 245, 242 | Fundo preferido |
+| Nome | HEX | RGB | CMYK (impressão) | Pantone | Uso |
+|---|---|---|---|---|---|
+| Verde NaPlanta | `#1f6f4a` | 31, 111, 74 | 84 · 32 · 79 · 13 | 7727 C (alternativa: 342 C) | P, "Planta", fundo do ícone do app |
+| Tinta | `#1d1d1b` | 29, 29, 27 | 0 · 0 · 0 · 100 (áreas grandes: 60 · 40 · 40 · 100) | Black 6 C | N, "Na" |
+| Verde claro | `#8fd3ae` | 143, 211, 174 | 46 · 1 · 43 · 0 | — | P e "Planta" em fundo escuro |
+| Papel | `#f6f5f2` | 246, 245, 242 | papel branco | — | Fundo preferido |
 
-Para impressão, pedir à gráfica a conversão CMYK/Pantone do `#1f6f4a` e conferir numa prova; a cor não foi casada com escala Pantone.
+O CMYK foi convertido com perfil de impressão offset em papel revestido (SWOP, intenção colorimétrica relativa). No papel o verde sai um pouco mais claro que na tela, e isso é normal. Se a gráfica usar outro perfil (no Brasil é comum o FOGRA39), peça a conversão no perfil dela e aprove numa prova impressa. O Pantone é a cor mais próxima por cálculo; confira no guia físico (Formula Guide Coated) antes de fechar, porque a tela não mostra Pantone com fidelidade.
 
 ## Regras
 
