@@ -3,7 +3,7 @@
 Fases curtas, cada uma entregável sozinha. Esforço estimado para uma pessoa.
 
 ## Fase 0 · Feito (até out/2026)
-- 11 fontes, mapa, filtros, novidades, página "Sobre os dados".
+- 12 fontes, mapa, filtros, novidades, página "Sobre os dados".
 - Segurança (CSP, SRI, actions fixadas), validação de dados, queda aceita após 3 coletas.
 - Coleta local agendada para Cury e Sousa Araujo.
 - Página por empreendimento, sitemap, Search Console, meta tags.

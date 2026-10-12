@@ -12,7 +12,7 @@ flowchart LR
       A[GitHub Actions 06h] --> C[app/coleta_diaria.py]
       L[PC do projeto 12h<br>local.ps1] --> C
       C --> R[infra/rede.py<br>robots.txt + pausa]
-      R --> F[11 coletores]
+      R --> F[12 coletores]
       C --> G[geo.py<br>Nominatim]
       C --> AR[arredores.py<br>Overpass]
       C --> FO[fotos.py<br>WebP 600x300]

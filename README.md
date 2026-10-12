@@ -29,7 +29,7 @@ Os dados vêm **direto dos sites das próprias incorporadoras** e são atualizad
 
 | | |
 |---|---|
-| 🗺️ **Mapa e lista** | Mais de 900 empreendimentos de 11 incorporadoras. Por padrão mostra só o que está **na planta** (breve lançamento, lançamento e em obras); os prontos aparecem com a opção "Prontos". |
+| 🗺️ **Mapa e lista** | Mais de 900 empreendimentos de 12 incorporadoras. Por padrão mostra só o que está **na planta** (breve lançamento, lançamento e em obras); os prontos aparecem com a opção "Prontos". |
 | 🔎 **Filtros** | Cidade, tipo (apartamento, casa em condomínio, lote), etapa, construtora, dormitórios, área mínima e distância até a estação. |
 | 🚆 **Arredores** | Estação de trem ou metrô em operação mais próxima (até 3 km) e escolas, saúde, mercados e parques a até 1 km. |
 | 🆕 **O que mudou** | Lançamentos novos, mudanças de etapa e empreendimentos que saíram, comparando cada coleta com a do dia anterior. |
@@ -41,7 +41,7 @@ Os dados vêm **direto dos sites das próprias incorporadoras** e são atualizad
 ```mermaid
 flowchart LR
     A[GitHub Actions<br>todo dia] --> B[coletar.py]
-    B --> C[11 coletores<br>um por incorporadora]
+    B --> C[12 coletores<br>um por incorporadora]
     C --> D[geo.py<br>localização]
     D --> E[arredores.py<br>estação e serviços]
     E --> F[fotos.py<br>miniaturas]
@@ -78,6 +78,7 @@ flowchart LR
 | Econ | São Paulo e Guarulhos |
 | Metrocasa | São Paulo |
 | Vibra Residencial | São Paulo |
+| Árbore Engenharia | Suzano, Poá, Grande SP e interior |
 
 <details>
 <summary><b>Incorporadoras que ficaram de fora</b></summary>

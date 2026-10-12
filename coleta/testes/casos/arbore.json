@@ -1,0 +1,24 @@
+{
+ "url": "https://arboreengenharia.com.br/empreendimentos/residencial-contemporaneo/",
+ "esperado": [
+  {
+   "nome": "Contemporâneo",
+   "construtora": "Árbore",
+   "etapa": "Lançamento",
+   "endereco": "R. Kanej Kodama, 1815, Vila Figueira, Suzano - SP",
+   "cidade": "Suzano",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    2,
+    2
+   ],
+   "m2": null,
+   "texto": "Contemporâneo  apartamentos",
+   "imagem": "https://arboreengenharia.com.br/wp-content/uploads/2025/10/contemporaneo-portaria-arbore-engenharia-desktop-2.webp",
+   "fonte": "https://arboreengenharia.com.br/empreendimentos/residencial-contemporaneo/",
+   "mcmv": true
+  }
+ ]
+}

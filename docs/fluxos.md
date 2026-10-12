@@ -59,12 +59,12 @@ sequenceDiagram
     participant OSM as Nominatim / Overpass
     participant GH as Repositório (main)
     participant P as GitHub Pages
-    GA->>S: 11 fontes (Cury e Sousa Araujo barram o GitHub)
+    GA->>S: 12 fontes (Cury e Sousa Araujo barram o GitHub)
     GA->>OSM: localização e arredores dos novos
     GA->>GH: commit dos dados (fontes falhas mantêm os de ontem)
     GA->>P: gera páginas e publica
     PC->>GH: reset para a main
-    PC->>S: 11 fontes (todas respondem)
+    PC->>S: 12 fontes (todas respondem)
     PC->>GH: commit + pull --rebase + push
     GH->>P: push dispara a publicação
 ```

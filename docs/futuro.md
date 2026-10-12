@@ -73,7 +73,7 @@
 
 ## 6. Ideias para o UMC Summit
 - Mostrar o painel "O que mudou" ao vivo: o dado de hoje contra o de ontem.
-- Mostrar números de cobertura: 900+ empreendimentos, 11 fontes, custo de operação R$ 0.
+- Mostrar números de cobertura: 900+ empreendimentos, 12 fontes, custo de operação R$ 0.
 - Mostrar a ética como diferencial técnico: `robots.txt`, fontes públicas, nenhum dado pessoal.
 - Roadmap: alertas, mais cidades e o selo MCMV.
 
