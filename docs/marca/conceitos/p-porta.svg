@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- P de planta: haste e bojo sao paredes; junto da haste fica o vao da porta, com folha e arco de abertura -->
+  <path fill="#000" d="M56 32H200V144H124V112H168V64H88V224H56Z"/>
+  <rect x="114" y="72" width="10" height="40" fill="#000"/>
+  <path fill="none" stroke="#000" stroke-width="8" d="M117 76A34 34 0 0 0 88 108"/>
+</svg>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- pino do mapa cuja cabeca e uma planta baixa: uma parede divide dois comodos e tem a porta aberta -->
+  <path fill="#000" fill-rule="evenodd" d="M128 236C128 236 44 156 44 104A84 84 0 0 1 212 104C212 156 128 236 128 236ZM128 48A56 56 0 0 0 72 104A56 56 0 0 0 184 104A56 56 0 0 0 128 48Z"/>
+  <path fill="#000" d="M70 96H104V114H70ZM144 96H186V114H144Z"/>
+  <rect x="140" y="62" width="9" height="40" fill="#000"/>
+  <path fill="none" stroke="#000" stroke-width="7" d="M142 66A38 38 0 0 0 106 104"/>
+</svg>
