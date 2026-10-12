@@ -1,0 +1,33 @@
+{
+  "brand": "NaPlanta",
+  "tagline": "Lançamentos na planta de Mogi e do Alto Tietê, direto das incorporadoras",
+  "brief": "Mapa gratuito de lançamentos imobiliários na planta, com dados coletados todo dia dos sites das incorporadoras. O logo precisa dizer 'na planta' sem cair na casinha, funcionar como favicon e ícone de app e manter o verde já conhecido do site.",
+  "adjectives": ["confiável", "direto", "local", "claro"],
+  "criteria": "Legível a 16 px, funciona em uma cor, ligado à planta baixa, mantém o verde #1f6f4a.",
+  "mockups": ["website", "favicon-tab", "app-icon", "social", "signage", "business-card"],
+  "nav": ["Mapa", "Lista", "Novidades", "Alertas"],
+  "brand_color": "#1f6f4a",
+  "greyscale": false,
+  "final": true,
+  "designer": "NaPlanta",
+  "concepts": [
+    {
+      "name": "NP em paredes",
+      "symbol": "naplanta-simbolo.svg",
+      "lockup": "naplanta-horizontal.svg",
+      "stacked": "naplanta-vertical.svg",
+      "symbol_on_tile": "naplanta-simbolo-white.svg",
+      "lockup_on_dark": "naplanta-horizontal-reverso.svg",
+      "tile_color": "#1f6f4a",
+      "idea": "As iniciais desenhadas como paredes de planta baixa; o bojo do P é um cômodo com a porta aberta.",
+      "rationale": [
+        "Diz 'na planta' pelo desenho, não pela casinha que todo o setor usa",
+        "Paredes com a mesma espessura (24 em 256) e ângulos retos, como uma planta de verdade",
+        "Versão pequena sem o arco da porta mantém o NP nítido no favicon",
+        "Preto e verde continuam o que o site já usa"
+      ]
+    }
+  ],
+  "recommendation": "Usar o símbolo NP no favicon, ícone do app e avatar; a versão horizontal no topo do site e em materiais.",
+  "next_steps": ["Trocar favicon e ícones do site", "Atualizar o og:image (compartilhar.png)", "Usar o guia de uso em novos materiais"]
+}
