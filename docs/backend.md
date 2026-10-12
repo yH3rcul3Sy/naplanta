@@ -61,6 +61,7 @@ A chave é `fonte` (URL oficial), que é o que liga um empreendimento entre dias
 | `desde` | date? | `2026-10-10` | primeira coleta em que apareceu (`null` se a fonte é nova) |
 | `estacao` | objeto? | `{"nome":"Estudantes","tipo":"trem","km":2.2}` | `arredores.py` |
 | `perto` | objeto | `{"escolas":4,"saude":1,"mercados":2,"parques":2}` | `arredores.py` (1 km) |
+| `mcmv` | bool | `true` | a página da construtora cita o Minha Casa Minha Vida (`dominio.texto.cita_mcmv`) |
 | `pagina` | string | `americas-19-rio-de-janeiro-f0ba` | **só no publicado**, por `paginas.py` |
 
 ## `site/mudancas.json`: histórico (180 dias)

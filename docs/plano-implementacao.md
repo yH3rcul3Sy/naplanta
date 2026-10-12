@@ -8,15 +8,15 @@ Fases curtas, cada uma entregável sozinha. Esforço estimado para uma pessoa.
 - Coleta local agendada para Cury e Sousa Araujo.
 - Página por empreendimento, sitemap, Search Console, meta tags.
 - Ajustes de layout para notebook e "atualizado hoje".
+- Boas-vindas com glossário, popup curto, ordenação, selo e filtro MCMV, menu compacto no celular.
+- Domínio próprio (naplanta.app.br) com HTTPS, imagem de compartilhamento, logo NP.
+- Páginas por cidade, breadcrumbs, "Outros na cidade", "Como chegar", FAQ, privacidade, 404, llms.txt.
+- Arquitetura em camadas (docs/arquitetura.md) e coleta local + GitHub sem conflito.
 
 ## Fase 1 · Confiabilidade e primeira impressão (1 a 2 semanas)
 | Tarefa | Por quê | Esforço |
 |---|---|---|
 | Testes de `parse()` com 1 a 2 HTMLs salvos por fonte (`pytest`), rodando no Actions antes da coleta | Detectar mudança de layout antes de virar dado errado | 2 dias |
-| Faixa de boas-vindas (A1) | Primeira visita entender o produto | 0,5 dia |
-| Popup curto e ordenação (A3, A4) | Uso mais fluido | 1 dia |
-| Glossário de etapas (A9) | Público iniciante | 0,5 dia |
-| `og:image` 1200×630 (A6) | Compartilhamento no WhatsApp | 0,5 dia |
 | Alerta de fonte parada por e-mail (issue automática no GitHub) | Hoje o aviso só aparece na aba Actions | 0,5 dia |
 
 ## Fase 2 · Retenção (3 a 4 semanas)

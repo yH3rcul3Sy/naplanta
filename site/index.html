@@ -49,9 +49,6 @@
            padding:7px 14px; transition:background-color .15s, border-color .15s, color .15s, transform .1s; }
   button:hover { background:var(--accent-bg); border-color:var(--accent); color:var(--accent); }
   button:active { transform:translateY(1px); }
-  .botao { display:inline-flex; align-items:center; font-weight:600; font-size:inherit; color:var(--ink); text-decoration:none; border:1px solid var(--line);
-           background:#fff; border-radius:10px; padding:7px 14px; transition:background-color .15s, border-color .15s, color .15s; }
-  .botao:hover { background:var(--accent-bg); border-color:var(--accent); color:var(--accent); }
   .check { flex-direction:row; align-items:center; gap:8px; font-size:14px; color:var(--ink); cursor:pointer; padding:7px 0; }
   .check input { min-width:0; width:18px; height:18px; margin:0; accent-color:var(--accent); cursor:pointer; }
   #rodape { margin-left:auto; display:flex; align-items:center; gap:10px; color:var(--muted); font-size:12px; white-space:nowrap; }
@@ -59,8 +56,8 @@
   @media (min-width: 801px) {
     header { flex-wrap:nowrap; gap:8px; padding:8px 12px; }
     h1 { font-size:22px; margin-right:4px; }
-    header select, header input, header button, header .botao { font-size:14px; }
-    header button, header .botao { padding:6px 11px; white-space:nowrap; }
+    header select, header input, header button { font-size:14px; }
+    header button { padding:6px 11px; white-space:nowrap; }
     select, input { padding:6px 6px; }
     #filtros { flex:1 1 auto; flex-wrap:nowrap; min-width:0; gap:8px; justify-content:center; }  /* centralizado entre a marca e o total */
     #filtros > label:not(.check) { flex:1 1 var(--w, 110px); min-width:0; max-width:calc(var(--w, 110px) * 1.5); }
