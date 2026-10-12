@@ -1,5 +1,5 @@
 {
- "coleta": "2026-10-12T16:05-03:00",
+ "coleta": "2026-10-12T19:25-03:00",
  "fontes": [
   {
    "site": "https://helbor.com.br",
@@ -26,7 +26,7 @@
   {
    "site": "https://tenda.com",
    "construtora": "Tenda",
-   "total": 290,
+   "total": 286,
    "ok": true,
    "atualizada": "2026-10-12"
   },
@@ -84,6 +84,49 @@
    "site": "https://arboreengenharia.com.br",
    "construtora": "Árbore",
    "total": 49,
+   "ok": true,
+   "atualizada": "2026-10-12"
+  },
+  {
+   "site": "https://jbianchi.com.br",
+   "construtora": "jbianchi",
+   "total": 0,
+   "ok": false,
+   "erro": "nenhum empreendimento retornado (site fora do ar ou bloqueando o acesso)",
+   "atualizada": null
+  },
+  {
+   "site": "https://gfrempreendimentos.com.br",
+   "construtora": "GFR",
+   "total": 8,
+   "ok": true,
+   "atualizada": "2026-10-12"
+  },
+  {
+   "site": "https://scopel.com.br",
+   "construtora": "Scopel",
+   "total": 41,
+   "ok": true,
+   "atualizada": "2026-10-12"
+  },
+  {
+   "site": "https://ribeira.com.br",
+   "construtora": "Ribeira",
+   "total": 6,
+   "ok": true,
+   "atualizada": "2026-10-12"
+  },
+  {
+   "site": "https://construtoralumiar.com.br",
+   "construtora": "Lumiar",
+   "total": 14,
+   "ok": true,
+   "atualizada": "2026-10-12"
+  },
+  {
+   "site": "https://jeronimodaveiga.com.br",
+   "construtora": "Jeronimo da Veiga",
+   "total": 5,
    "ok": true,
    "atualizada": "2026-10-12"
   }
