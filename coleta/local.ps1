@@ -17,6 +17,10 @@ $copia = Join-Path $env:LOCALAPPDATA 'naplanta-coleta'
 $log = Join-Path $copia 'coleta-local.log'
 function GitBot { git.exe -C $copia -c user.name=coleta-bot -c user.email=coleta-bot@users.noreply.github.com @args; if ($LASTEXITCODE) { throw "git $args falhou" } }
 
+# copia corrompida (PC desligado no meio de um git, por exemplo): guarda a pasta quebrada e clona de novo
+if ((Test-Path $copia) -and -not (git.exe -C $copia rev-parse --verify -q HEAD 2>$null)) {
+    Rename-Item $copia "$copia-quebrada-$(Get-Date -Format yyyyMMddHHmm)"
+}
 if (-not (Test-Path $copia)) { git.exe clone -q https://github.com/yH3rcul3Sy/naplanta $copia }
 $env:PYTHONIOENCODING = 'utf-8'  # sem console (agendador) o print de acentos quebraria no cp1252
 $falhou = $false

@@ -1,0 +1,22 @@
+{
+ "url": "https://www.direcional.com.br/empreendimentos/viva-vida-safira/",
+ "nome": "Viva Vida Safira",
+ "esperado": [
+  {
+   "nome": "Viva Vida Safira",
+   "construtora": "Direcional",
+   "etapa": "Lançamento",
+   "endereco": "Colônia Terra Nova, Manaus - AM",
+   "cidade": "Manaus",
+   "uf": "AM",
+   "lat": -3.010846898825107,
+   "lng": -60.03682461371493,
+   "dorms": null,
+   "m2": null,
+   "texto": "Viva Vida Safira apartamentos",
+   "imagem": "https://www.direcional.com.br/wp-content/uploads/2021/07/Direcional-Capa.jpg",
+   "fonte": "https://www.direcional.com.br/empreendimentos/viva-vida-safira/",
+   "mcmv": true
+  }
+ ]
+}

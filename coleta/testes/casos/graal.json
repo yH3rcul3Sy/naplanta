@@ -1,0 +1,115 @@
+{
+ "url": "https://graalengenharia.com.br/wp-json/wp/v2/obra?per_page=100",
+ "esperado": [
+  {
+   "nome": "Absoluto Vila Prudente",
+   "construtora": "Graal",
+   "etapa": "Breve lançamento",
+   "endereco": "Absoluto Vila Prudente, Vila Prudente",
+   "cidade": "São Paulo",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    1,
+    3
+   ],
+   "m2": [
+    26,
+    55
+   ],
+   "texto": "Absoluto Vila Prudente apartamentos",
+   "imagem": "https://graalengenharia.com.br/wp-content/uploads/2026/09/5603-EXT-02-Fachada-Noturna-R00-819x1024.jpg",
+   "fonte": "https://graalengenharia.com.br/empreendimentos/absoluto-vila-prudente/",
+   "mcmv": true
+  },
+  {
+   "nome": "Hug Serenity - Dom Bosco",
+   "construtora": "Graal",
+   "etapa": "Breve lançamento",
+   "endereco": "Hug Serenity - Dom Bosco, Itaquera",
+   "cidade": "São Paulo",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    2,
+    3
+   ],
+   "m2": [
+    35,
+    92
+   ],
+   "texto": "Hug Serenity - Dom Bosco apartamentos",
+   "imagem": "https://graalengenharia.com.br/wp-content/uploads/2026/07/SER-FACHADA-EMBASAMENTO-ALTA-1024x692.jpg",
+   "fonte": "https://graalengenharia.com.br/empreendimentos/hug-serenity/",
+   "mcmv": true
+  },
+  {
+   "nome": "Brisas da Praça - Patriarca",
+   "construtora": "Graal",
+   "etapa": "Lançamento",
+   "endereco": "Brisas da Praça - Patriarca, Cidade Patriarca",
+   "cidade": "São Paulo",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    2,
+    3
+   ],
+   "m2": [
+    45,
+    113
+   ],
+   "texto": "Brisas da Praça - Patriarca apartamentos",
+   "imagem": "https://graalengenharia.com.br/wp-content/uploads/2026/02/5601-EXT-04-Piscina-Adulto-R03-WEB-1024x579.jpg",
+   "fonte": "https://graalengenharia.com.br/empreendimentos/brisas-da-praca-patriarca/",
+   "mcmv": true
+  },
+  {
+   "nome": "Graal Parque Home Resort",
+   "construtora": "Graal",
+   "etapa": "Lançamento",
+   "endereco": "Graal Parque Home Resort, Itaquera",
+   "cidade": "São Paulo",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    2,
+    3
+   ],
+   "m2": [
+    82,
+    82
+   ],
+   "texto": "Graal Parque Home Resort apartamentos",
+   "imagem": "https://graalengenharia.com.br/wp-content/uploads/2023/12/GP_destaque_TESTE.webp",
+   "fonte": "https://graalengenharia.com.br/empreendimentos/graal-parque/",
+   "mcmv": true
+  },
+  {
+   "nome": "Pulse - Itaquera",
+   "construtora": "Graal",
+   "etapa": "Lançamento",
+   "endereco": "Pulse - Itaquera, Itaquera",
+   "cidade": "São Paulo",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    1,
+    3
+   ],
+   "m2": [
+    26,
+    90
+   ],
+   "texto": "Pulse - Itaquera apartamentos",
+   "imagem": "https://graalengenharia.com.br/wp-content/uploads/2025/10/pulse_destaque_TESTE.webp",
+   "fonte": "https://graalengenharia.com.br/empreendimentos/pulse-itaquera/",
+   "mcmv": true
+  }
+ ]
+}

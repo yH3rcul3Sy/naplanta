@@ -1,0 +1,26 @@
+{
+ "url": "https://www.longitude.com.br/imoveis/hortolandia/apartamento/arvo",
+ "nome": "Arvo",
+ "esperado": [
+  {
+   "nome": "Arvo",
+   "construtora": "Longitude",
+   "etapa": "Em obras",
+   "endereco": "R. Hjalmar Holdrich Gerhard Lindquist, 907, Parque Ortolândia, Hortolândia - SP",
+   "bairro": "Parque Ortolândia",
+   "cidade": "Hortolândia",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    2,
+    2
+   ],
+   "m2": null,
+   "texto": "Arvo apartamentos",
+   "imagem": "https://cdn.longitude.com.br/2023/08/03/15/03/a609239e2665467614e193f87a6a7b35303f74d6.jpg",
+   "fonte": "https://www.longitude.com.br/imoveis/hortolandia/apartamento/arvo",
+   "mcmv": true
+  }
+ ]
+}

@@ -26,6 +26,8 @@ def gravar(fonte, dados):
         caso = {'url': f'{fonte.BASE}/load_projetos.ashx?lancamento=1', 'etapa': 'Lançamento'}
     elif nome(fonte) == 'lumiar':
         caso = {'url': f'{fonte.BASE}/imoveis-grid.php?pagina=1'}
+    elif nome(fonte) == 'graal':
+        caso = {'url': f'{fonte.BASE}/wp-json/wp/v2/obra?per_page=100'}
     elif nome(fonte) == 'jeronimodaveiga':
         caso = {'url': f'{fonte.BASE}/empreendimentos/'}
     elif nome(fonte) == 'ribeira':
@@ -35,7 +37,8 @@ def gravar(fonte, dados):
     elif (e := amostra(fonte, dados) or amostra(fonte, fonte.coletar())) is None:  # fonte nova: ainda sem nada publicado
         return 'sem empreendimento publicado para usar de amostra'
     else:
-        caso = {'url': e['fonte'], **({'etapa': e['etapa']} if nome(fonte) in ('integra', 'evolife', 'lumy') else {})}
+        caso = {'url': e['fonte'], **({'etapa': e['etapa']} if nome(fonte) in ('integra', 'evolife', 'lumy') else {}),
+                **({'nome': e['nome']} if nome(fonte) in ('longitude', 'direcional') else {})}
     with rede.cliente() as c:
         r = c.get(caso['url'])
     if r.status_code != 200:

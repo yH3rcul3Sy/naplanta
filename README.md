@@ -29,7 +29,7 @@ Os dados vêm **direto dos sites das próprias incorporadoras** e são atualizad
 
 | | |
 |---|---|
-| 🗺️ **Mapa e lista** | Mais de 900 empreendimentos de 20 incorporadoras. Por padrão mostra só o que está **na planta** (breve lançamento, lançamento e em obras); os prontos aparecem com a opção "Prontos". |
+| 🗺️ **Mapa e lista** | Mais de 900 empreendimentos de 23 incorporadoras. Por padrão mostra só o que está **na planta** (breve lançamento, lançamento e em obras); os prontos aparecem com a opção "Prontos". |
 | 🔎 **Filtros** | Cidade, tipo (apartamento, casa em condomínio, lote), etapa, construtora, dormitórios, área mínima e distância até a estação. |
 | 🚆 **Arredores** | Estação de trem ou metrô em operação mais próxima (até 3 km) e escolas, saúde, mercados e parques a até 1 km. |
 | 🆕 **O que mudou** | Lançamentos novos, mudanças de etapa e empreendimentos que saíram, comparando cada coleta com a do dia anterior. |
@@ -87,6 +87,9 @@ flowchart LR
 | Jeronimo da Veiga | Poá, Taboão da Serra e Grande Rio |
 | Evo Life | Zona Leste de São Paulo |
 | Lumy | São Paulo, Guarulhos, Cajamar e Jundiaí |
+| Graal Engenharia | Zonas Leste e Norte de São Paulo |
+| Longitude | São Paulo e interior de SP |
+| Direcional | São Paulo, Campinas, Ribeirão Preto e outras capitais |
 
 <details>
 <summary><b>Incorporadoras que ficaram de fora</b></summary>
