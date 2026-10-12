@@ -179,7 +179,7 @@ def html_empreendimento(e, nome_arquivo, outros=(), eventos=(), inicio=None):
   <a class="btn" href="{escape(e['fonte'])}" rel="noopener">Site da {escape(e['construtora'])} ↗</a>
   {f'<a class="btn" href="{escape(rota)}" rel="noopener">Como chegar ↗</a>' if rota else ''}
   <a class="btn zap" href="{escape(zap)}" rel="noopener">Compartilhar no WhatsApp</a>
-  <a class="btn" href="../alertas.html{'?cidade=' + quote(cidade) if cidade else ''}">✉ Receber alertas por e-mail</a>
+  <a class="btn" href="../alertas.html{'?cidade=' + quote(cidade) if cidade else ''}">Receber alertas por e-mail</a>
 </div>
 {f'<p class="info">📍 {escape(e["endereco"])}</p>' if e.get('endereco') else ''}
 {'<p class="aviso">Localização aproximada: o pino está no bairro, não no endereço exato.</p>' if e.get('aprox') else ''}
@@ -238,7 +238,7 @@ def html_cidade(cidade, lista):
     corpo = f'''{trilha}<h1>Lançamentos na planta em {escape(cidade)}</h1>
 <p class="sub">{_plural(len(na_planta), 'empreendimento', 'empreendimentos')} na planta{f' ({por_etapa})' if por_etapa else ''}{f' e {_plural(prontos, "pronto", "prontos")} para morar' if prontos else ''}, de {_plural(len(construtoras), 'construtora', 'construtoras')}.</p>
 <div class="botoes"><a class="btn primario" href="../?cidade={quote(cidade)}">Ver {escape(cidade)} no mapa</a>
-<a class="btn" href="../alertas.html?cidade={quote(cidade)}">✉ Receber alertas por e-mail</a></div>
+<a class="btn" href="../alertas.html?cidade={quote(cidade)}">Receber alertas por e-mail</a></div>
 <p class="info">Construtoras: {escape(', '.join(construtoras))}. Dados coletados todo dia dos sites oficiais; preço e disponibilidade, consulte a construtora.</p>
 {secoes}'''
     return _documento(f'Lançamentos na planta em {cidade} | NaPlanta', descricao, canonica, corpo, None, ld,
