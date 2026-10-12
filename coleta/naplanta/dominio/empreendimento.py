@@ -2,7 +2,8 @@
 import re, unicodedata
 
 ETAPAS = {'breve lançamento': 'Breve lançamento', 'lançamento': 'Lançamento', 'em obras': 'Em obras',
-          'obras avançadas': 'Em obras', 'em construção': 'Em obras', 'pronto para morar': 'Pronto para morar'}
+          'obras avançadas': 'Em obras', 'em construção': 'Em obras', 'obras iniciadas': 'Em obras',
+          'obras em andamento': 'Em obras', 'pronto para morar': 'Pronto para morar'}
 
 
 def etapa(texto):

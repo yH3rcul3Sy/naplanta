@@ -1,0 +1,100 @@
+{
+ "url": "https://jeronimodaveiga.com.br/empreendimentos/",
+ "esperado": [
+  {
+   "nome": "Signature Conceito Taboão",
+   "construtora": "Jeronimo da Veiga",
+   "etapa": "Lançamento",
+   "endereco": null,
+   "cidade": "Taboão da Serra",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    2,
+    3
+   ],
+   "m2": null,
+   "texto": "Signature Conceito Taboão Signature Conceito Taboão Taboão da Serra Taboão da Serra — São Paulo, SP apartamentos",
+   "imagem": "https://jeronimodaveiga.com.br/upload/empreendimentos/principal-signature-conceito-taboao.jpg",
+   "fonte": "https://jeronimodaveiga.com.br/empreendimentos/#signature-conceito-taboao",
+   "mcmv": true
+  },
+  {
+   "nome": "Super Conceito Califórnia",
+   "construtora": "Jeronimo da Veiga",
+   "etapa": "Lançamento",
+   "endereco": null,
+   "cidade": "Nova Iguaçu",
+   "uf": "RJ",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    2,
+    2
+   ],
+   "m2": null,
+   "texto": "Super Conceito Califórnia Super Conceito Califórnia Nova Iguaçu Nova Iguaçu — Rio de Janeiro, RJ apartamentos",
+   "imagem": "https://jeronimodaveiga.com.br/upload/empreendimentos/principal-super-california.jpg",
+   "fonte": "https://jeronimodaveiga.com.br/empreendimentos/#super-conceito-california",
+   "mcmv": true
+  },
+  {
+   "nome": "Essenza Conceito Taboão",
+   "construtora": "Jeronimo da Veiga",
+   "etapa": "Lançamento",
+   "endereco": null,
+   "cidade": "Taboão da Serra",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    2,
+    3
+   ],
+   "m2": null,
+   "texto": "Essenza Conceito Taboão Essenza Conceito Taboão Taboão da Serra Taboão — São Paulo, SP apartamentos",
+   "imagem": "https://jeronimodaveiga.com.br/upload/empreendimentos/principal-essenza-conceito-taboao.jpg",
+   "fonte": "https://jeronimodaveiga.com.br/empreendimentos/#essenza-conceito-taboao",
+   "mcmv": true
+  },
+  {
+   "nome": "Samba Residencial",
+   "construtora": "Jeronimo da Veiga",
+   "etapa": "Lançamento",
+   "endereco": null,
+   "cidade": "Rio de Janeiro",
+   "uf": "RJ",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    1,
+    2
+   ],
+   "m2": null,
+   "texto": "Samba Residencial Samba Residencial Grajaú Grajaú, Grande Tijuca — Rio de Janeiro, RJ apartamentos",
+   "imagem": "https://jeronimodaveiga.com.br/upload/empreendimentos/principal-samba-residencial.jpg",
+   "fonte": "https://jeronimodaveiga.com.br/empreendimentos/#samba-residencial",
+   "mcmv": true
+  },
+  {
+   "nome": "Conceito Poá",
+   "construtora": "Jeronimo da Veiga",
+   "etapa": "Lançamento",
+   "endereco": null,
+   "cidade": "Poá",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    2,
+    2
+   ],
+   "m2": null,
+   "texto": "Conceito Poá Conceito Poá Poá Poá — São Paulo, SP apartamentos",
+   "imagem": "https://jeronimodaveiga.com.br/upload/empreendimentos/principal-conceito-poa.jpg",
+   "fonte": "https://jeronimodaveiga.com.br/empreendimentos/#conceito-poa",
+   "mcmv": true
+  }
+ ]
+}

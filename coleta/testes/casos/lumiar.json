@@ -1,0 +1,112 @@
+{
+ "url": "https://construtoralumiar.com.br/imoveis-grid.php?pagina=1",
+ "esperado": [
+  {
+   "nome": "Residencial Alemanha",
+   "construtora": "Lumiar",
+   "etapa": "Pronto para Morar",
+   "endereco": "Residencial Alemanha, Vila Taquari, Itaquera",
+   "cidade": "São Paulo",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    1,
+    3
+   ],
+   "m2": [
+    36,
+    56
+   ],
+   "texto": "Residencial Alemanha Apartamentos de 1 a 3 quartos 36 a 56m² Pronto para Morar",
+   "imagem": "https://construtoralumiar.com.br/painel/public/uploads/properties/6aa9faa2926665.01746079.jpg",
+   "fonte": "https://construtoralumiar.com.br/pagina-de-imovel.php?slug=residencial-alemanha",
+   "mcmv": false
+  },
+  {
+   "nome": "Residencial Finlândia",
+   "construtora": "Lumiar",
+   "etapa": "Pronto para Morar",
+   "endereco": "Residencial Finlândia, Vila Nova Aparecida",
+   "cidade": "Mogi das Cruzes",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    2,
+    3
+   ],
+   "m2": [
+    40,
+    50
+   ],
+   "texto": "Residencial Finlândia Apartamentos com 2 e 3 quartos 40 a 50m² Pronto para Morar",
+   "imagem": "https://construtoralumiar.com.br/painel/public/uploads/properties/6aa9f710ea3057.59204769.png",
+   "fonte": "https://construtoralumiar.com.br/pagina-de-imovel.php?slug=residencial-finlandia",
+   "mcmv": false
+  },
+  {
+   "nome": "Residencial Dinamarca",
+   "construtora": "Lumiar",
+   "etapa": "Pronto para Morar",
+   "endereco": "Residencial Dinamarca, Vila Nova Aparecida",
+   "cidade": "Mogi das Cruzes",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    2,
+    3
+   ],
+   "m2": [
+    40,
+    50
+   ],
+   "texto": "Residencial Dinamarca Apartamentos com 2 e 3 quartos Apartamentos de 40m² a 50m² Pronto para Morar",
+   "imagem": "https://construtoralumiar.com.br/painel/public/uploads/properties/6aa9f32988b8e2.53839514.png",
+   "fonte": "https://construtoralumiar.com.br/pagina-de-imovel.php?slug=residencial-dinamarca",
+   "mcmv": false
+  },
+  {
+   "nome": "Residencial Noruega",
+   "construtora": "Lumiar",
+   "etapa": "Pronto para Morar",
+   "endereco": "Residencial Noruega, Vila Miranda",
+   "cidade": "Itaquaquecetuba",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    2,
+    3
+   ],
+   "m2": [
+    40,
+    58
+   ],
+   "texto": "Residencial Noruega Apartamentos de 2 a 3 quartos 40 a 58m² Pronto para Morar",
+   "imagem": "https://construtoralumiar.com.br/painel/public/uploads/properties/6aa969a8eaff49.80838277.png",
+   "fonte": "https://construtoralumiar.com.br/pagina-de-imovel.php?slug=residencial-noruega",
+   "mcmv": false
+  },
+  {
+   "nome": "Residencial Espanha",
+   "construtora": "Lumiar",
+   "etapa": "Pronto para Morar",
+   "endereco": "Residencial Espanha, Vila Curuçá",
+   "cidade": "São Paulo",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": null,
+   "m2": [
+    82,
+    92
+   ],
+   "texto": "Residencial Espanha Apartamento Duplex 82 m² a 92 m² Pronto para Morar",
+   "imagem": "https://construtoralumiar.com.br/painel/public/uploads/properties/6a88cea00a4603.13555796.jpeg",
+   "fonte": "https://construtoralumiar.com.br/pagina-de-imovel.php?slug=residencial-espanha",
+   "mcmv": false
+  }
+ ]
+}

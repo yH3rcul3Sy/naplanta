@@ -21,6 +21,10 @@ def ler(fonte, caso, html):
         return [fonte.parse(caso['url'], html, caso['etapa'])]
     if nome(fonte) == 'gfr':  # a GFR traz os cards de uma etapa numa pagina so
         return fonte.parse(html, caso['etapa'])
+    if nome(fonte) in ('lumiar', 'jeronimodaveiga'):  # todos numa pagina de lista
+        return fonte.parse(html)[:5]
+    if nome(fonte) == 'ribeira':  # etapa, nome e cidade vem do card da lista
+        return [fonte.parse(caso['url'], html, tuple(caso['card']))]
     return [fonte.parse(caso['url'], html)]
 
 

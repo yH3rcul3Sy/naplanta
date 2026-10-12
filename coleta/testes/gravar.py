@@ -24,6 +24,14 @@ def gravar(fonte, dados):
         caso = {'url': f'{fonte.BASE}/imoveis'}
     elif nome(fonte) == 'gfr':
         caso = {'url': f'{fonte.BASE}/load_projetos.ashx?lancamento=1', 'etapa': 'Lançamento'}
+    elif nome(fonte) == 'lumiar':
+        caso = {'url': f'{fonte.BASE}/imoveis-grid.php?pagina=1'}
+    elif nome(fonte) == 'jeronimodaveiga':
+        caso = {'url': f'{fonte.BASE}/empreendimentos/'}
+    elif nome(fonte) == 'ribeira':
+        with rede.cliente() as c:
+            card = next(k for k in fonte.cards(c.get(f'{fonte.BASE}/empreendimentos/').text) if k[1] and k[4].startswith(fonte.BASE))
+        caso = {'url': card[4], 'card': list(card)}
     elif (e := amostra(fonte, dados) or amostra(fonte, fonte.coletar())) is None:  # fonte nova: ainda sem nada publicado
         return 'sem empreendimento publicado para usar de amostra'
     else:

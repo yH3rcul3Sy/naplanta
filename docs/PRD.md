@@ -29,7 +29,7 @@ Diferenciais:
 
 ## 4. Escopo atual (v1, no ar)
 
-- Mapa e lista sincronizados, com 900+ empreendimentos de 15 incorporadoras.
+- Mapa e lista sincronizados, com 900+ empreendimentos de 18 incorporadoras.
 - Filtros: cidade, tipo, etapa, construtora, dormitórios, área mínima, distância da estação, incluir prontos.
 - Foco padrão: Mogi das Cruzes e só imóveis **na planta** (breve lançamento, lançamento, em obras).
 - Painel "O que mudou" (30 dias) e selo "Novo" (7 dias).

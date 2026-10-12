@@ -1,0 +1,35 @@
+{
+ "url": "https://ribeira.com.br/sohogaleria/",
+ "card": [
+  "Obras Iniciadas",
+  "SOHO Galeria",
+  "MOGI DAS CRUZES - SP",
+  "3 E 4 DORMITÓRIOS | ATÉ 2 VAGAS",
+  "https://ribeira.com.br/sohogaleria/",
+  "https://ribeira.com.br/wp-content/uploads/2025/08/SOHO800.jpg"
+ ],
+ "esperado": [
+  {
+   "nome": "SOHO Galeria",
+   "construtora": "Ribeira",
+   "etapa": "Obras Iniciadas",
+   "endereco": null,
+   "cidade": "Mogi das Cruzes",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    3,
+    4
+   ],
+   "m2": [
+    83.0,
+    190.0
+   ],
+   "texto": "SOHO Galeria 3 E 4 DORMITÓRIOS | ATÉ 2 VAGAS apartamentos",
+   "imagem": "https://ribeira.com.br/wp-content/uploads/2025/08/SOHO800.jpg",
+   "fonte": "https://ribeira.com.br/sohogaleria/",
+   "mcmv": false
+  }
+ ]
+}
