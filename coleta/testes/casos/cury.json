@@ -6,6 +6,8 @@
    "construtora": "Cury",
    "etapa": "Em Obras",
    "endereco": "Avenida Professor Pereira Reis, 42, Porto Maravilha. Rio de Janeiro - RJ",
+   "cidade": "Rio de Janeiro",
+   "uf": "RJ",
    "lat": -22.896748,
    "lng": -43.203118,
    "dorms": [

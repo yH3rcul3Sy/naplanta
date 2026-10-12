@@ -1,0 +1,27 @@
+{
+ "url": "https://www.vibraresidencial.com.br/produtos/estacao-sao-mateus/",
+ "esperado": [
+  {
+   "nome": "Vibra Estação São Mateus",
+   "construtora": "Vibra Residencial",
+   "etapa": "Em obras",
+   "endereco": "Av. Sapopemba, 15997, Cidade Satelite Santa Barbara, São Paulo",
+   "cidade": "São Paulo",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    1,
+    2
+   ],
+   "m2": [
+    31.0,
+    37.0
+   ],
+   "texto": "VIBRA ESTAÇÃO SÃO MATEUS apartamentos",
+   "imagem": "https://gruponortiss1.blob.core.windows.net/portal-corretor/251031_151919_Acesso",
+   "fonte": "https://www.vibraresidencial.com.br/produtos/estacao-sao-mateus/",
+   "mcmv": true
+  }
+ ]
+}
