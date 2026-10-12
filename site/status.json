@@ -1,5 +1,5 @@
 {
- "coleta": "2026-10-12T12:45-03:00",
+ "coleta": "2026-10-12T16:05-03:00",
  "fontes": [
   {
    "site": "https://helbor.com.br",
@@ -77,9 +77,15 @@
    "site": "https://www.vibraresidencial.com.br",
    "construtora": "Vibra Residencial",
    "total": 20,
-   "ok": false,
-   "erro": "nenhum empreendimento retornado (site fora do ar ou bloqueando o acesso)",
-   "atualizada": "2026-10-09"
+   "ok": true,
+   "atualizada": "2026-10-12"
+  },
+  {
+   "site": "https://arboreengenharia.com.br",
+   "construtora": "Árbore",
+   "total": 49,
+   "ok": true,
+   "atualizada": "2026-10-12"
   }
  ]
 }
