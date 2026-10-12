@@ -122,8 +122,28 @@ def _faixa(v, u):
     return None if not v else f'{v[0]:g}{u}' if v[0] == v[1] else f'{v[0]:g} a {v[1]:g}{u}'
 
 
-def html_empreendimento(e, nome_arquivo, outros=()):
-    """outros: empreendimentos da mesma cidade para o bloco 'Outros lançamentos' (links internos)."""
+def _data(iso):
+    return '/'.join(reversed(iso.split('-')))
+
+
+def linha_do_tempo(e, eventos, inicio):
+    """Itens (data, texto) do mais antigo ao mais novo: estreia no site e trocas de etapa vistas pela coleta diaria."""
+    itens = [(ev['data'], f"Mudou de {ev['de']} para {ev['etapa']}") for ev in eventos if ev['tipo'] == 'etapa']
+    if e.get('desde'):
+        itens.append((e['desde'], f"Apareceu no site da {e['construtora']}"))
+    elif inicio:  # ja estava no site quando o acompanhamento comecou
+        itens.append((inicio, 'Já estava no site quando o NaPlanta começou a acompanhar'))
+    return sorted(itens)
+
+
+assert linha_do_tempo({'construtora': 'X', 'desde': '2026-10-01'}, [{'tipo': 'etapa', 'data': '2026-10-05', 'de': 'Lançamento', 'etapa': 'Em obras'}],
+                      '2026-09-25') == [('2026-10-01', 'Apareceu no site da X'), ('2026-10-05', 'Mudou de Lançamento para Em obras')]
+assert linha_do_tempo({'construtora': 'X', 'desde': None}, [], '2026-09-25')[0][0] == '2026-09-25'
+
+
+def html_empreendimento(e, nome_arquivo, outros=(), eventos=(), inicio=None):
+    """outros: empreendimentos da mesma cidade para o bloco 'Outros lançamentos' (links internos).
+    eventos: o que a coleta registrou desse empreendimento (mudancas.json); inicio: quando o acompanhamento comecou."""
     lugar = ' - '.join(filter(None, [e.get('cidade'), e.get('uf')]))
     fatos = ' · '.join(filter(None, [_faixa(e.get('dorms'), ' dormitórios'), _faixa(e.get('m2'), ' m²')]))
     descricao = f"{e['nome']}: {(e.get('tipo') or 'empreendimento').lower()} da {e['construtora']} em {lugar or 'local não informado'}, " \
@@ -146,7 +166,8 @@ def html_empreendimento(e, nome_arquivo, outros=()):
     trilha, ld_trilha = _trilha([('NaPlanta', URL)] + ([(cidade, f'{URL}lancamentos/{pagina_cidade(cidade)}.html')] if cidade else []) + [(e['nome'], None)])
     ld = _ld(dados) + ld_trilha
     rota = f"https://www.google.com/maps/dir/?api=1&destination={e['lat']},{e['lng']}" if e.get('lat') is not None else None
-    fato =lambda rotulo, valor: f'<div class="fato"><small>{rotulo}</small><strong>{escape(valor)}</strong></div>' if valor else ''
+    tempo = linha_do_tempo(e, eventos, inicio)
+    fato = lambda rotulo, valor: f'<div class="fato"><small>{rotulo}</small><strong>{escape(valor)}</strong></div>' if valor else ''
     zap = 'https://wa.me/?text=' + quote(f"{e['nome']} ({e['construtora']}, {lugar or 'NaPlanta'}): {canonica}")
     corpo = f'''{trilha}{f'<img class="foto" src="../{escape(e["imagem"])}" alt="Foto de {escape(e["nome"])}" width="600" height="300">' if e.get('imagem') else ''}
 <div class="selos"><span class="selo {ETAPA_CLASSE.get(e.get('etapa'), '')}">{escape(e.get('etapa') or '')}</span>{'<span class="selo">MCMV</span>' if e.get('mcmv') else ''}</div>
@@ -163,7 +184,8 @@ def html_empreendimento(e, nome_arquivo, outros=()):
 {'<p class="aviso">Localização aproximada: o pino está no bairro, não no endereço exato.</p>' if e.get('aprox') else ''}
 {'<div class="bloco"><h2>Minha Casa Minha Vida</h2><p style="margin:0">A página da construtora cita o programa. Veja se você se enquadra no <a href="https://www.portaldeempreendimentos.caixa.gov.br/simulador/" rel="noopener">simulador da Caixa ↗</a>.</p></div>' if e.get('mcmv') else ''}
 {'<div class="bloco"><h2>Arredores</h2><ul>' + ''.join(f'<li>{escape(a)}</li>' for a in arredores) + '</ul><p class="info" style="margin:8px 0 0">Dados do OpenStreetMap, distâncias em linha reta.</p></div>' if arredores else ''}
-<p class="info">{f"No site da construtora desde {'/'.join(reversed(e['desde'].split('-')))}. " if e.get('desde') else ''}Informações do site da {escape(e['construtora'])}; preço e disponibilidade, consulte a construtora.</p>
+{'<div class="bloco"><h2>Linha do tempo</h2><ul>' + ''.join(f'<li><strong>{_data(d)}</strong> · {escape(t)}</li>' for d, t in tempo) + '</ul><p class="info" style="margin:8px 0 0">Datas em que a coleta diária viu cada mudança no site da construtora.</p></div>' if tempo else ''}
+<p class="info">Informações do site da {escape(e['construtora'])}; preço e disponibilidade, consulte a construtora.</p>
 {_outros(cidade, outros)}'''
     return _documento(f"{e['nome']} · {e['construtora']}{' · ' + e['cidade'] if e.get('cidade') else ''} | NaPlanta",
                       descricao, canonica, corpo, e.get('imagem'), ld,
@@ -272,10 +294,15 @@ def gerar():
     for e in dados:
         if e.get('cidade'):
             por_cidade[e['cidade']].append(e)
+    mudancas = json.loads((SITE / 'mudancas.json').read_text(encoding='utf8')) if (SITE / 'mudancas.json').exists() else {'eventos': []}
+    eventos = defaultdict(list)
+    for ev in mudancas['eventos']:
+        eventos[ev['fonte']].append(ev)
     pasta = _limpar(SITE / 'e')
     for e in dados:
         outros = vizinhos(e, por_cidade.get(e.get('cidade'), []))
-        (pasta / f"{e['pagina']}.html").write_text(html_empreendimento(e, e['pagina'], outros), encoding='utf8')
+        html = html_empreendimento(e, e['pagina'], outros, eventos[e['fonte']], mudancas.get('inicio'))
+        (pasta / f"{e['pagina']}.html").write_text(html, encoding='utf8')
     (pasta / 'index.html').write_text(html_lista(dados), encoding='utf8')
     pasta = _limpar(SITE / 'lancamentos')
     for cidade, lista in por_cidade.items():
