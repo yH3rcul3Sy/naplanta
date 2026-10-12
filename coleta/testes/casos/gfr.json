@@ -1,0 +1,38 @@
+{
+ "url": "https://gfrempreendimentos.com.br/load_projetos.ashx?lancamento=1",
+ "etapa": "Lançamento",
+ "esperado": [
+  {
+   "nome": "Origem Mogi",
+   "construtora": "GFR",
+   "etapa": "Lançamento",
+   "endereco": null,
+   "cidade": "Mogi das Cruzes",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": null,
+   "m2": null,
+   "texto": "Origem Mogi Prepare-se para mais um lançamento da GFR. Onde nasce o sonho. SAIBA MAIS loteamento",
+   "imagem": "https://zaft.com.br/cms/upload/gfr/3_Origem_Mogi.jpg",
+   "fonte": "https://gfrempreendimentos.com.br/projetos#origem-mogi",
+   "mcmv": false
+  },
+  {
+   "nome": "Bern",
+   "construtora": "GFR",
+   "etapa": "Lançamento",
+   "endereco": null,
+   "cidade": "Campinas",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": null,
+   "m2": null,
+   "texto": "Bern Bern amplia o potencial do Swiss Park Campinas: 189 lotes empresariais planejados para receber negócios que valorizam estrutura, acessibilidade e um ambiente pensado para crescer com solidez e visão de futuro. Saiba Mais loteamento",
+   "imagem": "https://zaft.com.br/cms/upload/gfr/Bern_1.jpg",
+   "fonte": "https://gfrempreendimentos.com.br/projetos#bern",
+   "mcmv": false
+  }
+ ]
+}

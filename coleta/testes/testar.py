@@ -19,6 +19,8 @@ def ler(fonte, caso, html):
         return fonte.lista(html)[:5]
     if nome(fonte) == 'integra':  # a etapa vem da listagem, nao da pagina
         return [fonte.parse(caso['url'], html, caso['etapa'])]
+    if nome(fonte) == 'gfr':  # a GFR traz os cards de uma etapa numa pagina so
+        return fonte.parse(html, caso['etapa'])
     return [fonte.parse(caso['url'], html)]
 
 

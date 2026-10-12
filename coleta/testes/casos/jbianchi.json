@@ -1,0 +1,28 @@
+{
+ "url": "https://jbianchi.com.br/empreendimento/residencial-oliveira/",
+ "esperado": [
+  {
+   "nome": "Residencial Oliveira",
+   "construtora": "J.Bianchi",
+   "etapa": "Em obras",
+   "endereco": null,
+   "bairro": "Vila Oliveira",
+   "cidade": "Mogi das Cruzes",
+   "uf": "SP",
+   "lat": -23.52493909147093,
+   "lng": -46.16572855968207,
+   "dorms": [
+    3,
+    3
+   ],
+   "m2": [
+    97.24,
+    198.0
+   ],
+   "texto": "Residencial Oliveira Em construção Vila Oliveira - Mogi das Cruzes Residencial Oliveira O edifício mais moderno, elegante e sustentável de Mogi.",
+   "imagem": "https://jbianchi.com.br/wp-content/uploads/2024/05/LANCAMENTO-2.webp",
+   "fonte": "https://jbianchi.com.br/empreendimento/residencial-oliveira/",
+   "mcmv": false
+  }
+ ]
+}

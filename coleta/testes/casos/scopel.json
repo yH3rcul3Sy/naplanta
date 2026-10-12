@@ -1,0 +1,24 @@
+{
+ "url": "https://scopel.com.br/empreendimentos/aruja-hills-premium/",
+ "esperado": [
+  {
+   "nome": "Arujá Hills Premium",
+   "construtora": "Scopel",
+   "etapa": "Em obras",
+   "endereco": null,
+   "cidade": "Arujá",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": null,
+   "m2": [
+    467,
+    467
+   ],
+   "texto": "Arujá Hills Premium loteamento",
+   "imagem": "https://scopel.com.br/wp-content/uploads/2023/08/bg-aruja-hills.jpg",
+   "fonte": "https://scopel.com.br/empreendimentos/aruja-hills-premium/",
+   "mcmv": false
+  }
+ ]
+}

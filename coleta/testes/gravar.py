@@ -22,7 +22,9 @@ def amostra(fonte, dados):
 def gravar(fonte, dados):
     if nome(fonte) == 'eztec':
         caso = {'url': f'{fonte.BASE}/imoveis'}
-    elif (e := amostra(fonte, dados)) is None:
+    elif nome(fonte) == 'gfr':
+        caso = {'url': f'{fonte.BASE}/load_projetos.ashx?lancamento=1', 'etapa': 'Lançamento'}
+    elif (e := amostra(fonte, dados) or amostra(fonte, fonte.coletar())) is None:  # fonte nova: ainda sem nada publicado
         return 'sem empreendimento publicado para usar de amostra'
     else:
         caso = {'url': e['fonte'], **({'etapa': e['etapa']} if nome(fonte) == 'integra' else {})}
