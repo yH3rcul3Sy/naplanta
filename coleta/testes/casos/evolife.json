@@ -1,0 +1,28 @@
+{
+ "url": "https://evolifeincorporadora.com.br/imovel/edificio-evolife-patriarca/",
+ "etapa": "Breve lançamento",
+ "esperado": [
+  {
+   "nome": "Edifício EvoLife Patriarca",
+   "construtora": "Evo Life",
+   "etapa": "Breve lançamento",
+   "endereco": "Rua Namé, 365, Patriarca",
+   "cidade": "São Paulo",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    1,
+    2
+   ],
+   "m2": [
+    27,
+    38
+   ],
+   "texto": "Edifício EvoLife Patriarca apartamentos",
+   "imagem": "https://evolifeincorporadora.com.br/wp-content/uploads/2025/01/Evo-Patriarca.jpg",
+   "fonte": "https://evolifeincorporadora.com.br/imovel/edificio-evolife-patriarca/",
+   "mcmv": false
+  }
+ ]
+}

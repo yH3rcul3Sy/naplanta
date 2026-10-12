@@ -35,7 +35,7 @@ def gravar(fonte, dados):
     elif (e := amostra(fonte, dados) or amostra(fonte, fonte.coletar())) is None:  # fonte nova: ainda sem nada publicado
         return 'sem empreendimento publicado para usar de amostra'
     else:
-        caso = {'url': e['fonte'], **({'etapa': e['etapa']} if nome(fonte) == 'integra' else {})}
+        caso = {'url': e['fonte'], **({'etapa': e['etapa']} if nome(fonte) in ('integra', 'evolife', 'lumy') else {})}
     with rede.cliente() as c:
         r = c.get(caso['url'])
     if r.status_code != 200:

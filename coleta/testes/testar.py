@@ -17,7 +17,7 @@ def ler(fonte, caso, html):
     """Resultado da leitura da pagina gravada, do mesmo jeito que coletar() faz."""
     if nome(fonte) == 'eztec':  # a EZTEC traz todos numa pagina so; os 5 primeiros bastam
         return fonte.lista(html)[:5]
-    if nome(fonte) == 'integra':  # a etapa vem da listagem, nao da pagina
+    if nome(fonte) in ('integra', 'evolife', 'lumy'):  # a etapa vem da listagem, nao da pagina
         return [fonte.parse(caso['url'], html, caso['etapa'])]
     if nome(fonte) == 'gfr':  # a GFR traz os cards de uma etapa numa pagina so
         return fonte.parse(html, caso['etapa'])

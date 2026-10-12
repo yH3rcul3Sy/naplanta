@@ -1,0 +1,28 @@
+{
+ "url": "https://lumy.com.br/empreendimentos/lumy-cajamar/",
+ "etapa": "Lançamento",
+ "esperado": [
+  {
+   "nome": "Lumy Lucca Cajamar",
+   "construtora": "Lumy",
+   "etapa": "Lançamento",
+   "endereco": "Lumy Lucca Cajamar, Polvilho",
+   "cidade": "Cajamar",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    2,
+    3
+   ],
+   "m2": [
+    38,
+    48
+   ],
+   "texto": "Lumy Lucca Cajamar apartamentos",
+   "imagem": "https://lumy.com.br/wp-content/uploads/2026/05/6ef1bbfd62763544b391c0054c3d3caa-WhatsApp-Image-2024-05-10-at-16.00.21.webp",
+   "fonte": "https://lumy.com.br/empreendimentos/lumy-cajamar/",
+   "mcmv": true
+  }
+ ]
+}
