@@ -1,0 +1,21 @@
+name: alertas por e-mail
+# a noite, depois das duas coletas do dia (GitHub de manha e PC ao meio-dia), para pegar as novidades de ambas
+on:
+  schedule:
+    - cron: '0 23 * * *'  # 20:00 em Brasilia
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  alertas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: '3.12'
+      - run: pip install -r coleta/requirements.txt
+      - run: python coleta/alertas.py
+        env:
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}  # chave da API da Brevo (Settings > Secrets > Actions)
