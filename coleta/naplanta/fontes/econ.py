@@ -23,7 +23,7 @@ def parse(url, html):
     loc, metros, quartos = e.get('localizacao') or {}, [m['metros'] for m in e.get('metragem') or []], [q['qtde'] for q in e.get('quartos') or []]
     zona = loc.get('zona') or ''
     # na capital a Econ informa a zona; em "Grande São Paulo" a cidade e o fim do endereco ("..., 160 - Guarulhos")
-    fim = re.split(r'\s[-–]\s|,', loc.get('endereco_empreendimento') or '')[-1].strip()
+    fim = re.split(r'\s[-–]\s|,', loc.get('endereco_empreendimento') or loc.get('endereco') or '')[-1].strip()
     cidade = 'São Paulo' if re.match(r'(?i)zona|centro', zona) else (fim or None) if 'grande' in zona.lower() else zona or None
     return {
         'nome': e['titulo'],
