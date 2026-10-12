@@ -7,6 +7,7 @@ SITE = RAIZ / 'site'
 FOTOS = SITE / 'fotos'
 CACHE = RAIZ / 'coleta' / 'cache'
 URL_SITE = 'https://naplanta.app.br/'
+CONTADOR = 'https://naplanta.goatcounter.com'  # GoatCounter: visitas sem cookies (script em site/js/vendor)
 
 FUSO = timezone(timedelta(hours=-3))  # Brasil sem horario de verao desde 2019
 UA_ROBO = 'NaPlantaBot/0.1 (projeto academico UMC)'  # sites das incorporadoras e fotos

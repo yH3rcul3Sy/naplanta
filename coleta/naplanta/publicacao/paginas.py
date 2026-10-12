@@ -6,7 +6,7 @@ from html import escape
 from collections import Counter, defaultdict
 from itertools import groupby
 from urllib.parse import quote
-from naplanta.config import SITE, URL_SITE as URL
+from naplanta.config import CONTADOR, SITE, URL_SITE as URL
 from naplanta.dominio.texto import slug
 
 
@@ -91,7 +91,7 @@ def _documento(titulo, descricao, canonica, corpo, imagem=None, extra='', palavr
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'none'; style-src 'unsafe-inline'; img-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src {CONTADOR}; style-src 'unsafe-inline'; img-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{escape(titulo)}</title>
 <meta name="description" content="{escape(descricao)}">
@@ -112,6 +112,7 @@ def _documento(titulo, descricao, canonica, corpo, imagem=None, extra='', palavr
 {corpo}
 </main>
 <footer class="rodape"><a href="../e/">Todos os empreendimentos</a> · <a href="../transparencia.html">Sobre os dados</a> · <a href="../transparencia.html#perguntas">Perguntas frequentes</a> · <a href="../privacidade.html">Privacidade</a></footer>
+<script data-goatcounter="{CONTADOR}/count" async src="../js/vendor/goatcounter.js"></script>
 </body>
 </html>
 '''

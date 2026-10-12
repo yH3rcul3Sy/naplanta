@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'none'; style-src 'unsafe-inline'; img-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src https://naplanta.goatcounter.com; style-src 'unsafe-inline'; img-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#e7f2ec">
 <title>Privacidade · NaPlanta</title>
@@ -31,9 +31,12 @@
 </header>
 <main>
   <h1>Privacidade</h1>
-  <p class="info">Atualizada em 11 de outubro de 2026.</p>
+  <p class="info">Atualizada em 12 de outubro de 2026.</p>
 
   <p>O NaPlanta é um mapa público de lançamentos imobiliários. <strong>Não tem cadastro, não usa cookies e não coleta dados pessoais</strong> de quem visita.</p>
+
+  <h2>Contagem de visitas</h2>
+  <p>Para saber quantas pessoas usam o site, o NaPlanta conta visitas com o <a href="https://www.goatcounter.com/help/privacy">GoatCounter</a>, que <strong>não usa cookies</strong> e não identifica ninguém: registra só a página vista, de onde a visita veio (por exemplo, Google), o tipo de navegador e aparelho, o tamanho da tela e o país. O endereço IP não é guardado.</p>
 
   <h2>O que fica no seu aparelho</h2>
   <ul>
@@ -44,6 +47,7 @@
   <h2>Serviços de terceiros que o site usa</h2>
   <p>Como em qualquer site, ao carregar a página o seu navegador se conecta a estes serviços, que podem registrar o endereço IP e o navegador em seus próprios registros técnicos:</p>
   <ul>
+    <li><strong>GoatCounter</strong>: contagem de visitas sem cookies, descrita acima.</li>
     <li><strong>GitHub Pages</strong>: hospeda o site (<a href="https://docs.github.com/pt/site-policy/privacy-policies/github-general-privacy-statement">privacidade do GitHub</a>).</li>
     <li><strong>OpenStreetMap</strong>: fornece as imagens do mapa (<a href="https://osmfoundation.org/wiki/Privacy_Policy">privacidade da OSM Foundation</a>).</li>
     <li><strong>jsDelivr</strong>: entrega a biblioteca do mapa, Leaflet (<a href="https://www.jsdelivr.com/terms/privacy-policy-jsdelivr-net">privacidade do jsDelivr</a>).</li>
@@ -56,7 +60,8 @@
   <h2>Seus direitos (LGPD)</h2>
   <p>Como o NaPlanta não guarda dados pessoais de visitantes, não há o que acessar, corrigir ou apagar. Dúvidas ou pedidos podem ser feitos em <a href="https://github.com/yH3rcul3Sy/naplanta/issues">github.com/yH3rcul3Sy/naplanta/issues</a>.</p>
 
-  <p class="info">Se o site passar a usar estatísticas de visitas ou e-mail, esta página será atualizada antes.</p>
+  <p class="info">Se o site passar a coletar qualquer outro dado, esta página será atualizada antes.</p>
 </main>
+<script data-goatcounter="https://naplanta.goatcounter.com/count" async src="js/vendor/goatcounter.js"></script>
 </body>
 </html>
