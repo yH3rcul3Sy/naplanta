@@ -243,6 +243,7 @@ def llms_txt(dados, por_cidade):
 - Não coleta preços nem dados pessoais; cada empreendimento leva à página oficial da construtora.
 - Para cada empreendimento: etapa da obra, construtora, endereço, dormitórios, área, previsão de entrega, estação de trem/metrô mais próxima e serviços a até 1 km (OpenStreetMap).
 - Selo MCMV: a página da construtora cita o Minha Casa Minha Vida (não é garantia de enquadramento).
+- Contato: contato@naplanta.app.br
 
 ## Páginas principais
 
