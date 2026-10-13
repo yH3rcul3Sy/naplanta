@@ -12,6 +12,9 @@ ETAPAS = ('breve lançamento', 'lançamento', 'em obras', 'pronto para morar')
 MUNICIPIOS = ('Mogi das Cruzes', 'Itaquaquecetuba', 'Suzano', 'Poá', 'Ferraz de Vasconcelos', 'Guarulhos', 'Arujá')
 
 
+MAPA = re.compile(r'!2d(-?\d+\.\d+)!3d(-?\d+\.\d+)')  # embed do Google Maps: !2d<lng>!3d<lat>
+
+
 def lugar(texto, nome=''):
     """'Vila Nova Aparecida, Mogi das Cruzes' -> (bairro, cidade). Sem cidade conhecida no fim, vale a do nome
     ("Renaissance Suzano") ou a capital ("Vila Taquari, Itaquera")."""
@@ -69,4 +72,9 @@ def coletar():
                 break
             vistos |= {e['fonte'] for e in novos}
             out += novos
+        for e in out:
+            # o bairro do card engana ("Vila da Prata" existe em Sao Paulo e em Mogi); o mapa da pagina nao.
+            # Sem cidade, o geo tira a cidade da propria posicao.
+            if (r := c.get(e['fonte'])).status_code == 200 and (m := MAPA.search(r.text)):
+                e['lat'], e['lng'], e['cidade'], e['uf'] = float(m[2]), float(m[1]), None, None
     return out

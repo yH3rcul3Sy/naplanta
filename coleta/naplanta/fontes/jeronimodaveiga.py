@@ -38,6 +38,20 @@ def parse(html):
     return out
 
 
+MAPA = re.compile(r'!2d(-?\d+\.\d+)!3d(-?\d+\.\d+)')  # embed do Google Maps: !2d<lng>!3d<lat>
+
+
+def sites(html):
+    """{nome: site proprio do lancamento}; e la que fica o mapa com a posicao do predio."""
+    return {' '.join(c['data-nome'].split()): c.select_one('a[href^="http"]')['href']
+            for c in BeautifulSoup(html, 'html.parser').select('article.emp-card[data-nome]') if c.select_one('a[href^="http"]')}
+
+
 def coletar():
     with rede.cliente() as c:
-        return parse(c.get(f'{BASE}/empreendimentos/').raise_for_status().text)
+        html = c.get(f'{BASE}/empreendimentos/').raise_for_status().text
+        out, links = parse(html), sites(html)
+        for e in out:
+            if (site := links.get(e['nome'])) and (r := c.get(site)).status_code == 200 and (m := MAPA.search(r.text)):
+                e['lat'], e['lng'] = float(m[2]), float(m[1])
+    return out

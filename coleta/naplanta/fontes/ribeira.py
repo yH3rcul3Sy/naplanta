@@ -12,6 +12,9 @@ ENDERECO = re.compile(r'((?:Rua|R\.|Av\.|Avenida|Estrada|Alameda|Travessa)\s[^<>
                       r'([A-ZÀ-Ú][^<>"–-]{2,40}?)\s*(?:–|-)\s*Mogi das Cruzes')
 
 
+MAPA = re.compile(r'!2d(-?\d+\.\d+)!3d(-?\d+\.\d+)')  # embed do Google Maps: !2d<lng>!3d<lat>
+
+
 def cidade(texto):  # "MOGI DAS CRUZES - SP" -> ("Mogi das Cruzes", "SP")
     nome, _, uf = texto.rpartition('-')
     return ' '.join(p if p in MINUSCULAS else p.capitalize() for p in nome.lower().split()), uf.strip() or None
@@ -44,6 +47,7 @@ def parse(url, html, card):
     municipio, uf = cidade(local)
     texto = unescape(html)
     end = ENDERECO.search(texto)
+    mapa = MAPA.search(html)
     m2 = [float(x.replace('.', '').replace(',', '.')) for x in re.findall(r'(?<![\d.])(\d{2,3}(?:,\d+)?)\s*m²', texto)]
     m2 = [x for x in m2 if 20 <= x <= 400]  # tira terreno e areas de lazer
     dorms = [int(x) for x in re.findall(r'(\d)\s*(?=(?:\s*(?:e|a)\s*\d)*\s*(?:dormit|su[íi]te))', ficha, re.I)]
@@ -54,7 +58,7 @@ def parse(url, html, card):
         'endereco': f'{end[1].strip()}, {end[2].strip()}, {municipio} - {uf}' if end else None,
         'cidade': municipio,
         'uf': uf,
-        'lat': None, 'lng': None,
+        'lat': float(mapa[2]) if mapa else None, 'lng': float(mapa[1]) if mapa else None,
         'dorms': [min(dorms), max(dorms)] if dorms else None,
         'm2': [min(m2), max(m2)] if m2 else None,
         'texto': f'{nome} {ficha} apartamentos',

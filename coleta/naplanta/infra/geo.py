@@ -40,6 +40,9 @@ assert _sem_acento('São Paulo ') == 'sao paulo' and _sem_acento(None) == ''
 
 def na_cidade(lat, lng, cidade):
     a = _get('reverse', lat=lat, lon=lng, zoom=10).get('address', {})  # ponto no mar volta sem endereco
+    # no DF o OSM devolve a regiao administrativa (Ceilandia, Recanto das Emas), e o municipio e todo Brasilia
+    if _sem_acento(cidade) == 'brasilia' and a.get('ISO3166-2-lvl4') == 'BR-DF':
+        return True
     return _sem_acento(_cidade(a)) == _sem_acento(cidade)
 
 
