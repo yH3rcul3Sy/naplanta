@@ -8,8 +8,14 @@ BASE = 'https://helbor.com.br'
 
 
 def links(c):
-    xml = c.get(f'{BASE}/sitemap.xml').text
-    return sorted(set(re.findall(rf'<loc>({BASE}/empreendimentos/[^<]+)</loc>', xml)))
+    # o sitemap passou a trazer so alguns (out/2026); a lista completa esta paginada em /empreendimentos?page=N
+    achados = set(re.findall(rf'<loc>({BASE}/empreendimentos/[^<]+)</loc>', c.get(f'{BASE}/sitemap.xml').text))
+    for pagina in range(1, 30):
+        novos = set(re.findall(rf'{BASE}/empreendimentos/[a-z0-9-]+', c.get(f'{BASE}/empreendimentos', params={'page': pagina}).text))
+        if not novos - achados:
+            break
+        achados |= novos
+    return sorted(achados)
 
 
 def parse(url, html):
