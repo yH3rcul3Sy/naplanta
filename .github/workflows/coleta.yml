@@ -15,7 +15,7 @@ jobs:
   coleta:
     if: github.event_name != 'push'  # push so republica o site, sem coletar de novo
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 180  # 23 fontes + geocodificacao dos enderecos novos passam de 1 h
     permissions:
       contents: write  # commit dos dados coletados
       issues: write    # aviso de fonte parada

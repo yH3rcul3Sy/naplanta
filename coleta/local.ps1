@@ -7,7 +7,7 @@ if ($Agendar) {
     $acao = New-ScheduledTaskAction -Execute 'powershell.exe' -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`""
     $quando = New-ScheduledTaskTrigger -Daily -At '12:00'  # depois da coleta do GitHub (06h, que costuma atrasar)
     # StartWhenAvailable: se o PC estava desligado ao meio-dia, roda assim que ligar
-    $regras = New-ScheduledTaskSettingsSet -StartWhenAvailable -ExecutionTimeLimit (New-TimeSpan -Hours 2) -RunOnlyIfNetworkAvailable
+    $regras = New-ScheduledTaskSettingsSet -StartWhenAvailable -ExecutionTimeLimit (New-TimeSpan -Hours 4) -RunOnlyIfNetworkAvailable
     Register-ScheduledTask -TaskName 'NaPlanta coleta local' -Action $acao -Trigger $quando -Settings $regras -Force | Out-Null
     'Agendado: todo dia 12:00 (ou ao ligar o PC).'
     return
