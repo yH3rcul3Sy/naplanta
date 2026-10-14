@@ -1,17 +1,26 @@
 name: coleta e publicacao
 # titulo de cada execucao na aba Actions (sem isso o GitHub usa a mensagem do commit)
-run-name: ${{ github.event_name == 'push' && 'Publicação do site' || github.event_name == 'schedule' && 'Coleta diária' || 'Coleta manual' }}
+# o horario agendado (cron, em UTC) vai no titulo: e assim que coleta/agendamento.py mede o atraso de cada execucao
+run-name: ${{ github.event_name == 'push' && 'Publicação do site' || github.event_name == 'schedule' && format('Coleta diária ({0})', github.event.schedule) || 'Coleta manual' }}
 on:
   schedule:
-    # minuto quebrado: na hora cheia o GitHub atrasa por horas ou descarta o agendamento
+    # minuto quebrado: na hora cheia o GitHub atrasa por horas ou descarta o agendamento.
+    # Horarios em UTC; Brasilia e UTC-3 o ano todo (sem horario de verao desde 2019).
+    # A primeira que conseguir rodar no dia coleta; as outras veem a coleta feita e encerram (job "precisa")
     - cron: '23 8 * * *'   # 05:23 em Brasilia
-    - cron: '23 14 * * *'  # 11:23: reserva, so coleta se a das 05:23 nao rodou no dia
+    - cron: '23 11 * * *'  # 08:23 reserva
+    - cron: '23 14 * * *'  # 11:23 reserva
+    - cron: '23 17 * * *'  # 14:23 reserva
   workflow_dispatch:     # botao "Run workflow" na aba Actions
   push:
     branches: [main]
 permissions: {}  # cada job pede so o que usa
+# Duas filas: coletas (agendadas e manuais) nunca rodam juntas e push nao disputa lugar com elas, entao uma
+# reserva nao cancela um deploy de push que estava esperando. O GitHub mantem 1 execucao esperando por fila
+# (a nova substitui a antiga): entre coletas isso so troca uma reserva por outra; entre pushes, fica o mais novo.
+# Os deploys das duas filas sao serializados no job "publicar" (grupo pages).
 concurrency:
-  group: publicacao
+  group: ${{ github.event_name == 'push' && 'publicacao-push' || 'publicacao-coleta' }}
   cancel-in-progress: false
 jobs:
   precisa:
@@ -23,17 +32,23 @@ jobs:
       coletar: ${{ steps.v.outputs.coletar }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          # a main de agora, nao a do disparo: uma reserva que esperou na fila enquanto outra coletava
+          # precisa ver o status.json dessa coleta para nao coletar de novo
+          ref: main
       - id: v
         run: |
           hoje=$(TZ=America/Sao_Paulo date +%F)
-          if [ "${{ github.event.schedule }}" = '23 14 * * *' ] && grep -q "\"coleta\": \"$hoje" site/status.json; then
-            echo "coleta de hoje ja feita; a reserva nao roda"
+          # agendada so coleta uma vez por dia; a manual (Run workflow) sempre coleta
+          if [ "${{ github.event_name }}" = schedule ] && grep -q "\"coleta\": \"$hoje" site/status.json; then
+            echo "coleta de hoje ja feita; este horario de reserva nao roda"
           else
             echo coletar=1 >> "$GITHUB_OUTPUT"
           fi
 
   coleta:
-    needs: precisa
+    # so coleta com os testes verdes; sem "always()", testes com falha ou pulados deixam a coleta pulada
+    needs: [precisa, testes]
     if: needs.precisa.outputs.coletar == '1'
     runs-on: ubuntu-latest
     timeout-minutes: 180  # 23 fontes + geocodificacao dos enderecos novos passam de 1 h
@@ -42,12 +57,16 @@ jobs:
       issues: write    # aviso de fonte parada
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          ref: main  # compara com os dados atuais (e nao com os do disparo) e grava por cima deles
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
         with:
           python-version: '3.12'
       - run: pip install -r coleta/requirements.txt
       - run: python coleta/testes/testar.py  # leitura dos coletores contra paginas gravadas; se falhar, nao coleta
       - run: python coleta/coletar.py
+      # dado fora do formato nao e gravado: o job falha, nada vai ao ar e o site segue com a coleta anterior
+      - run: python coleta/testes/validar_dados.py
       - run: |
           git config user.name "coleta-bot"
           git config user.email "coleta-bot@users.noreply.github.com"
@@ -76,11 +95,30 @@ jobs:
             gh issue close "$num" --comment "Todas as fontes voltaram a atualizar."
           fi
 
+  testes:
+    # portao da coleta: so coleta com a bateria verde sobre a main atual. Em push nao roda aqui
+    # (o workflow "testes" ja roda no push, e o "publicar" testa o commit exato que publica)
+    needs: precisa
+    if: needs.precisa.outputs.coletar == '1'
+    uses: ./.github/workflows/testes.yml
+    with:
+      ref: main
+    permissions:
+      contents: read
+
   publicar:
-    # o commit da coleta nao dispara outro workflow, entao a publicacao roda aqui mesmo
+    # O commit testado e o publicado sao o mesmo: este job faz um unico checkout da main, roda a bateria
+    # completa sobre ele, gera as paginas, valida o artefato e publica esse mesmo diretorio. Nenhum outro
+    # job escolhe o que vai ao ar. Se a main mudar depois do checkout, a execucao do commit novo publica
+    # em seguida (grupo pages, sem cancelar o deploy em andamento).
+    # Roda no push (codigo novo) ou depois de uma coleta concluida; reserva sem coleta e coleta com falha nao publicam.
     needs: coleta
-    if: always() && needs.coleta.result != 'failure' && needs.coleta.result != 'cancelled'
+    if: always() && (github.event_name == 'push' || needs.coleta.result == 'success')
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     permissions:
       contents: read
       pages: write
@@ -91,8 +129,19 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
-          ref: main  # pega o commit novo da coleta
-      - run: python3 coleta/paginas.py  # paginas por empreendimento e sitemap; geradas aqui, fora do git
+          ref: main  # inclui o commit de dados desta coleta
+      - name: Commit que sera testado e publicado
+        run: echo "Publicando $(git rev-parse HEAD)" | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+        with:
+          python-version: '3.12'
+      - run: pip install -r coleta/requirements.txt ruff==0.17.0
+      - name: Bateria completa sobre este commit
+        run: bash coleta/testes/tudo.sh
+      - run: python coleta/paginas.py  # paginas por empreendimento e sitemap; geradas aqui, fora do git
+      # valida o que vai mesmo ao ar (o paginas.py reescreve o dados.json e gera as paginas): se falhar,
+      # o artefato nao e enviado e o site segue com a versao publicada
+      - run: python coleta/testes/validar_dados.py --publicacao
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d  # v6.0.0
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9  # v5.0.0
         with:

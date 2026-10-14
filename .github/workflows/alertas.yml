@@ -1,5 +1,5 @@
 name: alertas por e-mail
-# a noite, depois das duas coletas do dia (GitHub de manha e PC ao meio-dia), para pegar as novidades de ambas
+# a noite, depois da coleta do dia (que pode atrasar para a tarde), para pegar as novidades dela
 on:
   schedule:
     - cron: '0 23 * * *'  # 20:00 em Brasilia
