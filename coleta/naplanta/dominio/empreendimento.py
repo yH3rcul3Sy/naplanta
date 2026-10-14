@@ -27,7 +27,7 @@ assert tipo('Loteamento fechado de alto padrão') == 'Lote'
 assert tipo('Casas em Condomínio Fechado de 2 e 3 dorms.') == 'Casa em condomínio'
 assert tipo('Casa Piauí, studios de 30 m²') == 'Apartamento'
 
-INVISIVEIS = re.compile(r'[​-‏⁠﻿]')
+INVISIVEIS = re.compile(r'[\u200b-\u200f\u2060\ufeff]')
 
 
 def limpo(e):
@@ -38,7 +38,7 @@ def limpo(e):
     return e
 
 
-assert limpo({'cidade': 'São Paulo​', 'nome': ' Walk -  Guarulhos ', 'n': 2}) == {'cidade': 'São Paulo', 'nome': 'Walk - Guarulhos', 'n': 2}
+assert limpo({'cidade': 'São Paulo\u200b', 'nome': ' Walk -  Guarulhos ', 'n': 2}) == {'cidade': 'São Paulo', 'nome': 'Walk - Guarulhos', 'n': 2}
 
 
 CAMPOS_VIGIADOS = ('cidade', 'lat', 'dorms', 'm2', 'imagem', 'endereco', 'entrega')
