@@ -6,9 +6,8 @@ Arquitetura limpa na medida do projeto: **camadas com dependência num sentido s
 
 ```
 coleta/                              backend em lote (Python 3.12)
-  coletar.py                         ponto de entrada: coleta diária (Actions e local.ps1)
+  coletar.py                         ponto de entrada: coleta diária (GitHub Actions)
   paginas.py                         ponto de entrada: páginas e sitemap (job publicar)
-  local.ps1                          agendamento da coleta no PC do projeto
   requirements.txt
   cache/                             dados de apoio versionados (não é código)
     geo.json                         respostas do Nominatim

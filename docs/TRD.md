@@ -10,7 +10,6 @@ Tudo em lote: um robô gera arquivos JSON por dia e um site estático os lê. **
 flowchart LR
     subgraph Coleta [Coleta · Python 3.12]
       A[GitHub Actions 06h] --> C[app/coleta_diaria.py]
-      L[PC do projeto 12h<br>local.ps1] --> C
       C --> R[infra/rede.py<br>robots.txt + pausa]
       R --> F[12 coletores]
       C --> G[geo.py<br>Nominatim]
@@ -29,7 +28,7 @@ A estrutura completa e a regra de dependência entre camadas estão em [arquitet
 
 | Camada | Onde | Responsabilidade |
 |---|---|---|
-| Entrada | `coleta/coletar.py`, `coleta/paginas.py` | Pontos de entrada usados pelo Actions e pelo `local.ps1` |
+| Entrada | `coleta/coletar.py`, `coleta/paginas.py` | Pontos de entrada usados pelo Actions |
 | Caso de uso | `naplanta/app/coleta_diaria.py` | Orquestra: coleta, valida, compara com ontem e grava |
 | Domínio | `naplanta/dominio/` | Regras puras: validação, etapa, tipo, mudanças, quedas, texto |
 | Adaptadores | `naplanta/fontes/<fonte>.py` | `coletar()` devolve a lista de empreendimentos; `parse()` lê uma página |

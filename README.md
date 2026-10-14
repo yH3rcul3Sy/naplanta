@@ -102,7 +102,7 @@ flowchart LR
 | Habras | O site bloqueia acessos automatizados |
 | Cyrela | O site bloqueia acessos automatizados |
 
-Cury e Sousa Araujo não respondem às coletas feitas pelos servidores do GitHub; os dados delas são atualizados quando a coleta roda localmente.
+Cury, Sousa Araujo e J.Bianchi não respondem às coletas feitas pelos servidores do GitHub; o mapa mantém os dados da última coleta que funcionou e avisa a data no card. Para atualizá-las, rode a coleta num computador (veja abaixo).
 
 </details>
 
@@ -130,7 +130,6 @@ Depois é só abrir http://localhost:8000. A primeira coleta demora mais, porque
 ```
 coleta/
   coletar.py · paginas.py   pontos de entrada (coleta diária; páginas e sitemap)
-  local.ps1                 coleta diária no computador do projeto (Cury e Sousa Araujo)
   cache/                    respostas do Nominatim e do Overpass
   naplanta/
     config.py               caminhos, URL, fuso e identificação do robô

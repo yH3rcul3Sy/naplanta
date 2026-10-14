@@ -34,10 +34,10 @@ jobs:
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "Atualiza dados coletados"
           # pull antes do push: um commit na main durante a coleta (que leva ate 1 h) rejeitaria o push.
-          # Conflito nos dados = a coleta do PC (que pega todas as fontes) publicou no meio: ela fica, esta cede
+          # Conflito nos dados = outra coleta (manual) publicou no meio: ela fica, esta cede
           if ! git pull --rebase; then
             git rebase --abort
-            echo "::warning::A coleta local publicou durante esta; mantidos os dados dela"
+            echo "::warning::Outra coleta publicou durante esta; mantidos os dados dela"
             exit 0
           fi
           git push
