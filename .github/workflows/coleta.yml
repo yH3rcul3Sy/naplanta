@@ -15,8 +15,12 @@ on:
   push:
     branches: [main]
 permissions: {}  # cada job pede so o que usa
+# Duas filas: coletas (agendadas e manuais) nunca rodam juntas e push nao disputa lugar com elas, entao uma
+# reserva nao cancela um deploy de push que estava esperando. O GitHub mantem 1 execucao esperando por fila
+# (a nova substitui a antiga): entre coletas isso so troca uma reserva por outra; entre pushes, fica o mais novo.
+# Os deploys das duas filas sao serializados no job "publicar" (grupo pages).
 concurrency:
-  group: publicacao
+  group: ${{ github.event_name == 'push' && 'publicacao-push' || 'publicacao-coleta' }}
   cancel-in-progress: false
 jobs:
   precisa:
@@ -92,20 +96,29 @@ jobs:
           fi
 
   testes:
-    # o mesmo workflow dos pushes e pull requests; sem ele passar, o site nao e publicado
+    # portao da coleta: so coleta com a bateria verde sobre a main atual. Em push nao roda aqui
+    # (o workflow "testes" ja roda no push, e o "publicar" testa o commit exato que publica)
+    needs: precisa
+    if: needs.precisa.outputs.coletar == '1'
     uses: ./.github/workflows/testes.yml
     with:
-      ref: main  # o mesmo estado que a coleta e a publicacao usam
+      ref: main
     permissions:
       contents: read
 
   publicar:
-    # o commit da coleta nao dispara outro workflow, entao a publicacao roda aqui mesmo
-    # publica so com testes verdes e: no push (codigo novo) ou depois de uma coleta concluida.
-    # Reserva que viu a coleta do dia feita (coleta "skipped") nao republica; coleta com falha nao publica.
-    needs: [coleta, testes]
-    if: always() && needs.testes.result == 'success' && (github.event_name == 'push' || needs.coleta.result == 'success')
+    # O commit testado e o publicado sao o mesmo: este job faz um unico checkout da main, roda a bateria
+    # completa sobre ele, gera as paginas, valida o artefato e publica esse mesmo diretorio. Nenhum outro
+    # job escolhe o que vai ao ar. Se a main mudar depois do checkout, a execucao do commit novo publica
+    # em seguida (grupo pages, sem cancelar o deploy em andamento).
+    # Roda no push (codigo novo) ou depois de uma coleta concluida; reserva sem coleta e coleta com falha nao publicam.
+    needs: coleta
+    if: always() && (github.event_name == 'push' || needs.coleta.result == 'success')
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     permissions:
       contents: read
       pages: write
@@ -116,11 +129,15 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
-          ref: main  # pega o commit novo da coleta
+          ref: main  # inclui o commit de dados desta coleta
+      - name: Commit que sera testado e publicado
+        run: echo "Publicando $(git rev-parse HEAD)" | tee -a "$GITHUB_STEP_SUMMARY"
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
         with:
           python-version: '3.12'
-      - run: pip install -r coleta/requirements.txt  # o validador importa os coletores
+      - run: pip install -r coleta/requirements.txt ruff==0.17.0
+      - name: Bateria completa sobre este commit
+        run: bash coleta/testes/tudo.sh
       - run: python coleta/paginas.py  # paginas por empreendimento e sitemap; geradas aqui, fora do git
       # valida o que vai mesmo ao ar (o paginas.py reescreve o dados.json e gera as paginas): se falhar,
       # o artefato nao e enviado e o site segue com a versao publicada
