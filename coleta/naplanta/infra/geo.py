@@ -96,6 +96,59 @@ def _procurar(e):
             lat, lng = float(r['lat']), float(r['lon'])
             if serve(r) and (not e['cidade'] or na_cidade(lat, lng, e['cidade'])):
                 return lat, lng, aprox
+    return _na_rua(e)
+
+
+PHOTON = 'https://photon.komoot.io/api/'
+
+
+def _photon(q):
+    key = 'photon' + q
+    if key not in cache:
+        for espera in (1, 5, 15):  # servico gratuito: no maximo 1 req/s, e 429 quando passa disso
+            time.sleep(espera)
+            try:
+                r = httpx.get(PHOTON, params={'q': q, 'limit': 1}, headers=UA, timeout=30)
+            except httpx.HTTPError:
+                continue
+            if r.status_code == 200:
+                break
+        else:
+            return []  # reserva: fora do ar so deixa sem pino, nao derruba a coleta
+        cache[key] = r.json().get('features') or []
+        CACHE.write_text(json.dumps(cache, ensure_ascii=False), encoding='utf8')
+    return cache[key]
+
+
+def mesma_rua(rua, osm):
+    """Metade ou mais das palavras da rua (fora tipo e titulos) no nome do OSM: o Photon aceita erro de grafia,
+    mas tambem devolve qualquer coisa parecida (cemiterio, aeroporto, a rua vizinha de nome quase igual)."""
+    tirar = {'rua', 'avenida', 'estrada', 'alameda', 'travessa', 'rodovia', 'presidente', 'professor', 'professora',
+             'doutor', 'vereador', 'coronel', 'engenheiro', 'senador', 'padre'}
+    lp = [w for w in re.findall(r'[a-z0-9]{3,}', _sem_acento(rua)) if w not in tirar]
+    o = {w for w in re.findall(r'[a-z0-9]{3,}', _sem_acento(osm)) if w not in tirar}
+    # o ultimo nome (o sobrenome) separa ruas parecidas: "Jose Aparecido Custodio" x "Jose Aparecido de Andrade"
+    return bool(lp) and lp[-1] in o and len(set(lp) & o) * 2 >= len(set(lp))
+
+
+assert mesma_rua('R. Pres. João Café Filho', 'Rua Presidente João Café Filho')
+assert mesma_rua('Rua Sigehari Ieiri', 'Rua Sigenari Ieire') is False  # grafia muito diferente: fica sem pino
+assert not mesma_rua('Av. Lázaro Maciel do Carmo', 'Avenida Paulo do Carmo Monteiro')
+assert not mesma_rua('Rua José Aparecido Custódio', 'Rua José Aparecido de Andrade')
+
+
+def _na_rua(e):
+    """Ultimo recurso: a rua do endereco no Photon (mesmo mapa do OSM, busca tolerante a grafia), so se for uma rua,
+    com nome batendo e na cidade certa. O pino fica na rua, nao no numero: marcado como aproximado."""
+    partes = [p.strip() for p in re.split(r'[,–]| - ', e.get('endereco') or '')]
+    if not (partes[0] and e['cidade'] and re.match(r'(?i)(rua|r\.|av\.?|avenida|estrada|alameda|travessa|rodovia)\s', partes[0])):
+        return None
+    numero = next((p for p in partes[1:3] if re.fullmatch(r'n?º?\s*\d+', p)), '')
+    for f in _photon(f"{partes[0]} {numero}, {e['cidade']}".replace(' ,', ',')):
+        prop, (lng, lat) = f['properties'], f['geometry']['coordinates']
+        if prop.get('osm_key') == 'highway' and mesma_rua(partes[0], prop.get('name') or prop.get('street') or '') \
+                and _sem_acento(prop.get('city') or prop.get('county')) == _sem_acento(e['cidade']):
+            return lat, lng, 'rua'
 
 
 GENERICAS = {'residencial', 'condominio', 'edificio', 'resort', 'park', 'parque', 'jardim', 'jardins', 'life', 'home', 'clube',

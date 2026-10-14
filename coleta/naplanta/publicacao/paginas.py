@@ -182,7 +182,7 @@ def html_empreendimento(e, nome_arquivo, outros=(), eventos=(), inicio=None):
   <a class="btn" href="../alertas.html{'?cidade=' + quote(cidade) if cidade else ''}">Receber alertas por e-mail</a>
 </div>
 {f'<p class="info">📍 {escape(e["endereco"])}</p>' if e.get('endereco') else ''}
-{'<p class="aviso">Localização aproximada: o pino está no bairro, não no endereço exato.</p>' if e.get('aprox') else ''}
+{f'<p class="aviso">Localização aproximada: o pino está {"na rua" if e.get("aprox") == "rua" else "no bairro"}, não no endereço exato.</p>' if e.get('aprox') else ''}
 {'<div class="bloco"><h2>Minha Casa Minha Vida</h2><p style="margin:0">A página da construtora cita o programa. Veja se você se enquadra no <a href="https://www.portaldeempreendimentos.caixa.gov.br/simulador/" rel="noopener">simulador da Caixa ↗</a>.</p></div>' if e.get('mcmv') else ''}
 {'<div class="bloco"><h2>Arredores</h2><ul>' + ''.join(f'<li>{escape(a)}</li>' for a in arredores) + '</ul><p class="info" style="margin:8px 0 0">Dados do OpenStreetMap, distâncias em linha reta.</p></div>' if arredores else ''}
 {'<div class="bloco"><h2>Linha do tempo</h2><ul>' + ''.join(f'<li><strong>{_data(d)}</strong> · {escape(t)}</li>' for d, t in tempo) + '</ul><p class="info" style="margin:8px 0 0">Datas em que a coleta diária viu cada mudança no site da construtora.</p></div>' if tempo else ''}

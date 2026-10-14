@@ -33,7 +33,7 @@ export function cartao(e, ctx) {
       ${e.endereco ? `<p class="info">${esc(e.endereco)}</p>` : ''}
       ${fatos ? `<p class="fatos">${esc(fatos)}</p>` : ''}
       ${e.entrega ? `<p class="info">Entrega: ${esc(e.entrega)}</p>` : ''}
-      ${e.aprox ? '<p class="info aprox">Localização aproximada: o pino está no bairro, não no endereço exato</p>' : ''}
+      ${e.aprox ? `<p class="info aprox">Localização aproximada: o pino está ${e.aprox === 'rua' ? 'na rua' : 'no bairro'}, não no endereço exato</p>` : ''}
       ${ctx.parados[e.construtora] ? `<p class="info aprox">Dados de ${dataBR(ctx.parados[e.construtora])}: o site da ${esc(e.construtora)} não respondeu às últimas coletas</p>` : ''}
       ${arredores(e)}
       <div class="acoes">${acao}</div>`;

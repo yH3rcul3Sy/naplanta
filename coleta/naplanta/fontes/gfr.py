@@ -58,5 +58,23 @@ def coletar():
     out = []
     with rede.cliente() as c:
         for chave, etapa in ETAPAS.items():
-            out += parse(c.get(f'{BASE}/load_projetos.ashx', params={chave: 1}).raise_for_status().text, etapa)
+            html = c.get(f'{BASE}/load_projetos.ashx', params={chave: 1}).raise_for_status().text
+            novos, sites = parse(html, etapa), externos(html)
+            for e in novos:  # lancamento com site proprio: e la que fica o mapa com a posicao
+                if (site := sites.get(e['nome'])) and (r := c.get(site)).status_code == 200 and (m := MAPA.search(r.text)):
+                    e['lat'], e['lng'] = float(m[2]), float(m[1])
+            out += novos
+    return out
+
+
+MAPA = re.compile(r'!2d(-?\d+\.\d+)!3d(-?\d+\.\d+)')  # embed do Google Maps: !2d<lng>!3d<lat>
+
+
+def externos(html):
+    """{nome: site proprio} dos cards que linkam para fora do dominio da GFR."""
+    out = {}
+    for card in BeautifulSoup(html, 'html.parser').select('.projeto-box'):
+        nome, link = card.select_one('.projeto-nome'), card.select_one('a[href^="http"]')
+        if nome and link and not link['href'].startswith(BASE):
+            out[titulo(nome.get_text(' ').strip())] = link['href']
     return out
