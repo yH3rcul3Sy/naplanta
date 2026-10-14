@@ -65,9 +65,12 @@ def coletar():
     out = []
     with rede.cliente() as c:
         obras, pagina = [], 1
-        while lote := c.get(f'{BASE}/wp-json/wp/v2/empreendimento',
-                            params={'per_page': 100, 'page': pagina, '_fields': 'title,link'}).json():
-            if not isinstance(lote, list):  # passou da ultima pagina: a API devolve um erro em JSON
+        while True:
+            r = c.get(f'{BASE}/wp-json/wp/v2/empreendimento', params={'per_page': 100, 'page': pagina, '_fields': 'title,link'})
+            if r.status_code == 400 and pagina > 1:  # passou da ultima pagina
+                break
+            lote = r.raise_for_status().json()  # 403 = o site recusou a coleta (bloqueia servidores fora do Brasil)
+            if not lote:
                 break
             obras += lote
             pagina += 1
