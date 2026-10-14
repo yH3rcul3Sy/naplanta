@@ -5,6 +5,11 @@ on:
   push:
   pull_request:
   workflow_call:
+    inputs:
+      ref:
+        description: commit ou branch a testar (vazio = o do evento)
+        type: string
+        default: ''
 permissions:
   contents: read
 jobs:
@@ -13,16 +18,28 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          ref: ${{ inputs.ref }}  # o deploy passa 'main': testa o mesmo estado que a coleta e a publicacao usam
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
         with:
           python-version: '3.12'
       - run: pip install -r coleta/requirements.txt ruff==0.17.0
-      - name: Lint (erros reais e caracteres invisiveis no codigo)
+      - name: Lint dos workflows (actionlint, versao e checksum fixos)
+        env:
+          VERSAO: 1.7.12
+          SHA256: 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8  # actionlint_1.7.12_linux_amd64.tar.gz
+        run: |
+          curl -sSfLo /tmp/al.tgz "https://github.com/rhysd/actionlint/releases/download/v${VERSAO}/actionlint_${VERSAO}_linux_amd64.tar.gz"
+          echo "${SHA256}  /tmp/al.tgz" | sha256sum -c -
+          tar -xzf /tmp/al.tgz -C /tmp actionlint
+          # sem shellcheck/pyflakes embutidos: so erros de estrutura, expressoes e contextos dos workflows
+          /tmp/actionlint -shellcheck= -pyflakes= -color
+      - name: Lint do Python (erros reais e caracteres invisiveis no codigo)
         # E9 sintaxe, F nomes indefinidos e imports quebrados, PLE25 caracteres de controle (o bug do \b virando backspace)
         run: ruff check coleta --select E9,F,PLE25 --output-format github
       - name: Autotestes das regras (assert dentro dos modulos)
         working-directory: coleta
-        run: python -c "import coletar, paginas, alerta, alertas, naplanta.publicacao.paginas, naplanta.app.alertas; print('autotestes ok')"
+        run: python -c "import coletar, paginas, alerta, alertas, agendamento, naplanta.publicacao.paginas, naplanta.app.alertas; print('autotestes ok')"
       - name: Leitura dos coletores contra paginas gravadas
         run: python coleta/testes/testar.py
       - name: Validacao dos dados publicados

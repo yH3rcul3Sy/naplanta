@@ -1,6 +1,7 @@
 """Valida os JSONs publicados (site/dados.json, status.json, mudancas.json): estrutura, campos obrigatorios e
 consistencia entre eles. Roda nos testes de cada push e na coleta, antes de gravar: dado fora do formato nao vai ao ar.
-python coleta/testes/validar_dados.py [pasta do site]       (sai com erro e lista os problemas)"""
+python coleta/testes/validar_dados.py [pasta do site] [--publicacao]   (sai com erro e lista os problemas)
+--publicacao: depois do paginas.py, confere tambem uma pagina por empreendimento e o sitemap (o que vai mesmo ao ar)."""
 import json, pathlib, re, sys
 from collections import Counter
 
@@ -82,10 +83,32 @@ def erros_mudancas(mudancas):
     return erros
 
 
-def validar(pasta):
+def erros_publicacao(dados, pasta):
+    """Depois do paginas.py: cada empreendimento com a sua pagina, nenhuma pagina sobrando e o sitemap completo."""
+    erros = []
+    nomes = [e.get('pagina') for e in dados]
+    if not all(isinstance(n, str) and n for n in nomes):
+        return [f'publicacao: {sum(not n for n in nomes)} empreendimento(s) sem o campo pagina (paginas.py nao rodou?)']
+    erros += [f'publicacao: pagina repetida {n}' for n, k in Counter(nomes).items() if k > 1]
+    feitas = {p.stem for p in (pasta / 'e').glob('*.html')} - {'index'}
+    erros += [f'publicacao: falta a pagina e/{n}.html' for n in sorted(set(nomes) - feitas)]
+    erros += [f'publicacao: pagina e/{n}.html sem empreendimento' for n in sorted(feitas - set(nomes))]
+    if len(feitas) != len(dados):
+        erros.append(f'publicacao: {len(feitas)} paginas em e/ para {len(dados)} empreendimentos')
+    if not (pasta / 'e' / 'index.html').is_file():
+        erros.append('publicacao: falta e/index.html')
+    sitemap = (pasta / 'sitemap.xml').read_text(encoding='utf8') if (pasta / 'sitemap.xml').is_file() else ''
+    no_sitemap = len(re.findall(r'<loc>[^<]*/e/[^<]+\.html</loc>', sitemap))
+    if no_sitemap != len(dados):
+        erros.append(f'publicacao: sitemap com {no_sitemap} paginas de empreendimento para {len(dados)} empreendimentos')
+    return erros
+
+
+def validar(pasta, publicacao=False):
     ler = lambda nome: json.loads((pasta / nome).read_text(encoding='utf8'))
     dados = ler('dados.json')
-    return erros_dados(dados, pasta) + erros_status(ler('status.json'), dados) + erros_mudancas(ler('mudancas.json'))
+    erros = erros_dados(dados, pasta) + erros_status(ler('status.json'), dados) + erros_mudancas(ler('mudancas.json'))
+    return erros + (erros_publicacao(dados, pasta) if publicacao else [])
 
 
 # autoteste: o validador pega o que deve pegar
@@ -97,13 +120,17 @@ assert any('fora do Brasil' in x for x in erros_dados([{**_bom, 'lat': 48.8, 'ln
 assert any('nao pertence' in x for x in erros_dados([{**_bom, 'fonte': 'https://golpe.io/a'}], SITE))
 assert any('repetida' in x for x in erros_dados([_bom, _bom], SITE))
 assert any('nao existe' in x for x in erros_dados([{**_bom, 'imagem': 'fotos/nao-existe.webp'}], SITE))
+assert any('sem o campo pagina' in x for x in erros_publicacao([_bom], SITE))
+assert any('falta a pagina' in x for x in erros_publicacao([{**_bom, 'pagina': 'a'}], pathlib.Path('pasta-que-nao-existe')))
 assert any('diz 5' in x for x in erros_status({'coleta': '2026-10-14T05:23', 'fontes': [
     {'site': FONTES[0].BASE, 'total': 5, 'ok': True}]}, [_bom]))
 
 
 if __name__ == '__main__':
-    pasta = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else SITE
-    erros = validar(pasta)
+    publicacao = '--publicacao' in sys.argv  # no job publicar, depois do paginas.py: confere tambem paginas e sitemap
+    args = [a for a in sys.argv[1:] if a != '--publicacao']
+    pasta = pathlib.Path(args[0]) if args else SITE
+    erros = validar(pasta, publicacao)
     for erro in erros[:50]:
         print('ERRO', erro)
     if len(erros) > 50:
