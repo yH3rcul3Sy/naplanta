@@ -1,11 +1,16 @@
 name: coleta e publicacao
 # titulo de cada execucao na aba Actions (sem isso o GitHub usa a mensagem do commit)
-run-name: ${{ github.event_name == 'push' && 'Publicação do site' || github.event_name == 'schedule' && 'Coleta diária' || 'Coleta manual' }}
+# o horario agendado (cron, em UTC) vai no titulo: e assim que coleta/agendamento.py mede o atraso de cada execucao
+run-name: ${{ github.event_name == 'push' && 'Publicação do site' || github.event_name == 'schedule' && format('Coleta diária ({0})', github.event.schedule) || 'Coleta manual' }}
 on:
   schedule:
-    # minuto quebrado: na hora cheia o GitHub atrasa por horas ou descarta o agendamento
+    # minuto quebrado: na hora cheia o GitHub atrasa por horas ou descarta o agendamento.
+    # Horarios em UTC; Brasilia e UTC-3 o ano todo (sem horario de verao desde 2019).
+    # A primeira que conseguir rodar no dia coleta; as outras veem a coleta feita e encerram (job "precisa")
     - cron: '23 8 * * *'   # 05:23 em Brasilia
-    - cron: '23 14 * * *'  # 11:23: reserva, so coleta se a das 05:23 nao rodou no dia
+    - cron: '23 11 * * *'  # 08:23 reserva
+    - cron: '23 14 * * *'  # 11:23 reserva
+    - cron: '23 17 * * *'  # 14:23 reserva
   workflow_dispatch:     # botao "Run workflow" na aba Actions
   push:
     branches: [main]
@@ -26,8 +31,9 @@ jobs:
       - id: v
         run: |
           hoje=$(TZ=America/Sao_Paulo date +%F)
-          if [ "${{ github.event.schedule }}" = '23 14 * * *' ] && grep -q "\"coleta\": \"$hoje" site/status.json; then
-            echo "coleta de hoje ja feita; a reserva nao roda"
+          # agendada so coleta uma vez por dia; a manual (Run workflow) sempre coleta
+          if [ "${{ github.event_name }}" = schedule ] && grep -q "\"coleta\": \"$hoje" site/status.json; then
+            echo "coleta de hoje ja feita; este horario de reserva nao roda"
           else
             echo coletar=1 >> "$GITHUB_OUTPUT"
           fi
@@ -48,6 +54,8 @@ jobs:
       - run: pip install -r coleta/requirements.txt
       - run: python coleta/testes/testar.py  # leitura dos coletores contra paginas gravadas; se falhar, nao coleta
       - run: python coleta/coletar.py
+      # dado fora do formato nao e gravado: o job falha, nada vai ao ar e o site segue com a coleta anterior
+      - run: python coleta/testes/validar_dados.py
       - run: |
           git config user.name "coleta-bot"
           git config user.email "coleta-bot@users.noreply.github.com"
@@ -76,10 +84,16 @@ jobs:
             gh issue close "$num" --comment "Todas as fontes voltaram a atualizar."
           fi
 
+  testes:
+    # o mesmo workflow dos pushes e pull requests; sem ele passar, o site nao e publicado
+    uses: ./.github/workflows/testes.yml
+    permissions:
+      contents: read
+
   publicar:
     # o commit da coleta nao dispara outro workflow, entao a publicacao roda aqui mesmo
-    needs: coleta
-    if: always() && needs.coleta.result != 'failure' && needs.coleta.result != 'cancelled'
+    needs: [coleta, testes]
+    if: always() && needs.testes.result == 'success' && needs.coleta.result != 'failure' && needs.coleta.result != 'cancelled'
     runs-on: ubuntu-latest
     permissions:
       contents: read
