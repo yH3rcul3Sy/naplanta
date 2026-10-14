@@ -94,6 +94,19 @@ Legenda usada em todo o documento:
 
 ## 4. Roadmap completo
 
+### Estado das tarefas (atualizado em 14/10/2026)
+
+Ajustes decididos depois da auditoria: agendamento primeiro sem token (4 horários nativos, 7 dias de observação); quarentena com revisão manual para mudanças graves, sem aceitar automaticamente após 3 coletas; pedido de uso das fotos às 23 incorporadoras antes de decidir suspensão; dados brutos só estruturados e com retenção definida.
+
+| Tarefa | Estado | Evidência |
+|---|---|---|
+| F3/F8 Testes em push e PR, lint, validação dos JSONs, deploy depende dos testes | implementado na branch `fase0-testes`, aguardando revisão | PR da Fase 0; execução do workflow `testes` na branch |
+| F2 Agendamento: 4 horários nativos + registro de horários | implementado na branch, **depende de observação real** após o merge | `docs/agendamento.md`, `coleta/agendamento.py` |
+| Métricas de base (`docs/metricas.md`) | não iniciado | — |
+| Contatos às 4 fontes bloqueadas + pedido de fotos às 23 | não iniciado (nada é enviado sem aprovação) | — |
+| Inventário das fotos e opções | não iniciado | — |
+| Critérios de quarentena (documento) | não iniciado | — |
+
 ### Fase 0 — Estabilização (semana 1)
 
 | Iniciativa | P | Impacto | Esforço | Critério de conclusão | Como validar |
