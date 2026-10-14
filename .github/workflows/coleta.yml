@@ -3,7 +3,9 @@ name: coleta e publicacao
 run-name: ${{ github.event_name == 'push' && 'Publicação do site' || github.event_name == 'schedule' && 'Coleta diária' || 'Coleta manual' }}
 on:
   schedule:
-    - cron: '0 9 * * *'  # 06:00 em Brasilia
+    # minuto quebrado: na hora cheia o GitHub atrasa por horas ou descarta o agendamento
+    - cron: '23 8 * * *'   # 05:23 em Brasilia
+    - cron: '23 14 * * *'  # 11:23: reserva, so coleta se a das 05:23 nao rodou no dia
   workflow_dispatch:     # botao "Run workflow" na aba Actions
   push:
     branches: [main]
@@ -12,8 +14,27 @@ concurrency:
   group: publicacao
   cancel-in-progress: false
 jobs:
-  coleta:
+  precisa:
     if: github.event_name != 'push'  # push so republica o site, sem coletar de novo
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      coletar: ${{ steps.v.outputs.coletar }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - id: v
+        run: |
+          hoje=$(TZ=America/Sao_Paulo date +%F)
+          if [ "${{ github.event.schedule }}" = '23 14 * * *' ] && grep -q "\"coleta\": \"$hoje" site/status.json; then
+            echo "coleta de hoje ja feita; a reserva nao roda"
+          else
+            echo coletar=1 >> "$GITHUB_OUTPUT"
+          fi
+
+  coleta:
+    needs: precisa
+    if: needs.precisa.outputs.coletar == '1'
     runs-on: ubuntu-latest
     timeout-minutes: 180  # 23 fontes + geocodificacao dos enderecos novos passam de 1 h
     permissions:
