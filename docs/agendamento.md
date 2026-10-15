@@ -13,7 +13,8 @@
 
 - Brasília é UTC-3 o ano todo (sem horário de verão desde 2019).
 - Execuções agendadas só coletam se ainda não houve coleta no dia (`status.json`); as demais encerram em segundos (job `coleta` = `skipped`).
-- O grupo de concorrência `publicacao` impede duas execuções ao mesmo tempo (a segunda espera na fila).
+- Duas filas de concorrência: `publicacao-coleta` (agendadas e manuais) e `publicacao-push` (pushes na main). Dentro de cada fila não rodam duas ao mesmo tempo; o GitHub mantém só 1 execução esperando por fila (a nova substitui a antiga). Os deploys das duas filas são serializados pelo grupo `pages` do job `publicar`.
+- Uma reserva que não aparece pode ter sido substituída na fila por outra reserva: antes de concluir que não rodou, conferir execuções canceladas ou na fila.
 - A coleta manual (Run workflow) sempre coleta.
 
 ## Como medir
@@ -23,6 +24,17 @@ python coleta/agendamento.py 7
 ```
 
 Lê a API pública do GitHub (sem token). Para cada execução: horário previsto (lido do título `Coleta diária (<cron>)`, gravado a partir deste PR), criação, início, fim, atraso (início − previsto), resultado e se o job `coleta` rodou ou foi pulado.
+
+## Estado da validação em produção
+
+| Etapa | Estado | Evidência |
+|---|---|---|
+| Merge na main | confirmado em 14/10/2026 | PR #9, commit `26db17e` |
+| Publicação pelo fluxo novo (testes → páginas → validação do artefato → deploy) | confirmada em 14/10/2026, sem coleta (push) | execução 38653246098; sitemap com 1.207 páginas de empreendimento |
+| Coleta real pelo fluxo novo (testes → coleta → validação → commit de dados → publicação) | **pendente**: primeira oportunidade 15/10 às 05:23 | — |
+| Observação de 7 dias | começa após a primeira coleta real | tabela abaixo |
+
+A primeira coleta bem-sucedida comprova o fluxo, não que o agendamento melhorou: essa conclusão só sai da comparação dos 7 dias com a linha de base.
 
 ## Linha de base (antes da mudança), medida em 14/10/2026 às 19:16
 

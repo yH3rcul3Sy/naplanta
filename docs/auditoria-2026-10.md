@@ -100,8 +100,8 @@ Ajustes decididos depois da auditoria: agendamento primeiro sem token (4 horári
 
 | Tarefa | Estado | Evidência |
 |---|---|---|
-| F3/F8 Testes em push e PR, lint, validação dos JSONs, deploy depende dos testes | implementado na branch `fase0-testes`, aguardando revisão | PR da Fase 0; execução do workflow `testes` na branch |
-| F2 Agendamento: 4 horários nativos + registro de horários | implementado na branch, **depende de observação real** após o merge | `docs/agendamento.md`, `coleta/agendamento.py` |
+| F3/F8 Testes em push e PR, lint, validação dos JSONs, deploy depende dos testes | na main (PR #9, 14/10); publicação validada em produção; **coleta real pelo fluxo novo pendente** (15/10) | PR #9; execução 38653246098 |
+| F2 Agendamento: 4 horários nativos + registro de horários | na main desde 14/10; **aguarda a primeira coleta real e 7 dias de observação** | `docs/agendamento.md`, `coleta/agendamento.py` |
 | Métricas de base (`docs/metricas.md`) | não iniciado | — |
 | Contatos às 4 fontes bloqueadas + pedido de fotos às 23 | não iniciado (nada é enviado sem aprovação) | — |
 | Inventário das fotos e opções | não iniciado | — |
