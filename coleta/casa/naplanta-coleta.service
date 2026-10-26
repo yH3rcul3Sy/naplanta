@@ -1,0 +1,7 @@
+[Unit]
+Description=Dispara a coleta do NaPlanta no runner de casa
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/gh workflow run coleta.yml -R yH3rcul3Sy/naplanta -f local=casa

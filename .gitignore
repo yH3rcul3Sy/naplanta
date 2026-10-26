@@ -11,3 +11,5 @@ site/e/
 site/lancamentos/
 site/sitemap.xml
 site/llms.txt
+# coleta em casa: runner, venv e units geradas por coleta/casa/instalar.sh
+.casa/
