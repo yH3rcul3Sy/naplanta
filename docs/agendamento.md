@@ -33,7 +33,7 @@ Cury, Sousa Araujo, J.Bianchi e Direcional bloqueiam IP de datacenter (auditoria
 
 | O quê | Onde |
 |---|---|
-| Runner do GitHub (`casa-danilo`, label `casa`) | `.casa/runner`; PATH dos jobs em `.casa/runner/.path` |
+| Runner do GitHub (`casa-danilo`, label `casa`) | `.casa/runner`; PATH dos jobs na unit `naplanta-runner.service` |
 | Python 3.12 dos jobs | `.casa/venv`, primeiro no PATH dos jobs |
 | Units do systemd | modelos em `coleta/casa/`, geradas em `.casa/systemd/` e ligadas com `systemctl --user link` |
 | `gh` (dispara o timer e abre a issue de fonte parada) e `uv` | `~/.local/bin`, com `gh auth login` feito |
