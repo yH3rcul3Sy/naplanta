@@ -29,48 +29,14 @@ Cury, Sousa Araujo, J.Bianchi e Direcional bloqueiam IP de datacenter (auditoria
 - PC desligado ou dormindo às 04:53: o timer dispara quando ele ligar (`Persistent=true`). Até lá as agendadas coletam no GitHub sem as 4 fontes; a de casa, por ser manual, coleta de novo e completa o dia.
 - O repositório é público: PRs de fork de qualquer contribuidor externo pedem aprovação antes de rodar (Settings → Actions), para nenhum código de terceiros chegar ao runner.
 
-**Na máquina** (Ubuntu, usuário com `loginctl enable-linger`):
+**Na máquina** (Ubuntu, `loginctl enable-linger` para os serviços rodarem sem sessão aberta): `bash coleta/casa/instalar.sh`. Ele cria tudo em `.casa/` (fora do git) e pode rodar de novo sem estragar nada.
 
 | O quê | Onde |
 |---|---|
-| Runner do GitHub | `~/actions-runner` (`config.sh --labels casa`); PATH dos jobs em `~/actions-runner/.path` |
-| Python 3.12 dos jobs | `~/naplanta-runner/venv` (`uv venv --seed --python 3.12`), primeiro no `.path` |
-| `gh` (dispara o timer e abre a issue de fonte parada) | `~/.local/bin/gh`, logado com `gh auth login` |
-| Serviços | `~/.config/systemd/user/naplanta-runner.service`, `naplanta-coleta.service` e `naplanta-coleta.timer` |
-
-```ini
-# naplanta-runner.service
-[Unit]
-Description=Runner do GitHub Actions do NaPlanta
-After=network-online.target
-[Service]
-WorkingDirectory=%h/actions-runner
-ExecStart=%h/actions-runner/run.sh
-Restart=always
-RestartSec=30
-KillSignal=SIGINT
-[Install]
-WantedBy=default.target
-
-# naplanta-coleta.service
-[Unit]
-Description=Dispara a coleta do NaPlanta no runner de casa
-After=network-online.target
-[Service]
-Type=oneshot
-ExecStart=%h/.local/bin/gh workflow run coleta.yml -R yH3rcul3Sy/naplanta -f local=casa
-
-# naplanta-coleta.timer
-[Unit]
-Description=Coleta diaria do NaPlanta as 04:53
-[Timer]
-OnCalendar=*-*-* 04:53:00 America/Sao_Paulo
-Persistent=true
-[Install]
-WantedBy=timers.target
-```
-
-Ativar: `systemctl --user daemon-reload && systemctl --user enable --now naplanta-runner.service naplanta-coleta.timer`.
+| Runner do GitHub (`casa-danilo`, label `casa`) | `.casa/runner`; PATH dos jobs em `.casa/runner/.path` |
+| Python 3.12 dos jobs | `.casa/venv`, primeiro no PATH dos jobs |
+| Units do systemd | modelos em `coleta/casa/`, geradas em `.casa/systemd/` e ligadas com `systemctl --user link` |
+| `gh` (dispara o timer e abre a issue de fonte parada) e `uv` | `~/.local/bin`, com `gh auth login` feito |
 
 ## Como medir
 
