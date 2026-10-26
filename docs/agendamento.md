@@ -17,6 +17,61 @@
 - Uma reserva que não aparece pode ter sido substituída na fila por outra reserva: antes de concluir que não rodou, conferir execuções canceladas ou na fila.
 - A coleta manual (Run workflow) sempre coleta.
 
+## Coleta em casa (desde 26/10/2026)
+
+Cury, Sousa Araujo, J.Bianchi e Direcional bloqueiam IP de datacenter (auditoria, D1), então a coleta principal roda num runner self-hosted no PC do mantenedor, com IP residencial. O GitHub continua orquestrando: testes, commit dos dados e publicação são os mesmos.
+
+| Horário (Brasília) | Quem dispara | Onde coleta |
+|---|---|---|
+| 04:53 | timer do systemd no PC (`gh workflow run coleta.yml -f local=casa`) | runner `casa-danilo` (label `casa`) |
+| 05:23, 08:23, 11:23, 14:23 | agendamento do GitHub | `ubuntu-latest`; só coletam se a de casa não rodou no dia |
+
+- PC desligado ou dormindo às 04:53: o timer dispara quando ele ligar (`Persistent=true`). Até lá as agendadas coletam no GitHub sem as 4 fontes; a de casa, por ser manual, coleta de novo e completa o dia.
+- O repositório é público: PRs de fork de qualquer contribuidor externo pedem aprovação antes de rodar (Settings → Actions), para nenhum código de terceiros chegar ao runner.
+
+**Na máquina** (Ubuntu, usuário com `loginctl enable-linger`):
+
+| O quê | Onde |
+|---|---|
+| Runner do GitHub | `~/actions-runner` (`config.sh --labels casa`); PATH dos jobs em `~/actions-runner/.path` |
+| Python 3.12 dos jobs | `~/naplanta-runner/venv` (`uv venv --seed --python 3.12`), primeiro no `.path` |
+| `gh` (dispara o timer e abre a issue de fonte parada) | `~/.local/bin/gh`, logado com `gh auth login` |
+| Serviços | `~/.config/systemd/user/naplanta-runner.service`, `naplanta-coleta.service` e `naplanta-coleta.timer` |
+
+```ini
+# naplanta-runner.service
+[Unit]
+Description=Runner do GitHub Actions do NaPlanta
+After=network-online.target
+[Service]
+WorkingDirectory=%h/actions-runner
+ExecStart=%h/actions-runner/run.sh
+Restart=always
+RestartSec=30
+KillSignal=SIGINT
+[Install]
+WantedBy=default.target
+
+# naplanta-coleta.service
+[Unit]
+Description=Dispara a coleta do NaPlanta no runner de casa
+After=network-online.target
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/gh workflow run coleta.yml -R yH3rcul3Sy/naplanta -f local=casa
+
+# naplanta-coleta.timer
+[Unit]
+Description=Coleta diaria do NaPlanta as 04:53
+[Timer]
+OnCalendar=*-*-* 04:53:00 America/Sao_Paulo
+Persistent=true
+[Install]
+WantedBy=timers.target
+```
+
+Ativar: `systemctl --user daemon-reload && systemctl --user enable --now naplanta-runner.service naplanta-coleta.timer`.
+
 ## Como medir
 
 ```bash
