@@ -9,6 +9,8 @@ CASA=$RAIZ/.casa
 REPO=yH3rcul3Sy/naplanta
 RUNNER=2.338.1  # o runner se atualiza sozinho depois de registrado
 
+export UV_PYTHON_INSTALL_DIR=$CASA/python  # o Python baixado pelo uv fica aqui, nao em ~/.local/share/uv
+
 mkdir -p "$CASA/systemd" "$CASA/runner"
 [ -x "$CASA/venv/bin/pip" ] || uv venv --seed --python 3.12 "$CASA/venv"
 if [ ! -f "$CASA/runner/.runner" ]; then
