@@ -1,165 +1,166 @@
 {
- "coleta": "2026-10-26T16:01-03:00",
+ "coleta": "2026-10-27T12:01-03:00",
  "fontes": [
   {
    "site": "https://helbor.com.br",
    "construtora": "Helbor",
    "total": 40,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://www.cacengenharia.com.br",
    "construtora": "C.A.C Engenharia",
    "total": 9,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://cury.net",
    "construtora": "Cury",
    "total": 224,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://tenda.com",
    "construtora": "Tenda",
-   "total": 290,
+   "total": 289,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://integraurbano.com.br",
    "construtora": "Integra Urbano",
    "total": 19,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://sousaaraujo.com.br",
    "construtora": "Sousa Araujo",
    "total": 22,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://www.damebe.com.br",
    "construtora": "Damebe",
    "total": 4,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://www.eztec.com.br",
    "construtora": "EZTEC",
    "total": 70,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://econconstrutora.com.br",
    "construtora": "Econ",
    "total": 110,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://www.metrocasa.com.br",
    "construtora": "Metrocasa",
    "total": 100,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://www.vibraresidencial.com.br",
    "construtora": "Vibra Residencial",
    "total": 20,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://arboreengenharia.com.br",
    "construtora": "Árbore",
    "total": 48,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://jbianchi.com.br",
    "construtora": "J.Bianchi",
    "total": 3,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://gfrempreendimentos.com.br",
    "construtora": "GFR",
    "total": 8,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://scopel.com.br",
    "construtora": "Scopel",
    "total": 41,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://ribeira.com.br",
    "construtora": "Ribeira",
    "total": 6,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://construtoralumiar.com.br",
    "construtora": "Lumiar",
    "total": 14,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://jeronimodaveiga.com.br",
    "construtora": "Jeronimo da Veiga",
    "total": 5,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://evolifeincorporadora.com.br",
    "construtora": "Evo Life",
    "total": 9,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://lumy.com.br",
    "construtora": "Lumy",
    "total": 9,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://graalengenharia.com.br",
    "construtora": "Graal",
    "total": 12,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://www.longitude.com.br",
    "construtora": "Longitude",
    "total": 48,
    "ok": true,
-   "atualizada": "2026-10-26"
+   "atualizada": "2026-10-27"
   },
   {
    "site": "https://www.direcional.com.br",
    "construtora": "Direcional",
    "total": 98,
-   "ok": true,
+   "ok": false,
+   "erro": "The read operation timed out",
    "atualizada": "2026-10-26"
   }
  ]
