@@ -52,8 +52,8 @@ Lê a API pública do GitHub (sem token). Para cada execução: horário previst
 |---|---|---|
 | Merge na main | confirmado em 14/10/2026 | PR #9, commit `26db17e` |
 | Publicação pelo fluxo novo (testes → páginas → validação do artefato → deploy) | confirmada em 14/10/2026, sem coleta (push) | execução 38653246098; sitemap com 1.207 páginas de empreendimento |
-| Coleta real pelo fluxo novo (testes → coleta → validação → commit de dados → publicação) | **pendente**: primeira oportunidade 15/10 às 05:23 | — |
-| Observação de 7 dias | começa após a primeira coleta real | tabela abaixo |
+| Coleta real pelo fluxo novo (testes → coleta → validação → commit de dados → publicação) | confirmada em 15/10/2026 (agendada das 05:23, concluída às 11:24) | `python coleta/agendamento.py` |
+| Observação de 7 dias | concluída (15 a 21/10); acompanhamento seguiu até 27/10 | tabela abaixo |
 
 A primeira coleta bem-sucedida comprova o fluxo, não que o agendamento melhorou: essa conclusão só sai da comparação dos 7 dias com a linha de base.
 
@@ -82,8 +82,28 @@ Agendamento único às 06:00 (`0 9 * * *`) até 14/10 de manhã; depois 05:23 + 
 - **Fica como está** se em ≥ 6 dos 7 dias houver coleta concluída até 12:00.
 - **Gatilho externo** (com token de privilégio mínimo) se em ≥ 2 dos 7 dias a primeira coleta concluída for depois das 12:00 ou não ocorrer.
 
-## Observações (preencher)
+## Observações (medidas em 27/10/2026 com `coleta/agendamento.py`)
 
 | Dia | Primeira execução agendada que rodou | Atraso | Coleta concluída às | Falhas |
 |---|---|---|---|---|
-| | | | | |
+| 15/10 | 05:23 | 5 h 09 | 11:24 | — |
+| 16/10 | 05:23 | 4 h 57 | 11:16 | — |
+| 17/10 | 05:23 | 3 h 53 | 10:04 | — |
+| 18/10 | 05:23 | 4 h 16 | 10:30 | — |
+| 19/10 | 05:23 | 7 h 20 | **13:46** | depois das 12:00 |
+| 20/10 | 05:23 | 5 h 17 | 11:28 | — |
+| 21/10 | 05:23 | 5 h 33 | 11:43 | — |
+| *22/10* | 05:23 | 5 h 32 | 11:46 | — |
+| *23/10* | 05:23 | 5 h 12 | 11:17 | — |
+| *24/10* | 05:23 | 4 h 23 | 10:21 | — |
+| *25/10* | 05:23 | 4 h 51 | 10:52 | — |
+| *26/10* | 05:23 | 6 h 54 | **12:50** | depois das 12:00 |
+| *27/10* | 05:23 | 6 h 16 (criada 11:39) | — | não coletou: a coleta em casa, disparada à mão às 11:18, terminou antes (12:02) |
+
+Em itálico, os dias depois da janela de 7 dias.
+
+**Resultado da janela (15 a 21/10):** 6 de 7 dias com coleta concluída até 12:00. Pelo critério acima, **fica como está**.
+
+**Mas a decisão mudou por outro motivo:** em 26/10 a coleta principal passou para a [coleta em casa](#coleta-em-casa-desde-26102026), por causa das 4 fontes que bloqueiam IP de datacenter (auditoria, D1). O timer do PC às 04:53 é, na prática, o gatilho externo previsto acima, e os horários do GitHub ficam de reserva. Os dias seguintes à janela confirmam que a reserva continua lenta (26/10 às 12:50; 27/10 com 6 h 16 de atraso).
+
+**Pendente:** o critério pedia um token de privilégio mínimo para o gatilho externo. O timer usa o login do `gh` do mantenedor (escopos `repo`, `workflow`, `gist`, `read:org`, que valem para todos os repositórios). Falta trocar por um token fine-grained só do `naplanta`, com permissão só de Actions (escrita).
