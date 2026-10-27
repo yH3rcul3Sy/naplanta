@@ -17,6 +17,27 @@
 - Uma reserva que não aparece pode ter sido substituída na fila por outra reserva: antes de concluir que não rodou, conferir execuções canceladas ou na fila.
 - A coleta manual (Run workflow) sempre coleta.
 
+## Coleta em casa (desde 26/10/2026)
+
+Cury, Sousa Araujo, J.Bianchi e Direcional bloqueiam IP de datacenter (auditoria, D1), então a coleta principal roda num runner self-hosted no PC do mantenedor, com IP residencial. O GitHub continua orquestrando: testes, commit dos dados e publicação são os mesmos.
+
+| Horário (Brasília) | Quem dispara | Onde coleta |
+|---|---|---|
+| 04:53 | timer do systemd no PC (`gh workflow run coleta.yml -f local=casa`) | runner `casa-danilo` (label `casa`) |
+| 05:23, 08:23, 11:23, 14:23 | agendamento do GitHub | `ubuntu-latest`; só coletam se a de casa não rodou no dia |
+
+- PC desligado ou dormindo às 04:53: o timer dispara quando ele ligar (`Persistent=true`). Até lá as agendadas coletam no GitHub sem as 4 fontes; a de casa, por ser manual, coleta de novo e completa o dia.
+- O repositório é público: PRs de fork de qualquer contribuidor externo pedem aprovação antes de rodar (Settings → Actions), para nenhum código de terceiros chegar ao runner.
+
+**Na máquina** (Ubuntu, `loginctl enable-linger` para os serviços rodarem sem sessão aberta): `bash coleta/casa/instalar.sh`. Ele cria tudo em `.casa/` (fora do git) e pode rodar de novo sem estragar nada.
+
+| O quê | Onde |
+|---|---|
+| Runner do GitHub (`casa-danilo`, label `casa`) | `.casa/runner`; PATH dos jobs na unit `naplanta-runner.service` |
+| Python 3.12 dos jobs | `.casa/venv`, primeiro no PATH dos jobs |
+| Units do systemd | modelos em `coleta/casa/`, geradas em `.casa/systemd/` e ligadas com `systemctl --user link` |
+| `gh` (dispara o timer e abre a issue de fonte parada) e `uv` | `~/.local/bin`, com `gh auth login` feito |
+
 ## Como medir
 
 ```bash

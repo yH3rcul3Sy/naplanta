@@ -1,7 +1,7 @@
 name: coleta e publicacao
 # titulo de cada execucao na aba Actions (sem isso o GitHub usa a mensagem do commit)
 # o horario agendado (cron, em UTC) vai no titulo: e assim que coleta/agendamento.py mede o atraso de cada execucao
-run-name: ${{ github.event_name == 'push' && 'Publicação do site' || github.event_name == 'schedule' && format('Coleta diária ({0})', github.event.schedule) || 'Coleta manual' }}
+run-name: ${{ github.event_name == 'push' && 'Publicação do site' || github.event_name == 'schedule' && format('Coleta diária ({0})', github.event.schedule) || inputs.local == 'casa' && 'Coleta em casa' || 'Coleta manual' }}
 on:
   schedule:
     # minuto quebrado: na hora cheia o GitHub atrasa por horas ou descarta o agendamento.
@@ -12,6 +12,15 @@ on:
     - cron: '23 14 * * *'  # 11:23 reserva
     - cron: '23 17 * * *'  # 14:23 reserva
   workflow_dispatch:     # botao "Run workflow" na aba Actions
+    inputs:
+      local:
+        # casa = runner self-hosted (label casa) no PC do mantenedor: IP residencial, que Cury, Sousa Araujo,
+        # J.Bianchi e Direcional nao bloqueiam. Disparado por um timer do systemd no proprio PC (docs/agendamento.md),
+        # entao so entra na fila com o PC ligado; desligado, as agendadas acima coletam no GitHub sem essas 4
+        description: Onde coletar
+        type: choice
+        options: [github, casa]
+        default: github
   push:
     branches: [main]
 permissions: {}  # cada job pede so o que usa
@@ -50,7 +59,7 @@ jobs:
     # so coleta com os testes verdes; sem "always()", testes com falha ou pulados deixam a coleta pulada
     needs: [precisa, testes]
     if: needs.precisa.outputs.coletar == '1'
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.local == 'casa' && fromJSON('["self-hosted", "casa"]') || 'ubuntu-latest' }}
     timeout-minutes: 180  # 23 fontes + geocodificacao dos enderecos novos passam de 1 h
     permissions:
       contents: write  # commit dos dados coletados
@@ -59,7 +68,9 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           ref: main  # compara com os dados atuais (e nao com os do disparo) e grava por cima deles
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+      # em casa o Python 3.12 vem de um venv que ja esta no PATH do runner (ver docs/agendamento.md)
+      - if: runner.environment == 'github-hosted'
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
         with:
           python-version: '3.12'
       - run: pip install -r coleta/requirements.txt

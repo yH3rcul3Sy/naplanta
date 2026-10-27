@@ -1,0 +1,15 @@
+[Unit]
+Description=Runner do GitHub Actions do NaPlanta
+After=network-online.target
+
+[Service]
+WorkingDirectory=@CASA@/runner
+# PATH dos jobs: o venv primeiro, para "python" e "pip" serem os do 3.12 (o run.sh ignora o .path do runner)
+Environment=PATH=@CASA@/venv/bin:%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=@CASA@/runner/run.sh
+Restart=always
+RestartSec=30
+KillSignal=SIGINT
+
+[Install]
+WantedBy=default.target
