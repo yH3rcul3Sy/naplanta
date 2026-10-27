@@ -1,0 +1,10 @@
+[Unit]
+Description=Coleta diaria do NaPlanta as 04:53
+
+[Timer]
+OnCalendar=*-*-* 04:53:00 America/Sao_Paulo
+# PC desligado no horario: dispara quando ligar
+Persistent=true
+
+[Install]
+WantedBy=timers.target
