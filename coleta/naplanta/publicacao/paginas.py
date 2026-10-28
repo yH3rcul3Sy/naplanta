@@ -312,7 +312,7 @@ def gerar():
     (SITE / 'llms.txt').write_text(llms_txt(dados, por_cidade), encoding='utf8')
     # o mapa liga cada card a sua pagina por esse campo; so no dados.json publicado, nao no do git
     (SITE / 'dados.json').write_text(json.dumps(dados, ensure_ascii=False, separators=(',', ':')), encoding='utf8')
-    urls = ([URL, URL + 'transparencia.html', URL + 'privacidade.html', URL + 'alertas.html', URL + 'e/']
+    urls = ([URL, URL + 'transparencia.html', URL + 'privacidade.html', URL + 'alertas.html', URL + 'cadastro.html', URL + 'e/']
             + [f'{URL}lancamentos/{pagina_cidade(c)}.html' for c in sorted(por_cidade)] + [f"{URL}e/{e['pagina']}.html" for e in dados])
     (SITE / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                                       + ''.join(f'<url><loc>{escape(u)}</loc></url>\n' for u in urls) + '</urlset>\n', encoding='utf8')
