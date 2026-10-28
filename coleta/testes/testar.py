@@ -27,7 +27,7 @@ def ler(fonte, caso, html):
         return [fonte.parse(caso['url'], html, caso['nome'])]
     if nome(fonte) == 'graal':  # a lista vem da API em JSON
         return fonte.parse(json.loads(html))[:5]
-    if nome(fonte) == 'ribeira':  # etapa, nome e cidade vem do card da lista
+    if nome(fonte) in ('ribeira', 'lidera'):  # etapa, nome e cidade vem do card da lista
         return [fonte.parse(caso['url'], html, tuple(caso['card']))]
     return [fonte.parse(caso['url'], html)]
 

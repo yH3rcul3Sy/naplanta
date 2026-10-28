@@ -1,0 +1,34 @@
+{
+ "url": "https://www.grupolidera.com.br/imoveis/portofino/",
+ "card": [
+  "https://www.grupolidera.com.br/imoveis/portofino/",
+  "Em obras",
+  "Mogi das Cruzes",
+  "SP",
+  "Porto Fino"
+ ],
+ "esperado": [
+  {
+   "nome": "Porto Fino",
+   "construtora": "Lidera",
+   "etapa": "Em obras",
+   "endereco": "Rua Gomes Cardim, 185 - Mogi Moderno - Mogi das Cruzes/SP",
+   "cidade": "Mogi das Cruzes",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    1,
+    2
+   ],
+   "m2": [
+    25.76,
+    78.47
+   ],
+   "texto": "Porto Fino Lidera - Residencial Porto Fino Home Imóveis A Lidera Fale Conosco Área do Cliente Home Imóveis Todos Lançamentos Em obras Breve lançamento Entregues A Lidera Fale Conosco Compre o seu Lidera Venda seu terreno Seja um fornecedor Trabalhe conosco Área do Cliente Residencial Porto Fino Rua Gomes Cardi",
+   "imagem": "https://www.grupolidera.com.br/imoveis/imagens/imoveis_portofino.jpg",
+   "fonte": "https://www.grupolidera.com.br/imoveis/portofino/",
+   "mcmv": false
+  }
+ ]
+}
