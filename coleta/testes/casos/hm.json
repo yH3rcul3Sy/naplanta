@@ -1,0 +1,27 @@
+{
+ "url": "https://eme.maishm.com.br/imoveis/hm-campos-eliseos",
+ "esperado": [
+  {
+   "nome": "HM Intense Campos Elíseos",
+   "construtora": "HM Engenharia",
+   "etapa": "Lançamento",
+   "endereco": "Rua Danilo Glauco Pereira Vilagelin, n° 121 - Jardim Campos Elíseos - Campinas/SP.",
+   "cidade": "Campinas",
+   "uf": "SP",
+   "lat": null,
+   "lng": null,
+   "dorms": [
+    2,
+    2
+   ],
+   "m2": [
+    33.62,
+    33.62
+   ],
+   "texto": "HM Intense Campos Elíseos apartamentos",
+   "imagem": "https://grq4vpksrr5h.compat.objectstorage.sa-saopaulo-1.oraclecloud.com/BUCKET-ARQUIVOS-SITE/HM_072_Fachada_Noite_Final_09b2dfa29c.jpg",
+   "fonte": "https://eme.maishm.com.br/imoveis/hm-campos-eliseos",
+   "mcmv": true
+  }
+ ]
+}
