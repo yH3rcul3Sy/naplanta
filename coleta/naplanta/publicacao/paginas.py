@@ -176,7 +176,7 @@ def html_empreendimento(e, nome_arquivo, outros=(), eventos=(), inicio=None):
 <div class="fatos">{fato('Dormitórios', _faixa(e.get('dorms'), ''))}{fato('Área', _faixa(e.get('m2'), ' m²'))}{fato('Tipo', e.get('tipo'))}{fato('Entrega', e.get('entrega'))}</div>
 <div class="botoes">
   <a class="btn primario" href="../?e={escape(nome_arquivo)}">Ver no mapa</a>
-  <a class="btn" href="{escape(e['fonte'])}" rel="noopener">Site da {escape(e['construtora'])} ↗</a>
+  <a class="btn" href="{escape(e['fonte'])}" rel="noopener" data-goatcounter-click="saida/{slug(e['construtora'])}" data-goatcounter-title="{escape(e['nome'])}">Site da {escape(e['construtora'])} ↗</a>
   {f'<a class="btn" href="{escape(rota)}" rel="noopener">Como chegar ↗</a>' if rota else ''}
   <a class="btn zap" href="{escape(zap)}" rel="noopener">Compartilhar no WhatsApp</a>
   <a class="btn" href="../alertas.html{'?cidade=' + quote(cidade) if cidade else ''}">Receber alertas por e-mail</a>
