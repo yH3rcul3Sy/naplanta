@@ -1,8 +1,8 @@
 """Adaptadores das incorporadoras. Cada modulo expoe BASE (URL do site) e coletar() -> lista de empreendimentos crus.
 Nova fonte: criar o modulo, conferir o robots.txt e incluir aqui."""
-from naplanta.fontes import (arbore, cac, cury, damebe, direcional, econ, evolife, eztec, gfr, graal, helbor, hm, integra, lidera,
+from naplanta.fontes import (arbore, cac, cury, damebe, direcional, econ, evolife, eztec, gfr, graal, helbor, hm, integra, lidera, ngn,
                              jbianchi, jeronimodaveiga, longitude, lumiar, lumy, metrocasa, ribeira, scopel, sousaaraujo,
                              tenda, vibra)
 
 FONTES = [helbor, cac, cury, tenda, integra, sousaaraujo, damebe, eztec, econ, metrocasa, vibra, arbore, jbianchi, gfr, scopel,
-          ribeira, lumiar, jeronimodaveiga, evolife, lumy, graal, longitude, direcional, hm, lidera]
+          ribeira, lumiar, jeronimodaveiga, evolife, lumy, graal, longitude, direcional, hm, lidera, ngn]
