@@ -17,6 +17,10 @@ def nome(fonte):
     return fonte.__name__.rsplit('.', 1)[-1]  # 'naplanta.fontes.helbor' -> 'helbor', como aparece nos logs
 
 
+def rotulo(fonte, lista):
+    return getattr(fonte, 'ROTULO', None) or (lista[0]['construtora'] if lista else nome(fonte))
+
+
 def hoje():
     return datetime.now(FUSO).date().isoformat()
 
@@ -40,6 +44,8 @@ def validos(fonte):
 
 def conferir_volume(fonte, novos, velhos, status_antes):
     """Devolve quantas coletas seguidas veio com queda (0 = normal); levanta excecao se a coleta parece ter falhado."""
+    if getattr(fonte, 'VAZIO_OK', False):  # o cadastro pelo site pode estar vazio ou perder itens de proposito
+        return 0
     if not novos:  # site que bloqueia o servidor responde "vazio" em vez de dar erro
         raise RuntimeError('nenhum empreendimento retornado (site fora do ar ou bloqueando o acesso)')
     seguidas = quedas(len(novos), len(velhos), status_antes.get('quedas', 0))
@@ -72,7 +78,7 @@ def executar():
             seguidas = getattr(erro, 'seguidas', 0)
             print(f'falha em {nome(f)}: {erro} -> mantendo {len(velhos)} da coleta anterior')
             dados += [geo.completar(limpo(e)) for e in velhos]
-            fontes.append({'site': f.BASE, 'construtora': velhos[0]['construtora'] if velhos else nome(f), 'total': len(velhos),
+            fontes.append({'site': f.BASE, 'construtora': rotulo(f, velhos), 'total': len(velhos),
                            'ok': False, 'erro': str(erro), 'atualizada': antes.get('atualizada'),
                            **({'quedas': seguidas} if seguidas else {})})
             # aviso na aba Actions: fonte parada nao derruba a coleta, mas precisa ser vista
@@ -84,7 +90,7 @@ def executar():
         # comparado depois do geo, que tambem completa cidade e posicao dos dois lados
         if sumidos := campos_sumidos(velhos, novos):
             print(f"::warning::{nome(f)}: campos {sumidos} sumiram da maioria dos empreendimentos (o site pode ter mudado)")
-        fontes.append({'site': f.BASE, 'construtora': novos[0]['construtora'], 'total': len(novos), 'ok': True, 'atualizada': dia,
+        fontes.append({'site': f.BASE, 'construtora': rotulo(f, novos), 'total': len(novos), 'ok': True, 'atualizada': dia,
                        **({'sumidos': sumidos} if sumidos else {})})
     enriquecer(dados)
     historico['eventos'] = historico_recente(eventos + historico['eventos'], dia)

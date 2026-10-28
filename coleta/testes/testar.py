@@ -39,6 +39,8 @@ def html(fonte):
 def testar():
     falhas, sem_caso = [], []
     for f in FONTES:
+        if getattr(f, 'VAZIO_OK', False):  # o cadastro pelo site nao tem pagina: se testa pelos asserts do modulo
+            continue
         arquivo = CASOS / f'{nome(f)}.json'
         if not arquivo.exists():
             sem_caso.append(nome(f))

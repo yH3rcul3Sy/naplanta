@@ -68,6 +68,7 @@ def problemas(e, base):
               'lng': lambda v: v is None or (num(v) and -180 <= v <= 180),
               'dorms': faixa, 'm2': faixa,
               'imagem': lambda v: v is None or (isinstance(v, str) and v.startswith(('https://', 'http://'))),
+              'link': lambda v: v is None or (isinstance(v, str) and v.startswith('https://')),
               'etapa': texto, 'endereco': texto, 'cidade': texto, 'uf': texto, 'entrega': texto}
     ruins = [k for k, ok in regras.items() if not ok(e.get(k))]
     if (e.get('lat') is None) != (e.get('lng') is None):
@@ -80,3 +81,4 @@ assert problemas(_ok, 'https://x.com') == []
 assert problemas({**_ok, 'fonte': 'https://x.com.golpe.io/a'}, 'https://x.com') == ['fonte']
 assert problemas({**_ok, 'm2': ['50', 70], 'imagem': 'javascript:alert(1)', 'lng': None}, 'https://x.com') == ['imagem', 'lat', 'lng', 'm2']
 assert problemas({**_ok, 'dorms': [3, 1], 'nome': ' '}, 'https://x.com') == ['dorms', 'nome']
+assert problemas({**_ok, 'link': 'javascript:alert(1)'}, 'https://x.com') == ['link']

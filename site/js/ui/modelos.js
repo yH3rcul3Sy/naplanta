@@ -22,7 +22,7 @@ function partes(e, { novoDesde }) {
   const mcmv = e.mcmv ? '<span class="selo-mcmv" title="A página da construtora cita o Minha Casa Minha Vida. Confira as condições no simulador da Caixa.">MCMV</span>' : '';
   const selos = `<span class="etapa ${cls}">${esc(e.etapa)}</span>${novo}${mcmv}`;
   const acao = e.pagina ? `<a class="btn primario" href="e/${esc(e.pagina)}.html">Ver detalhes</a>`
-                        : `<a class="btn" href="${esc(e.fonte)}" target="_blank" rel="noopener">Construtora ↗</a>`;
+                        : `<a class="btn" href="${esc(e.link || e.fonte)}" target="_blank" rel="noopener">Construtora ↗</a>`;
   return { selos, fatos, acao };
 }
 
