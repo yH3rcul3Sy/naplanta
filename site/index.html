@@ -47,9 +47,6 @@
     background:linear-gradient(90deg, transparent, rgba(255,255,255,.65), transparent); animation:brilho 1.2s ease-in-out infinite; }
   @keyframes brilho { to { transform:translateX(100%); } }
   /* cards entram suaves; a foto aparece quando termina de carregar */
-  .card { animation:entrar .28s ease-out both; }
-  @keyframes entrar { from { opacity:0; transform:translateY(6px); } }
-  .card img { opacity:0; transition:opacity .3s, transform .4s; } .card img.ok { opacity:1; }
   /* janelas (Como funciona, Novidades) abrem e fecham com esmaecer e leve subida */
   dialog { opacity:0; transform:translateY(10px) scale(.98);
            transition:opacity .2s ease-out, transform .2s ease-out, overlay .2s allow-discrete, display .2s allow-discrete; }
@@ -61,8 +58,7 @@
   .btn:active, button:active { transform:scale(.97); }
   /* troca da lista ao filtrar: so a lista participa (o resto da pagina nao pisca) */
   .vt-filtro { view-transition-name:none; } .vt-filtro #lista { view-transition-name:lista; }
-  ::view-transition-old(lista) { animation:.15s ease-in both sair; } ::view-transition-new(lista) { animation:.25s ease-out both entrar; }
-  @keyframes sair { to { opacity:0; } }
+  ::view-transition-old(lista), ::view-transition-new(lista) { animation-duration:.2s; }  /* esmaecer simples entre a lista velha e a nova */
   html, body { height:100%; }
   body { margin:0; font:16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); background:var(--bg);
          display:grid; grid-template-rows:auto 1fr; grid-template-columns:minmax(0, 1fr); height:100dvh; overflow:hidden; }

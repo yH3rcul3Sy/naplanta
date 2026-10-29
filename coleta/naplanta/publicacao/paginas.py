@@ -73,7 +73,7 @@ ESTILO = '''<style>
          font-weight:600; text-decoration:none; border:1px solid var(--line); background:var(--card); color:var(--ink); flex:1 1 180px; }
   .btn:hover { border-color:var(--accent); color:var(--accent); }
   .btn.primario { background:var(--accent); border-color:var(--accent); color:#fff; } .btn.primario:hover { background:#185a3c; color:#fff; }
-  .mais { margin:-6px 0 18px; font-size:14px; color:var(--muted); } .mais a { font-weight:600; }
+  .botoes.mais { margin-top:-8px; } .botoes.mais .btn { min-height:40px; font-size:14px; color:var(--muted); }  /* acoes secundarias, menores */
   .voltar { margin-left:auto; flex:0 0 auto; min-height:40px; padding:6px 12px; }
   .info { color:var(--muted); font-size:14px; } .aviso { color:#8a5a00; }
   a { color:var(--accent); text-underline-offset:3px; } a:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
@@ -208,7 +208,8 @@ def html_empreendimento(e, nome_arquivo, outros=(), eventos=(), inicio=None):
   <a class="btn" href="{escape(e.get('link') or e['fonte'])}" rel="noopener" data-goatcounter-click="saida/{slug(e['construtora'])}" data-goatcounter-title="{escape(e['nome'])}">Site da {escape(e['construtora'])} ↗</a>
   {f'<a class="btn" href="{escape(rota)}" rel="noopener">Como chegar ↗</a>' if rota else ''}
 </div>
-<p class="mais"><a href="{escape(zap)}" rel="noopener">Compartilhar no WhatsApp</a> · <a href="../alertas.html{'?cidade=' + quote(cidade) if cidade else ''}">Receber alertas de {escape(cidade or 'novos lançamentos')}</a></p>
+<div class="botoes mais"><a class="btn" href="{escape(zap)}" rel="noopener">Compartilhar no WhatsApp</a>
+<a class="btn" href="../alertas.html{'?cidade=' + quote(cidade) if cidade else ''}">Receber alertas de {escape(cidade or 'novos lançamentos')}</a></div>
 {f'<p class="info">📍 {escape(e["endereco"].replace(" | ", " · "))}</p>' if e.get('endereco') else ''}
 {f'<p class="aviso">Localização aproximada: o pino está {"na rua" if e.get("aprox") == "rua" else "no bairro"}, não no endereço exato.</p>' if e.get('aprox') else ''}
 {'<div class="bloco"><h2>Minha Casa Minha Vida</h2><p style="margin:0">A página da construtora cita o programa. Veja se você se enquadra no <a href="https://www.portaldeempreendimentos.caixa.gov.br/simulador/" rel="noopener">simulador da Caixa ↗</a>.</p></div>' if e.get('mcmv') else ''}

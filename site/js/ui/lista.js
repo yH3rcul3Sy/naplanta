@@ -20,11 +20,6 @@ export function criarLista(el) {
         const card = document.createElement('article');
         card.className = 'card'; card.tabIndex = 0;
         card.innerHTML = conteudo(e);
-        // a foto aparece quando termina de carregar (pode carregar antes do card entrar na pagina, dai o complete)
-        for (const img of card.querySelectorAll('img')) {
-          const ok = () => img.classList.add('ok');
-          if (img.complete) ok(); else { img.onload = ok; img.onerror = ok; }
-        }
         if (e.lat != null) {
           const abrir = ev => { if (!ev.target.closest('a')) aoAbrir(e); };
           card.onclick = abrir; card.onkeydown = ev => { if (ev.key === 'Enter') abrir(ev); };
