@@ -57,13 +57,14 @@
   header .voltar { flex:0 0 auto; margin-left:auto; padding:0 16px; font-size:14px; font-weight:600; color:var(--ink); text-decoration:none; }
   header > a:hover { background:var(--accent-bg); border-color:var(--accent); color:var(--accent); }
   body { padding-top:56px; }  /* o conteudo comeca abaixo das capsulas */
+  @media (max-width: 800px) { header > a { min-height:44px; font-size:15px; } body { padding-top:62px; } }
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "O que significam \"breve lançamento\", \"lançamento\" e \"em obras\"?", "acceptedAnswer": {"@type": "Answer", "text": "São as etapas informadas pela construtora. Breve lançamento: o empreendimento foi anunciado, mas as vendas ainda não começaram. Lançamento: as vendas estão abertas e a obra ainda não começou. Em obras: o prédio está em construção. Pronto para morar: obra entregue (aparece no mapa marcando \"Prontos\")."}}, {"@type": "Question", "name": "O NaPlanta mostra o preço dos imóveis?", "acceptedAnswer": {"@type": "Answer", "text": "Não. Preços mudam com frequência e variam por unidade, então o NaPlanta não os coleta para não mostrar valor errado. Cada empreendimento tem um link para o site oficial da construtora, onde estão preço e condições."}}, {"@type": "Question", "name": "O que quer dizer o selo MCMV?", "acceptedAnswer": {"@type": "Answer", "text": "Indica que a página do empreendimento no site da construtora cita o programa Minha Casa Minha Vida. Não é garantia de enquadramento: confira renda, faixa e condições no simulador oficial da Caixa."}}, {"@type": "Question", "name": "Os dados são confiáveis e atualizados?", "acceptedAnswer": {"@type": "Answer", "text": "Os dados vêm direto dos sites oficiais das incorporadoras e são coletados todo dia. Quando um site não responde, o NaPlanta mantém a última coleta e avisa no card a data dos dados. Informação desatualizada no site da construtora aparece desatualizada aqui também."}}, {"@type": "Question", "name": "Sou de uma incorporadora: como incluo, corrijo ou retiro um empreendimento?", "acceptedAnswer": {"@type": "Answer", "text": "Escreva para contato@naplanta.app.br. O robô do NaPlanta respeita o robots.txt: bloquear o NaPlantaBot no robots.txt do seu site também retira os dados na próxima coleta."}}]}</script>
 </head>
 <body>
 <header>
   <a class="marca" aria-label="NaPlanta" href="./"><img src="logo.svg" alt="" width="37" height="26"></a>
-  <a class="voltar" href="./">← Voltar ao mapa</a>
+  <a class="voltar" href="./">← Mapa</a>
 </header>
 <main>
   <h1>Sobre os dados</h1>

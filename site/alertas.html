@@ -29,7 +29,11 @@
   label.campo { display:block; font-weight:600; margin:20px 0 6px; }
   input[type=email], input[type=search] { width:100%; font:inherit; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:#fff; }
   input:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
-  .cidades { background:var(--card); border:1px solid var(--line); border-radius:10px; max-height:300px; overflow:auto; margin-top:8px; padding:4px 0; }
+  .cidades { background:var(--card); border:1px solid var(--line); border-radius:10px; height:300px; overflow:auto; margin-top:8px; padding:4px 0; }
+  .cidades .espera { display:block; height:14px; margin:15px 14px; border-radius:7px; background:#ece9e3; }
+  .cidades .espera:nth-child(odd) { width:55%; } .cidades .espera:nth-child(even) { width:40%; }
+  .cidades label { animation:surgir .2s ease-out; } @keyframes surgir { from { opacity:0; } }
+  @media (prefers-reduced-motion: reduce) { .cidades label { animation:none; } }
   .cidades label { display:flex; gap:10px; align-items:center; padding:8px 14px; cursor:pointer; }
   .cidades label[hidden] { display:none; }
   .cidades label:hover { background:var(--accent-bg); }
@@ -54,12 +58,13 @@
   header .voltar { flex:0 0 auto; margin-left:auto; padding:0 16px; font-size:14px; font-weight:600; color:var(--ink); text-decoration:none; }
   header > a:hover { background:var(--accent-bg); border-color:var(--accent); color:var(--accent); }
   body { padding-top:56px; }  /* o conteudo comeca abaixo das capsulas */
+  @media (max-width: 800px) { header > a { min-height:44px; font-size:15px; } body { padding-top:62px; } }
 </style>
 </head>
 <body>
 <header>
   <a class="marca" aria-label="NaPlanta" href="./"><img src="logo.svg" alt="" width="37" height="26"></a>
-  <a class="voltar" href="./">← Voltar ao mapa</a>
+  <a class="voltar" href="./">← Mapa</a>
 </header>
 <main>
   <h1>Receba os lançamentos da sua cidade</h1>
@@ -70,7 +75,7 @@
     <label class="campo" for="busca">Cidades</label>
     <p class="info" id="escolhidas" style="margin:0">Escolha uma ou mais.</p>
     <input id="busca" type="search" placeholder="Buscar cidade" autocomplete="off" style="margin-top:8px">
-    <div class="cidades" id="cidades" role="group" aria-label="Cidades"></div>
+    <div class="cidades" id="cidades" role="group" aria-label="Cidades" aria-busy="true"><i class="espera"></i><i class="espera"></i><i class="espera"></i><i class="espera"></i><i class="espera"></i><i class="espera"></i><i class="espera"></i></div>
     <button id="enviar" type="submit">Quero receber</button>
     <p id="resposta" role="status"></p>
   </form>

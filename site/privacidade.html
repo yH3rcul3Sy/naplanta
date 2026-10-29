@@ -39,12 +39,13 @@
   header .voltar { flex:0 0 auto; margin-left:auto; padding:0 16px; font-size:14px; font-weight:600; color:var(--ink); text-decoration:none; }
   header > a:hover { background:var(--accent-bg); border-color:var(--accent); color:var(--accent); }
   body { padding-top:56px; }  /* o conteudo comeca abaixo das capsulas */
+  @media (max-width: 800px) { header > a { min-height:44px; font-size:15px; } body { padding-top:62px; } }
 </style>
 </head>
 <body>
 <header>
   <a class="marca" aria-label="NaPlanta" href="./"><img src="logo.svg" alt="" width="37" height="26"></a>
-  <a class="voltar" href="./">← Voltar ao mapa</a>
+  <a class="voltar" href="./">← Mapa</a>
 </header>
 <main>
   <h1>Privacidade</h1>

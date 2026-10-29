@@ -64,6 +64,11 @@ ESTILO = '''<style>
   .sub { color:var(--muted); margin:0; }
   .fatos { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:8px; margin:18px 0; }
   .fato { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; }
+  @media (max-width: 600px) {  /* celular: 3 fatos numa linha (ou 2 x 2 quando tem a entrega), sem um sobrando sozinho */
+    .fatos { grid-template-columns:repeat(3, 1fr); } .fatos:has(> :nth-child(4)) { grid-template-columns:1fr 1fr; }
+    .fato { padding:8px 10px; } .fato strong { font-size:14px; white-space:nowrap; }
+    .botoes.mais .btn { flex:1 1 0; font-size:13px; padding:8px 10px; text-align:center; }
+  }
   .fato small { display:block; color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.05em; }
   .fato strong { font-size:17px; }
   .bloco { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin:12px 0; }
@@ -100,6 +105,7 @@ ESTILO = '''<style>
   header .voltar { flex:0 0 auto; margin-left:auto; padding:0 16px; font-size:14px; font-weight:600; color:var(--ink); text-decoration:none; }
   header > a:hover { background:var(--accent-bg); border-color:var(--accent); color:var(--accent); }
   body { padding-top:56px; }  /* o conteudo comeca abaixo das capsulas */
+  @media (max-width: 800px) { header > a { min-height:44px; font-size:15px; } body { padding-top:62px; } }
 </style>'''
 
 
@@ -209,7 +215,7 @@ def html_empreendimento(e, nome_arquivo, outros=(), eventos=(), inicio=None):
   {f'<a class="btn" href="{escape(rota)}" rel="noopener">Como chegar ↗</a>' if rota else ''}
 </div>
 <div class="botoes mais"><a class="btn" href="{escape(zap)}" rel="noopener">Compartilhar no WhatsApp</a>
-<a class="btn" href="../alertas.html{'?cidade=' + quote(cidade) if cidade else ''}">Receber alertas de {escape(cidade or 'novos lançamentos')}</a></div>
+<a class="btn" href="../alertas.html{'?cidade=' + quote(cidade) if cidade else ''}">Alertas de {escape(cidade or 'lançamentos')}</a></div>
 {f'<p class="info">📍 {escape(e["endereco"].replace(" | ", " · "))}</p>' if e.get('endereco') else ''}
 {f'<p class="aviso">Localização aproximada: o pino está {"na rua" if e.get("aprox") == "rua" else "no bairro"}, não no endereço exato.</p>' if e.get('aprox') else ''}
 {'<div class="bloco"><h2>Minha Casa Minha Vida</h2><p style="margin:0">A página da construtora cita o programa. Veja se você se enquadra no <a href="https://www.portaldeempreendimentos.caixa.gov.br/simulador/" rel="noopener">simulador da Caixa ↗</a>.</p></div>' if e.get('mcmv') else ''}

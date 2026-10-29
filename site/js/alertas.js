@@ -17,6 +17,7 @@ fetch('dados.json').then(r => r.json()).then(dados => {
   if (pedida) nomes.add(pedida);
   // a cidade que veio no link fica marcada e no topo; o resto em ordem alfabetica
   const cidades = [...nomes].sort((a, b) => (b === pedida) - (a === pedida) || a.localeCompare(b, 'pt-BR'));
+  $('cidades').removeAttribute('aria-busy');
   $('cidades').innerHTML = cidades.map(c => `<label><input type="checkbox" value="${esc(c)}"${c === pedida ? ' checked' : ''}> ${esc(c)}</label>`).join('');
   resumo();
 });
