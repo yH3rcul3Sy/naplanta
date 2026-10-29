@@ -2,9 +2,9 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<!-- so carrega o que vem do proprio site, da CDN do Leaflet e dos mapas do OSM; o JS mora em js/ (modulos), entao script inline e bloqueado
+<!-- so carrega o que vem do proprio site e dos mapas do OSM; o JS mora em js/ (modulos), entao script inline e bloqueado
      (style inline segue liberado: os pinos e o Leaflet usam style="...") -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: https://*.tile.openstreetmap.org; connect-src 'self' https://naplanta.goatcounter.com; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.tile.openstreetmap.org; connect-src 'self' https://naplanta.goatcounter.com; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#e7f2ec">
 <title>Lançamentos na planta em Mogi das Cruzes e Alto Tietê | NaPlanta</title>
@@ -24,8 +24,12 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <link rel="preload" href="dados.json" as="fetch" crossorigin>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
-      integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
+<!-- os pedacos do mapa sao a maior imagem da tela no celular: abrir a conexao com o OSM antes de o Leaflet pedir -->
+<link rel="preconnect" href="https://a.tile.openstreetmap.org">
+<link rel="preconnect" href="https://b.tile.openstreetmap.org">
+<link rel="preconnect" href="https://c.tile.openstreetmap.org">
+<!-- Leaflet servido do proprio site (js/vendor, copia identica da CDN): sem conexao extra antes de desenhar a pagina -->
+<link rel="stylesheet" href="js/vendor/leaflet.css">
 <style>
   :root { --bg:#f6f5f2; --card:#fff; --ink:#1d1d1b; --muted:#6b6a66; --line:#e3e1dc; --accent:#1f6f4a;
           --breve:#8a5a00; --breve-bg:#fbefd6; --lanc:#9a3b12; --lanc-bg:#fbe3d8;
@@ -336,11 +340,9 @@
   <a class="alerta-email so-celular" href="alertas.html">Receber as novidades por e-mail</a>
   <div id="eventos"></div>
 </dialog>
-<!-- integrity: o navegador recusa o arquivo se a CDN entregar algo diferente; ao trocar de versao, gerar o hash de novo -->
-<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"
-        integrity="sha384-eXVCORTRlv4FUUgS/xmOyr66XBVraen8ATNLMESp92FKXLAMiKkerixTiBvXriZr" crossorigin="anonymous"></script>
+<!-- defer: baixam sem travar a pagina e rodam na ordem, antes do main.js (modulo, que tambem espera o fim da leitura) -->
+<script defer src="js/vendor/leaflet.js"></script>
+<script defer src="js/vendor/leaflet.markercluster.js"></script>
 <script data-goatcounter="https://naplanta.goatcounter.com/count" async src="js/vendor/goatcounter.js"></script>
 <script type="module" src="js/main.js"></script>
 </body>
