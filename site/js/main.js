@@ -14,7 +14,7 @@ import { criarPainelFiltros } from './ui/painel-filtros.js';
 const celular = matchMedia('(max-width: 800px)');
 let dados = [], mudancas = { inicio: null, eventos: [] }, situacao = { atualizado: '', parados: {} };
 
-const filtros = criarPainelFiltros({ celular, aoMudar: render });
+const filtros = criarPainelFiltros({ aoMudar: render });
 const mapa = criarMapa('mapa', { agruparDeLonge: () => !filtros.cidade() });
 const cabecalho = criarCabecalho({ redimensionarMapa: mapa.redimensionar });
 const lista = criarLista(document.getElementById('lista'));

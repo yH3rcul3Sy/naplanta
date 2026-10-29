@@ -26,6 +26,10 @@ def pagina_cidade(cidade):
 
 assert pagina_cidade('Mogi das Cruzes') == 'mogi-das-cruzes'
 NA_PLANTA = ('Breve lançamento', 'Lançamento', 'Em obras')  # a ordem da obra; prontos ficam por ultimo
+ALTO_TIETE = ('Mogi das Cruzes', 'Suzano', 'Arujá', 'Itaquaquecetuba', 'Poá', 'Ferraz de Vasconcelos', 'Guararema', 'Biritiba Mirim',
+              'Salesópolis', 'Santa Isabel')
+MINIMO_INDEXAR = 3  # cidade com menos empreendimentos fica fora do Google (noindex) ate ter volume: pagina rala dilui o site
+NOINDEX = '<meta name="robots" content="noindex, follow">\n'
 IMAGEM_PADRAO = 'compartilhar.png'
 
 
@@ -107,11 +111,11 @@ def _documento(titulo, descricao, canonica, corpo, imagem=None, extra='', palavr
 {extra}{ESTILO}
 </head>
 <body>
-<header><a class="marca" href="../"><img src="../logo.svg" alt="" width="34" height="24" style="height:.95em;width:auto;vertical-align:-.1em;margin-right:.3em">Na<span>Planta</span></a><a class="btn voltar" href="../">← Mapa</a></header>
+<header><a class="marca" aria-label="NaPlanta" href="../"><svg viewBox="14 46 112 164" aria-hidden="true" style="height:.79em;width:auto;vertical-align:-.03em;shape-rendering:geometricPrecision"><path fill="currentColor" stroke="currentColor" stroke-width="12" stroke-linejoin="round" d="M20 52H44L96 148V52H120V204H96L44 108V204H20Z"/></svg>a<span><svg viewBox="132 46 110 164" aria-hidden="true" style="height:.79em;width:auto;vertical-align:-.03em;shape-rendering:geometricPrecision"><path fill="currentColor" stroke="currentColor" stroke-width="12" stroke-linejoin="round" d="M138 52H236V146H186V122H212V76H162V204H138Z"/></svg>lanta</span></a><a class="btn voltar" href="../">← Mapa</a></header>
 <main>
 {corpo}
 </main>
-<footer class="rodape"><a href="../e/">Todos os empreendimentos</a> · <a href="../transparencia.html">Sobre os dados</a> · <a href="../transparencia.html#perguntas">Perguntas frequentes</a> · <a href="../privacidade.html">Privacidade</a></footer>
+<footer class="rodape"><a href="../lancamentos/">Lançamentos por cidade</a> · <a href="../lancamentos/alto-tiete.html">Alto Tietê</a> · <a href="../e/">Todos os empreendimentos</a> · <a href="../transparencia.html">Sobre os dados</a> · <a href="../transparencia.html#perguntas">Perguntas frequentes</a> · <a href="../privacidade.html">Privacidade</a></footer>
 <script data-goatcounter="{CONTADOR}/count" async src="../js/vendor/goatcounter.js"></script>
 </body>
 </html>
@@ -141,6 +145,14 @@ assert linha_do_tempo({'construtora': 'X', 'desde': '2026-10-01'}, [{'tipo': 'et
 assert linha_do_tempo({'construtora': 'X', 'desde': None}, [], '2026-09-25')[0][0] == '2026-09-25'
 
 
+def rua(endereco):
+    """So a rua e o numero: algumas fontes trazem 'Rua X, 10 | Bairro'."""
+    return endereco.split(' | ')[0].strip() if endereco else None
+
+
+assert rua('Rua A, 333 | Cezar de Souza (Ipoema)') == 'Rua A, 333' and rua('Av. B, 1') == 'Av. B, 1' and rua(None) is None
+
+
 def html_empreendimento(e, nome_arquivo, outros=(), eventos=(), inicio=None):
     """outros: empreendimentos da mesma cidade para o bloco 'Outros lançamentos' (links internos).
     eventos: o que a coleta registrou desse empreendimento (mudancas.json); inicio: quando o acompanhamento comecou."""
@@ -158,7 +170,7 @@ def html_empreendimento(e, nome_arquivo, outros=(), eventos=(), inicio=None):
         arredores.append('A até 1 km: ' + ', '.join(servicos))
     canonica = f'{URL}e/{nome_arquivo}.html'
     dados = {'@context': 'https://schema.org', '@type': 'Residence', 'name': e['nome'], 'url': canonica,
-             'address': {'@type': 'PostalAddress', 'streetAddress': e.get('endereco'), 'addressLocality': e.get('cidade'),
+             'address': {'@type': 'PostalAddress', 'streetAddress': rua(e.get('endereco')), 'addressLocality': e.get('cidade'),
                          'addressRegion': e.get('uf'), 'addressCountry': 'BR'}}
     if e.get('lat') is not None:
         dados['geo'] = {'@type': 'GeoCoordinates', 'latitude': e['lat'], 'longitude': e['lng']}
@@ -181,7 +193,7 @@ def html_empreendimento(e, nome_arquivo, outros=(), eventos=(), inicio=None):
   <a class="btn zap" href="{escape(zap)}" rel="noopener">Compartilhar no WhatsApp</a>
   <a class="btn" href="../alertas.html{'?cidade=' + quote(cidade) if cidade else ''}">Receber alertas por e-mail</a>
 </div>
-{f'<p class="info">📍 {escape(e["endereco"])}</p>' if e.get('endereco') else ''}
+{f'<p class="info">📍 {escape(e["endereco"].replace(" | ", " · "))}</p>' if e.get('endereco') else ''}
 {f'<p class="aviso">Localização aproximada: o pino está {"na rua" if e.get("aprox") == "rua" else "no bairro"}, não no endereço exato.</p>' if e.get('aprox') else ''}
 {'<div class="bloco"><h2>Minha Casa Minha Vida</h2><p style="margin:0">A página da construtora cita o programa. Veja se você se enquadra no <a href="https://www.portaldeempreendimentos.caixa.gov.br/simulador/" rel="noopener">simulador da Caixa ↗</a>.</p></div>' if e.get('mcmv') else ''}
 {'<div class="bloco"><h2>Arredores</h2><ul>' + ''.join(f'<li>{escape(a)}</li>' for a in arredores) + '</ul><p class="info" style="margin:8px 0 0">Dados do OpenStreetMap, distâncias em linha reta.</p></div>' if arredores else ''}
@@ -220,6 +232,43 @@ def _plural(n, um, varios):
     return f'{n} {um if n == 1 else varios}'
 
 
+PLURAL_TIPO = {'Apartamento': 'apartamentos', 'Lote': 'lotes', 'Casa em condomínio': 'casas em condomínio'}
+
+
+def _num(v):
+    return f'{v:g}'.replace('.', ',')
+
+
+def _e(itens):
+    return ', '.join(itens[:-1]) + ' e ' + itens[-1] if len(itens) > 1 else ''.join(itens)
+
+
+def resumo_cidade(cidade, lista):
+    """Paragrafo da pagina da cidade montado dos dados (tipos, dormitorios, area, estacoes, MCMV): contexto sem texto inventado."""
+    tipos = Counter(e.get('tipo') for e in lista if e.get('tipo'))
+    dorms = [d for e in lista for d in (e.get('dorms') or [])]
+    areas = [a for e in lista for a in (e.get('m2') or [])]
+    estacoes = sorted({e['estacao']['nome'] for e in lista if e.get('estacao') and e['estacao']['km'] <= 1})
+    mcmv = sum(bool(e.get('mcmv')) for e in lista)
+    partes = [f"Em {cidade}, o NaPlanta acompanha {_plural(len(lista), 'empreendimento', 'empreendimentos')}"
+              + (': ' + _e([f'{n} {t.lower() if n == 1 else PLURAL_TIPO.get(t, t.lower())}' for t, n in tipos.most_common()]) if tipos else '') + '.']
+    if dorms:
+        partes.append(f'As plantas vão de {min(dorms)} a {max(dorms)} dormitórios' + (f', com {_num(min(areas))} a {_num(max(areas))} m²' if areas else '') + '.')
+    if estacoes:
+        um = len(estacoes) == 1
+        partes.append(f"{'A estação' if um else 'As estações'} {_e(estacoes)} {'fica' if um else 'ficam'} a até 1 km de algum deles.")
+    if mcmv:
+        partes.append(f"{mcmv} {'cita' if mcmv == 1 else 'citam'} o Minha Casa Minha Vida na página da construtora.")
+    return ' '.join(partes)
+
+
+assert resumo_cidade('Y', [{'tipo': 'Apartamento', 'm2': [25.5, 40]}, {'tipo': 'Apartamento'}, {'tipo': 'Lote'}]).startswith(
+    'Em Y, o NaPlanta acompanha 3 empreendimentos: 2 apartamentos e 1 lote.')
+assert resumo_cidade('X', [{'tipo': 'Apartamento', 'dorms': [1, 2], 'm2': [40, 55], 'mcmv': True, 'estacao': {'nome': 'Braz Cubas', 'km': 0.8}}]) == \
+    ('Em X, o NaPlanta acompanha 1 empreendimento: 1 apartamento. As plantas vão de 1 a 2 dormitórios, com 40 a 55 m². '
+     'A estação Braz Cubas fica a até 1 km de algum deles. 1 cita o Minha Casa Minha Vida na página da construtora.')
+
+
 def html_cidade(cidade, lista):
     na_planta = [e for e in lista if e.get('etapa') in NA_PLANTA]
     construtoras = sorted({e['construtora'] for e in lista})
@@ -239,10 +288,59 @@ def html_cidade(cidade, lista):
 <p class="sub">{_plural(len(na_planta), 'empreendimento', 'empreendimentos')} na planta{f' ({por_etapa})' if por_etapa else ''}{f' e {_plural(prontos, "pronto", "prontos")} para morar' if prontos else ''}, de {_plural(len(construtoras), 'construtora', 'construtoras')}.</p>
 <div class="botoes"><a class="btn primario" href="../?cidade={quote(cidade)}">Ver {escape(cidade)} no mapa</a>
 <a class="btn" href="../alertas.html?cidade={quote(cidade)}">Receber alertas por e-mail</a></div>
+<p>{escape(resumo_cidade(cidade, lista))}</p>
 <p class="info">Construtoras: {escape(', '.join(construtoras))}. Dados coletados todo dia dos sites oficiais; preço e disponibilidade, consulte a construtora.</p>
-{secoes}'''
-    return _documento(f'Lançamentos na planta em {cidade} | NaPlanta', descricao, canonica, corpo, None, ld,
+{secoes}
+<p class="info" style="margin-top:24px"><a href="./">Lançamentos em outras cidades</a>{' · <a href="alto-tiete.html">Alto Tietê</a>' if cidade in ALTO_TIETE else ''}</p>'''
+    extra = ld + (NOINDEX if len(lista) < MINIMO_INDEXAR else '')
+    return _documento(f'Lançamentos na planta em {cidade} | NaPlanta', descricao, canonica, corpo, None, extra,
                       f'lançamentos {cidade}, imóveis na planta {cidade}, apartamento na planta {cidade}, breve lançamento {cidade}')
+
+
+def _cidade_li(cidade, lista):
+    n = sum(e.get('etapa') in NA_PLANTA for e in lista)
+    return (f'<li><a href="{pagina_cidade(cidade)}.html"><strong>{escape(cidade)}</strong>'
+            f'<small>{n} na planta · {_plural(len(lista), "empreendimento", "empreendimentos")} no total</small></a></li>')
+
+
+def html_indice_cidades(por_cidade):
+    """/lancamentos/: todas as cidades, Alto Tietê primeiro. Liga a home e o rodape as paginas de cidade."""
+    regiao = [c for c in ALTO_TIETE if c in por_cidade]
+    outras = sorted((c for c in por_cidade if c not in ALTO_TIETE), key=lambda c: (-len(por_cidade[c]), c))
+    trilha, ld_trilha = _trilha([('NaPlanta', URL), ('Lançamentos por cidade', None)])
+    corpo = f'''{trilha}<h1>Lançamentos na planta por cidade</h1>
+<p class="sub">{_plural(len(por_cidade), 'cidade', 'cidades')} com lançamentos acompanhados pelo NaPlanta, atualizados todo dia.</p>
+<h2 style="margin-top:24px"><a href="alto-tiete.html">Alto Tietê</a></h2><ul class="itens">{''.join(_cidade_li(c, por_cidade[c]) for c in regiao)}</ul>
+<h2 style="margin-top:24px">Outras cidades</h2><ul class="itens">{''.join(_cidade_li(c, por_cidade[c]) for c in outras)}</ul>'''
+    return _documento('Lançamentos na planta por cidade | NaPlanta',
+                      'Lançamentos imobiliários na planta por cidade: Mogi das Cruzes, Suzano, Alto Tietê e Grande São Paulo, atualizados todo dia.',
+                      f'{URL}lancamentos/', corpo, None, ld_trilha)
+
+
+def html_regiao(por_cidade):
+    """/lancamentos/alto-tiete.html: a regiao foco do NaPlanta numa pagina so."""
+    cidades = [c for c in ALTO_TIETE if c in por_cidade]
+    todos = [e for c in cidades for e in por_cidade[c]]
+    na_planta = [e for e in todos if e.get('etapa') in NA_PLANTA]
+    construtoras = sorted({e['construtora'] for e in todos})
+    trilha, ld_trilha = _trilha([('NaPlanta', URL), ('Lançamentos por cidade', f'{URL}lancamentos/'), ('Alto Tietê', None)])
+    ld = _ld({'@context': 'https://schema.org', '@type': 'ItemList', 'name': 'Lançamentos na planta no Alto Tietê',
+              'itemListElement': [{'@type': 'ListItem', 'position': i, 'url': f'{URL}lancamentos/{pagina_cidade(c)}.html', 'name': c}
+                                  for i, c in enumerate(cidades, 1)]}) + ld_trilha
+    blocos = ''.join(f'<h2 style="margin-top:24px"><a href="{pagina_cidade(c)}.html">{escape(c)}</a></h2><ul class="itens">'
+                     + ''.join(_item(e, '../e/') for e in sorted((e for e in por_cidade[c] if e.get('etapa') in NA_PLANTA), key=lambda e: e['nome']))
+                     + '</ul>' for c in cidades if any(e.get('etapa') in NA_PLANTA for e in por_cidade[c]))
+    lista = ', '.join(ALTO_TIETE[:-1]) + ' e ' + ALTO_TIETE[-1]
+    corpo = f'''{trilha}<h1>Lançamentos na planta no Alto Tietê</h1>
+<p class="sub">{_plural(len(na_planta), 'empreendimento', 'empreendimentos')} na planta em {_plural(len(cidades), 'cidade', 'cidades')} da região, de {_plural(len(construtoras), 'construtora', 'construtoras')}, atualizados todo dia.</p>
+<div class="botoes"><a class="btn primario" href="../">Ver no mapa</a><a class="btn" href="../alertas.html">Receber alertas por e-mail</a></div>
+<p>O Alto Tietê reúne {lista}. O NaPlanta junta num lugar só os lançamentos espalhados pelos sites das incorporadoras, das grandes às locais, com etapa da obra, dormitórios, área e a estação de trem mais próxima.</p>
+<p class="info">Construtoras: {escape(', '.join(construtoras))}. Preço e disponibilidade, consulte a construtora.</p>
+{blocos}'''
+    return _documento('Lançamentos na planta no Alto Tietê (Mogi, Suzano e região) | NaPlanta',
+                      f'Lançamentos imobiliários na planta no Alto Tietê: {_plural(len(na_planta), "empreendimento", "empreendimentos")} em Mogi das Cruzes, Suzano e região, atualizados todo dia.',
+                      f'{URL}lancamentos/alto-tiete.html', corpo, None, ld,
+                      'lançamentos alto tietê, imóveis na planta alto tietê, lançamentos mogi das cruzes, lançamentos suzano')
 
 
 def html_lista(dados):
@@ -272,6 +370,8 @@ def llms_txt(dados, por_cidade):
 ## Páginas principais
 
 - [Mapa interativo]({URL}): filtros por cidade, etapa, construtora, dormitórios, área, estação e MCMV
+- [Alto Tietê]({URL}lancamentos/alto-tiete.html): os lançamentos da região foco, por cidade
+- [Lançamentos por cidade]({URL}lancamentos/): todas as cidades
 - [Todos os empreendimentos]({URL}e/): lista completa por cidade
 - [Sobre os dados e perguntas frequentes]({URL}transparencia.html): fontes, frequência de coleta e limites
 - [Privacidade]({URL}privacidade.html)
@@ -309,11 +409,14 @@ def gerar():
     pasta = _limpar(SITE / 'lancamentos')
     for cidade, lista in por_cidade.items():
         (pasta / f'{pagina_cidade(cidade)}.html').write_text(html_cidade(cidade, lista), encoding='utf8')
+    (pasta / 'index.html').write_text(html_indice_cidades(por_cidade), encoding='utf8')
+    (pasta / 'alto-tiete.html').write_text(html_regiao(por_cidade), encoding='utf8')
     (SITE / 'llms.txt').write_text(llms_txt(dados, por_cidade), encoding='utf8')
     # o mapa liga cada card a sua pagina por esse campo; so no dados.json publicado, nao no do git
     (SITE / 'dados.json').write_text(json.dumps(dados, ensure_ascii=False, separators=(',', ':')), encoding='utf8')
-    urls = ([URL, URL + 'transparencia.html', URL + 'privacidade.html', URL + 'alertas.html', URL + 'cadastro.html', URL + 'e/']
-            + [f'{URL}lancamentos/{pagina_cidade(c)}.html' for c in sorted(por_cidade)] + [f"{URL}e/{e['pagina']}.html" for e in dados])
+    urls = ([URL, URL + 'transparencia.html', URL + 'privacidade.html', URL + 'alertas.html', URL + 'cadastro.html', URL + 'e/',
+             URL + 'lancamentos/', URL + 'lancamentos/alto-tiete.html']
+            + [f'{URL}lancamentos/{pagina_cidade(c)}.html' for c in sorted(por_cidade) if len(por_cidade[c]) >= MINIMO_INDEXAR] + [f"{URL}e/{e['pagina']}.html" for e in dados])
     (SITE / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                                       + ''.join(f'<url><loc>{escape(u)}</loc></url>\n' for u in urls) + '</urlset>\n', encoding='utf8')
     return len(dados)
