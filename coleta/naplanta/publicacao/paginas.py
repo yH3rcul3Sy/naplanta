@@ -41,7 +41,7 @@ def _ld(obj):
 def _trilha(itens):
     """Breadcrumbs visiveis + BreadcrumbList para o Google. itens: [(nome, url ou None para a pagina atual)]"""
     # links visiveis relativos (funcionam em qualquer endereco); o JSON-LD exige URL completa
-    partes = [f'<a href="{escape(u.replace(URL, "../"))}">{escape(n)}</a>' if u else f'<span aria-current="page">{escape(n)}</span>' for n, u in itens]
+    partes = [f'<a href="{escape(u.replace(URL, "../"))}">{escape(n)}</a>' if u else f'<span aria-current="page">{escape(n)}</span>' for n, u in itens[1:]]
     ld = {'@context': 'https://schema.org', '@type': 'BreadcrumbList', 'itemListElement': [
         {'@type': 'ListItem', 'position': i, 'name': n, **({'item': u} if u else {})} for i, (n, u) in enumerate(itens, 1)]}
     return f'<nav class="trilha" aria-label="Você está em">{" › ".join(partes)}</nav>\n', _ld(ld)
@@ -73,7 +73,7 @@ ESTILO = '''<style>
          font-weight:600; text-decoration:none; border:1px solid var(--line); background:var(--card); color:var(--ink); flex:1 1 180px; }
   .btn:hover { border-color:var(--accent); color:var(--accent); }
   .btn.primario { background:var(--accent); border-color:var(--accent); color:#fff; } .btn.primario:hover { background:#185a3c; color:#fff; }
-  .btn.zap { border-color:#25d366; color:#128c4a; }
+  .mais { margin:-6px 0 18px; font-size:14px; color:var(--muted); } .mais a { font-weight:600; }
   .voltar { margin-left:auto; flex:0 0 auto; min-height:40px; padding:6px 12px; }
   .info { color:var(--muted); font-size:14px; } .aviso { color:#8a5a00; }
   a { color:var(--accent); text-underline-offset:3px; } a:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
@@ -83,6 +83,23 @@ ESTILO = '''<style>
   .itens a { display:block; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 14px; text-decoration:none; color:var(--ink); }
   .itens a:hover { border-color:var(--accent); } .itens strong { display:block; } .itens small { color:var(--muted); font-size:13px; }
   footer.rodape { max-width:760px; margin:0 auto; padding:0 16px 32px; color:var(--muted); font-size:14px; }
+  /* barra fina sem setas: scrollbar-* (Chrome, Edge, Firefox) e ::-webkit-scrollbar (Safari, que ignora o resto) */
+  * { scrollbar-width:thin; scrollbar-color:#c9c6bf transparent; }
+  ::-webkit-scrollbar { width:8px; height:8px; } ::-webkit-scrollbar-track { background:transparent; } ::-webkit-scrollbar-button { display:none; }
+  ::-webkit-scrollbar-thumb { background:#c9c6bf; border-radius:99px; border:2px solid transparent; background-clip:padding-box; }
+  @view-transition { navigation:auto; }  /* troca de pagina com esmaecer (Chrome, Edge, Safari); nos outros abre normal */
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration:.22s; }
+  @media (prefers-reduced-motion: reduce) { @view-transition { navigation:none; } }
+  /* paginas internas sem barra no topo: so o simbolo NP num canto e o voltar no outro, flutuando em capsulas de vidro */
+  header { position:fixed; top:12px; left:12px; right:12px; z-index:20; display:flex; align-items:center; justify-content:space-between;
+           background:none; border:0; padding:0; pointer-events:none; }
+  header > a { pointer-events:auto; display:inline-flex; align-items:center; min-height:40px; border-radius:99px;
+               background:rgba(255,255,255,.8); -webkit-backdrop-filter:saturate(1.4) blur(12px); backdrop-filter:saturate(1.4) blur(12px);
+               border:1px solid rgba(227,225,220,.75); box-shadow:0 2px 12px rgba(29,29,27,.08); transition:background-color .2s, color .2s, border-color .2s; }
+  header .marca { padding:0 14px; line-height:0; } header .marca img { height:20px; width:auto; }
+  header .voltar { flex:0 0 auto; margin-left:auto; padding:0 16px; font-size:14px; font-weight:600; color:var(--ink); text-decoration:none; }
+  header > a:hover { background:var(--accent-bg); border-color:var(--accent); color:var(--accent); }
+  body { padding-top:56px; }  /* o conteudo comeca abaixo das capsulas */
 </style>'''
 
 
@@ -111,7 +128,7 @@ def _documento(titulo, descricao, canonica, corpo, imagem=None, extra='', palavr
 {extra}{ESTILO}
 </head>
 <body>
-<header><a class="marca" aria-label="NaPlanta" href="../"><svg viewBox="14 46 112 164" aria-hidden="true" style="height:.79em;width:auto;vertical-align:-.03em;shape-rendering:geometricPrecision"><path fill="currentColor" stroke="currentColor" stroke-width="12" stroke-linejoin="round" d="M20 52H44L96 148V52H120V204H96L44 108V204H20Z"/></svg>a<span><svg viewBox="132 46 110 164" aria-hidden="true" style="height:.79em;width:auto;vertical-align:-.03em;shape-rendering:geometricPrecision"><path fill="currentColor" stroke="currentColor" stroke-width="12" stroke-linejoin="round" d="M138 52H236V146H186V122H212V76H162V204H138Z"/></svg>lanta</span></a><a class="btn voltar" href="../">← Mapa</a></header>
+<header><a class="marca" aria-label="NaPlanta" href="../"><img src="../logo.svg" alt="" width="37" height="26"></a><a class="btn voltar" href="../">← Mapa</a></header>
 <main>
 {corpo}
 </main>
@@ -190,9 +207,8 @@ def html_empreendimento(e, nome_arquivo, outros=(), eventos=(), inicio=None):
   <a class="btn primario" href="../?e={escape(nome_arquivo)}">Ver no mapa</a>
   <a class="btn" href="{escape(e.get('link') or e['fonte'])}" rel="noopener" data-goatcounter-click="saida/{slug(e['construtora'])}" data-goatcounter-title="{escape(e['nome'])}">Site da {escape(e['construtora'])} ↗</a>
   {f'<a class="btn" href="{escape(rota)}" rel="noopener">Como chegar ↗</a>' if rota else ''}
-  <a class="btn zap" href="{escape(zap)}" rel="noopener">Compartilhar no WhatsApp</a>
-  <a class="btn" href="../alertas.html{'?cidade=' + quote(cidade) if cidade else ''}">Receber alertas por e-mail</a>
 </div>
+<p class="mais"><a href="{escape(zap)}" rel="noopener">Compartilhar no WhatsApp</a> · <a href="../alertas.html{'?cidade=' + quote(cidade) if cidade else ''}">Receber alertas de {escape(cidade or 'novos lançamentos')}</a></p>
 {f'<p class="info">📍 {escape(e["endereco"].replace(" | ", " · "))}</p>' if e.get('endereco') else ''}
 {f'<p class="aviso">Localização aproximada: o pino está {"na rua" if e.get("aprox") == "rua" else "no bairro"}, não no endereço exato.</p>' if e.get('aprox') else ''}
 {'<div class="bloco"><h2>Minha Casa Minha Vida</h2><p style="margin:0">A página da construtora cita o programa. Veja se você se enquadra no <a href="https://www.portaldeempreendimentos.caixa.gov.br/simulador/" rel="noopener">simulador da Caixa ↗</a>.</p></div>' if e.get('mcmv') else ''}

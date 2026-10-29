@@ -38,18 +38,23 @@ export function criarMapa(id, { agruparDeLonge }) {
       }
       camada.addLayers([...marcadores.values()]);  // em lote: bem mais rapido que um por um
     },
-    enquadrar() {
+    // animar so quando o usuario muda um filtro: na abertura, o fim da animacao desfazia o foco no pino (link ?e=)
+    enquadrar(animar = false) {
       mapa.invalidateSize();
-      // sem animacao: o fim da animacao desfazia o foco no pino (link ?e=)
-      if (marcadores.size) mapa.fitBounds(camada.getBounds(), { padding: [30, 30], maxZoom: 15, animate: false });
+      if (marcadores.size) mapa.fitBounds(camada.getBounds(), { padding: [30, 30], maxZoom: 15, animate: animar, duration: 0.5 });
     },
     tem: fonte => marcadores.has(fonte),
     // e pode ser um evento das novidades (sem coordenada): a posicao vem do pino
     abrir(e) {
-      const m = marcadores.get(e.fonte);
-      mapa.setView(m.getLatLng(), 15, { animate: false });
-      const grupo = camada.getVisibleParent(m);  // se ainda estiver agrupado, abre o leque antes do popup
-      if (grupo && grupo !== m) { camada.once('spiderfied', () => m.openPopup()); grupo.spiderfy(); } else m.openPopup();
+      const m = marcadores.get(e.fonte), alvo = m.getLatLng(), zoom = Math.max(mapa.getZoom(), 15);
+      const mostrar = () => {
+        const grupo = camada.getVisibleParent(m);  // se ainda estiver agrupado, abre o leque antes do popup
+        if (grupo && grupo !== m) { camada.once('spiderfied', () => m.openPopup()); grupo.spiderfy(); } else m.openPopup();
+      };
+      // voo curto ate o pino (pula direto se ja esta la ou se o sistema pede menos movimento)
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches || (mapa.getZoom() === zoom && mapa.getCenter().distanceTo(alvo) < 5)) {
+        mapa.setView(alvo, zoom, { animate: false }); mostrar();
+      } else { mapa.once('moveend', mostrar); mapa.flyTo(alvo, zoom, { duration: 0.6 }); }
     },
     redimensionar: () => mapa.invalidateSize(),
   };

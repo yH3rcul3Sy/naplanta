@@ -31,7 +31,38 @@
           --breve:#8a5a00; --breve-bg:#fbefd6; --lanc:#9a3b12; --lanc-bg:#fbe3d8;
           --obras:#1d4f91; --obras-bg:#dde8f7; --pronto:#1f6f4a; --pronto-bg:#e0f0e7;
           --accent-bg:#e7f2ec; --linha-forte:#c9c6bf; --sombra:0 6px 18px rgba(29,29,27,.12); }
-  * { box-sizing:border-box; scrollbar-width:thin; scrollbar-color:var(--linha-forte) transparent; }
+  * { box-sizing:border-box; }
+  /* barra fina sem setas: scrollbar-* (Chrome, Edge, Firefox) e ::-webkit-scrollbar (Safari, que ignora o resto) */
+  * { scrollbar-width:thin; scrollbar-color:#c9c6bf transparent; }
+  ::-webkit-scrollbar { width:8px; height:8px; } ::-webkit-scrollbar-track { background:transparent; } ::-webkit-scrollbar-button { display:none; }
+  ::-webkit-scrollbar-thumb { background:#c9c6bf; border-radius:99px; border:2px solid transparent; background-clip:padding-box; }
+  @view-transition { navigation:auto; }  /* troca de pagina com esmaecer (Chrome, Edge, Safari); nos outros abre normal */
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration:.22s; }
+  /* esqueleto: o formato dos cards aparece enquanto os dados chegam (o brilho anda por transform, sem repintar) */
+  .esqueleto { cursor:default; pointer-events:none; }
+  .esqueleto .ft, .esqueleto i { display:block; position:relative; overflow:hidden; background:#ece9e3; }
+  .esqueleto .ft { aspect-ratio:16/8; }
+  .esqueleto i { height:12px; border-radius:6px; margin:10px 0; } .esqueleto i.titulo { height:18px; width:70%; } .esqueleto i.curto { width:45%; }
+  .esqueleto .ft::after, .esqueleto i::after { content:""; position:absolute; inset:0; transform:translateX(-100%);
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.65), transparent); animation:brilho 1.2s ease-in-out infinite; }
+  @keyframes brilho { to { transform:translateX(100%); } }
+  /* cards entram suaves; a foto aparece quando termina de carregar */
+  .card { animation:entrar .28s ease-out both; }
+  @keyframes entrar { from { opacity:0; transform:translateY(6px); } }
+  .card img { opacity:0; transition:opacity .3s, transform .4s; } .card img.ok { opacity:1; }
+  /* janelas (Como funciona, Novidades) abrem e fecham com esmaecer e leve subida */
+  dialog { opacity:0; transform:translateY(10px) scale(.98);
+           transition:opacity .2s ease-out, transform .2s ease-out, overlay .2s allow-discrete, display .2s allow-discrete; }
+  dialog[open] { opacity:1; transform:none; }
+  @starting-style { dialog[open] { opacity:0; transform:translateY(10px) scale(.98); } }
+  dialog::backdrop { opacity:0; transition:opacity .2s, overlay .2s allow-discrete, display .2s allow-discrete; }
+  dialog[open]::backdrop { opacity:1; }
+  @starting-style { dialog[open]::backdrop { opacity:0; } }
+  .btn:active, button:active { transform:scale(.97); }
+  /* troca da lista ao filtrar: so a lista participa (o resto da pagina nao pisca) */
+  .vt-filtro { view-transition-name:none; } .vt-filtro #lista { view-transition-name:lista; }
+  ::view-transition-old(lista) { animation:.15s ease-in both sair; } ::view-transition-new(lista) { animation:.25s ease-out both entrar; }
+  @keyframes sair { to { opacity:0; } }
   html, body { height:100%; }
   body { margin:0; font:16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); background:var(--bg);
          display:grid; grid-template-rows:auto 1fr; grid-template-columns:minmax(0, 1fr); height:100dvh; overflow:hidden; }
@@ -73,6 +104,7 @@
     #filtros > label:not(.cidade):not(.ordem):not(.check) { flex:1 1 0; }  /* os filtros ocupam a linha toda, sem sobra a direita */
     #filtros > label:not(.cidade):not(.ordem):not(.check) select, #filtros > label:not(.check) input { width:100%; max-width:none; }
     #filtros > label:not(.check) { font-size:0; gap:0; }
+    #filtros select, #filtros input:not([type=checkbox]), .check { transition:background-color .2s, border-color .2s, color .2s; }
     #filtros select, #filtros input:not([type=checkbox]) { font-size:14px; padding:5px 12px; border-radius:99px; min-width:0; background-color:transparent;
                                                           field-sizing:content; max-width:190px; }  /* do tamanho do texto escolhido */
     .check { font-size:14px; white-space:nowrap; padding:5px 12px; border:1px solid var(--line); border-radius:99px; background:transparent; gap:6px; }
@@ -95,6 +127,10 @@
       #filtros select:hover { background:var(--bg); }
       #filtros select::picker-icon { color:var(--muted); transition:rotate .2s; }
       #filtros select:open::picker-icon { rotate:180deg; }
+      #filtros select::picker(select) { opacity:0; translate:0 -6px;
+        transition:opacity .16s ease-out, translate .16s ease-out, display .16s allow-discrete, overlay .16s allow-discrete; }
+      #filtros select:open::picker(select) { opacity:1; translate:0 0; }
+      @starting-style { #filtros select:open::picker(select) { opacity:0; translate:0 -6px; } }
       #filtros select::picker(select) { margin-top:6px; padding:6px; border:1px solid var(--line); border-radius:14px; max-height:min(420px, 60vh);
                                         background:rgba(255,255,255,.9); backdrop-filter:blur(12px); box-shadow:0 12px 32px rgba(29,29,27,.14); }
       #filtros option { padding:7px 12px; border-radius:9px; font-size:14px; font-weight:400; color:var(--ink); }
@@ -193,7 +229,7 @@
   .t-novo { color:var(--pronto); } .t-etapa { color:var(--obras); } .t-saiu { color:var(--lanc); }
   .tipo-evento { font-size:12px; font-weight:700; }
   @media (max-width: 1100px) and (min-width: 801px) { main { grid-template-columns:330px 1fr; } }
-  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition:none !important; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition:none !important; animation:none !important; } @view-transition { navigation:none; } }
   @media (hover: none) { .card:hover { transform:none; box-shadow:none; } .card:hover img { transform:none; } }
 
   @media (max-width: 800px) {
@@ -255,7 +291,7 @@
   <div id="rodape"><span id="total" aria-live="polite"></span></div>
 </header>
 <main>
-  <section id="lista" aria-label="Empreendimentos"></section>
+  <section id="lista" aria-label="Empreendimentos" aria-busy="true"><div class="card esqueleto" aria-hidden="true"><div class="ft"></div><div class="corpo"><i class="curto"></i><i class="titulo"></i><i></i><i class="curto"></i></div></div><div class="card esqueleto" aria-hidden="true"><div class="ft"></div><div class="corpo"><i class="curto"></i><i class="titulo"></i><i></i><i class="curto"></i></div></div><div class="card esqueleto" aria-hidden="true"><div class="ft"></div><div class="corpo"><i class="curto"></i><i class="titulo"></i><i></i><i class="curto"></i></div></div></section>
   <div id="mapa" role="region" aria-label="Mapa dos empreendimentos"></div>
 </main>
 <button id="alternar" type="button">Ver lista</button>
@@ -298,7 +334,7 @@
     </div>
     <button id="fecharNovidades" type="button" aria-label="Fechar">✕</button>
   </header>
-  <a class="alerta-email" href="alertas.html">Receber as novidades por e-mail</a>
+  <a class="alerta-email so-celular" href="alertas.html">Receber as novidades por e-mail</a>
   <div id="eventos"></div>
 </dialog>
 <!-- integrity: o navegador recusa o arquivo se a CDN entregar algo diferente; ao trocar de versao, gerar o hash de novo -->

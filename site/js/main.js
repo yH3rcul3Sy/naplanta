@@ -14,7 +14,14 @@ import { criarPainelFiltros } from './ui/painel-filtros.js';
 const celular = matchMedia('(max-width: 800px)');
 let dados = [], mudancas = { inicio: null, eventos: [] }, situacao = { atualizado: '', parados: {} };
 
-const filtros = criarPainelFiltros({ aoMudar: render });
+// filtro mudou: a lista troca com esmaecer (View Transition, so ela: o mapa tem a propria animacao) e o mapa desliza
+const suave = !matchMedia('(prefers-reduced-motion: reduce)').matches && 'startViewTransition' in document;
+function aoFiltrar() {
+  if (!suave) return render(true);
+  document.documentElement.classList.add('vt-filtro');
+  document.startViewTransition(() => render(true)).finished.finally(() => document.documentElement.classList.remove('vt-filtro'));
+}
+const filtros = criarPainelFiltros({ aoMudar: aoFiltrar });
 const mapa = criarMapa('mapa', { agruparDeLonge: () => !filtros.cidade() });
 const cabecalho = criarCabecalho({ redimensionarMapa: mapa.redimensionar });
 const lista = criarLista(document.getElementById('lista'));
@@ -37,7 +44,7 @@ function focar(e) {
   if (mapa.tem(e.fonte)) abrir(e, !celular.matches);
 }
 
-function render() {
+function render(animar = false) {
   const f = filtros.ler();
   const visiveis = ordenar(filtrar(dados, f), f.ordem);
   cabecalho.atualizar({ total: visiveis.length, atualizado: situacao.atualizado, filtrosAtivos: contarAtivos(f),
@@ -47,7 +54,7 @@ function render() {
                           aoFecharPopup: e => lista.desmarcar(e.fonte) });
   lista.montar(visiveis, { conteudo: e => cartao(e, ctx), aoAbrir: e => abrir(e, false),
                            vazio: '<p class="vazio">Nenhum empreendimento com esses filtros.<br>Tente limpar algum deles.</p>' });
-  mapa.enquadrar();
+  mapa.enquadrar(animar);
 }
 
 carregar().then(r => {
