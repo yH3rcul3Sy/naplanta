@@ -51,7 +51,9 @@ def parse(url, html):
     return {
         'nome': nome,
         'construtora': 'Scopel',
-        'etapa': etapa(topo, 'disponibilidade_empreendimento-breve-lancamento' in classes),
+        # pagina antiga sem etapa no topo, mas com nova fase a venda ("lança agora sua terceira etapa": Ibirapitanga 3)
+        'etapa': 'Lançamento' if re.search(r'(?i)lan[çc]a agora', s.get_text(' ')) and not ETAPA.match(topo)
+        else etapa(topo, 'disponibilidade_empreendimento-breve-lancamento' in classes),
         'endereco': endereco,
         'cidade': cidade(lugar[1]),
         'uf': 'SP',
@@ -71,6 +73,7 @@ def coletar():
         xml = c.get(f'{BASE}/empreendimentos-sitemap.xml').text
         for url in sorted(set(re.findall(rf'<loc>({BASE}/empreendimentos/[^<]+)</loc>', xml))):
             r = c.get(url)
-            if r.status_code == 200 and (e := parse(url, r.text)):
+            # loteamento antigo ja entregue, com lotes de revenda: nao e lancamento na planta
+            if r.status_code == 200 and (e := parse(url, r.text)) and e['etapa'] != 'Pronto para morar':
                 out.append(e)
     return out
