@@ -90,11 +90,20 @@ def _tentativas(e):
         yield {'q': f'{nome}, {cidade}'}, lambda r: r.get('category') in ('place', 'boundary', 'railway', 'highway'), 'bairro'
 
 
+def a_cidade(r, cidade):
+    """A busca vaga ("GFR Mogi" -> "Mogi", "km 11, Santa Isabel") devolve o proprio municipio: o pino cairia no centro."""
+    return r.get('category') in ('boundary', 'place') and _sem_acento(r.get('name')) == _sem_acento(cidade)
+
+
+assert a_cidade({'category': 'boundary', 'name': 'Mogi das Cruzes'}, 'Mogi das Cruzes')
+assert not a_cidade({'category': 'place', 'name': 'Reserva Ibirapitanga'}, 'Santa Isabel')
+
+
 def _procurar(e):
     for params, serve, aprox in _tentativas(e):
         for r in _get('search', countrycodes='br', **{'limit': 1, **params}):
             lat, lng = float(r['lat']), float(r['lon'])
-            if serve(r) and (not e['cidade'] or na_cidade(lat, lng, e['cidade'])):
+            if serve(r) and not a_cidade(r, e['cidade']) and (not e['cidade'] or na_cidade(lat, lng, e['cidade'])):
                 return lat, lng, aprox
     return _na_rua(e)
 
