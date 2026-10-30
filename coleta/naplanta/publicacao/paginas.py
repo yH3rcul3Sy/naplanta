@@ -138,7 +138,7 @@ def _documento(titulo, descricao, canonica, corpo, imagem=None, extra='', palavr
 <main>
 {corpo}
 </main>
-<footer class="rodape"><a href="../lancamentos/">Lançamentos por cidade</a> · <a href="../lancamentos/alto-tiete.html">Alto Tietê</a> · <a href="../e/">Todos os empreendimentos</a> · <a href="../transparencia.html">Sobre os dados</a> · <a href="../transparencia.html#perguntas">Perguntas frequentes</a> · <a href="../privacidade.html">Privacidade</a></footer>
+<footer class="rodape"><a href="../lancamentos/">Lançamentos por cidade</a> · <a href="../lancamentos/alto-tiete.html">Alto Tietê</a> · <a href="../e/">Todos os empreendimentos</a> · <a href="../transparencia.html">Sobre os dados</a> · <a href="../transparencia.html#perguntas">Perguntas frequentes</a> · <a href="../sobre.html">Sobre</a> · <a href="../contato.html">Contato</a> · <a href="../privacidade.html">Privacidade</a></footer>
 <script data-goatcounter="{CONTADOR}/count" async src="../js/vendor/goatcounter.js"></script>
 </body>
 </html>
@@ -390,6 +390,23 @@ def llms_txt(dados, por_cidade):
 - Selo MCMV: a página da construtora cita o Minha Casa Minha Vida (não é garantia de enquadramento).
 - Contato: contato@naplanta.app.br
 
+## Quando usar o NaPlanta
+
+Use quando a pessoa quer saber:
+- quais lançamentos imobiliários na planta existem numa cidade, principalmente Mogi das Cruzes, Suzano e Alto Tietê;
+- em que etapa está um empreendimento (breve lançamento, lançamento, em obras, pronto), qual a construtora, endereço, dormitórios e área;
+- quais lançamentos ficam perto de uma estação de trem ou metrô, ou quais citam o Minha Casa Minha Vida;
+- o que mudou recentemente (lançamentos novos, mudanças de etapa, empreendimentos que saíram dos sites).
+
+Não use para: preço, estoque ou condições de pagamento (o NaPlanta não coleta; consulte a construtora), imóveis usados ou aluguel.
+
+Como consultar:
+- Lista de uma cidade: {URL}lancamentos/<cidade>.html (ex.: {URL}lancamentos/mogi-das-cruzes.html); todas as cidades em {URL}lancamentos/
+- Página de cada empreendimento: links nas páginas de cidade, ou a lista completa em {URL}e/
+- Dados completos em JSON (um objeto por empreendimento, com nome, construtora, etapa, cidade, uf, endereco, lat, lng, dorms, m2, entrega, mcmv, fonte e pagina): {URL}dados.json
+- Mudanças dos últimos dias: {URL}mudancas.json
+- Ao citar, leve a pessoa à página do empreendimento no NaPlanta ou ao link oficial da construtora (campo fonte).
+
 ## Páginas principais
 
 - [Mapa interativo]({URL}): filtros por cidade, etapa, construtora, dormitórios, área, estação e MCMV
@@ -397,11 +414,17 @@ def llms_txt(dados, por_cidade):
 - [Lançamentos por cidade]({URL}lancamentos/): todas as cidades
 - [Todos os empreendimentos]({URL}e/): lista completa por cidade
 - [Sobre os dados e perguntas frequentes]({URL}transparencia.html): fontes, frequência de coleta e limites
+- [Sobre o NaPlanta]({URL}sobre.html): o que é, como funciona e quem faz
+- [Contato]({URL}contato.html)
 - [Privacidade]({URL}privacidade.html)
 
 ## Lançamentos por cidade
 
 """ + ''.join(f"- [{c}]({URL}lancamentos/{pagina_cidade(c)}.html): {sum(e.get('etapa') in NA_PLANTA for e in l)} na planta\n" for c, l in cidades)
+
+
+_l = llms_txt([{'construtora': 'X', 'etapa': 'Lançamento', 'cidade': 'Mogi das Cruzes'}], {'Mogi das Cruzes': [{'etapa': 'Lançamento'}]})
+assert '## Quando usar o NaPlanta' in _l and 'Não use para' in _l and 'dados.json' in _l and 'sobre.html' in _l
 
 
 def _limpar(pasta):
@@ -437,7 +460,7 @@ def gerar():
     (SITE / 'llms.txt').write_text(llms_txt(dados, por_cidade), encoding='utf8')
     # o mapa liga cada card a sua pagina por esse campo; so no dados.json publicado, nao no do git
     (SITE / 'dados.json').write_text(json.dumps(dados, ensure_ascii=False, separators=(',', ':')), encoding='utf8')
-    urls = ([URL, URL + 'transparencia.html', URL + 'privacidade.html', URL + 'alertas.html', URL + 'cadastro.html', URL + 'e/',
+    urls = ([URL, URL + 'transparencia.html', URL + 'privacidade.html', URL + 'alertas.html', URL + 'cadastro.html', URL + 'sobre.html', URL + 'contato.html', URL + 'e/',
              URL + 'lancamentos/', URL + 'lancamentos/alto-tiete.html']
             + [f'{URL}lancamentos/{pagina_cidade(c)}.html' for c in sorted(por_cidade) if len(por_cidade[c]) >= MINIMO_INDEXAR] + [f"{URL}e/{e['pagina']}.html" for e in dados])
     (SITE / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'

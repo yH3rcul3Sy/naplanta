@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src https://naplanta.goatcounter.com; style-src 'unsafe-inline'; img-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#e7f2ec">
+<title>Contato · NaPlanta</title>
+<meta name="description" content="Como falar com o NaPlanta: e-mail, Instagram, cadastro de lançamentos para incorporadoras e pedidos sobre dados pessoais.">
+<link rel="canonical" href="https://naplanta.app.br/contato.html">
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+  :root { --bg:#f6f5f2; --card:#fff; --ink:#1d1d1b; --muted:#6b6a66; --line:#e3e1dc; --accent:#1f6f4a; }
+  body { margin:0; font:16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; color:var(--ink); background:var(--bg); }
+  header { background:var(--card); border-bottom:1px solid var(--line); padding:10px 16px; display:flex; align-items:center; gap:12px; position:sticky; top:0; z-index:10; }
+  .marca { font-size:25px; font-weight:700; color:inherit; text-decoration:none; } .marca span { color:var(--accent); }
+  .voltar { margin-left:auto; font-size:14px; font-weight:600; color:var(--ink); text-decoration:none; border:1px solid var(--line);
+            background:#fff; border-radius:10px; padding:6px 11px; }
+  .voltar:hover { border-color:var(--accent); color:var(--accent); }
+  main { max-width:760px; margin:0 auto; padding:20px 16px 48px; }
+  h1 { font-size:25px; margin:8px 0 4px; } h2 { font-size:19px; margin:28px 0 6px; }
+  .info { color:var(--muted); font-size:14px; } a { color:var(--accent); text-underline-offset:3px; }
+  a:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  ul { padding-left:20px; } li { margin:4px 0; }
+  /* barra fina sem setas: scrollbar-* (Chrome, Edge, Firefox) e ::-webkit-scrollbar (Safari, que ignora o resto) */
+  * { scrollbar-width:thin; scrollbar-color:#c9c6bf transparent; }
+  ::-webkit-scrollbar { width:8px; height:8px; } ::-webkit-scrollbar-track { background:transparent; } ::-webkit-scrollbar-button { display:none; }
+  ::-webkit-scrollbar-thumb { background:#c9c6bf; border-radius:99px; border:2px solid transparent; background-clip:padding-box; }
+  @view-transition { navigation:auto; }  /* troca de pagina com esmaecer (Chrome, Edge, Safari); nos outros abre normal */
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration:.22s; }
+  @media (prefers-reduced-motion: reduce) { @view-transition { navigation:none; } }
+  /* paginas internas sem barra no topo: so o simbolo NP num canto e o voltar no outro, flutuando em capsulas de vidro */
+  header { position:fixed; top:12px; left:12px; right:12px; z-index:20; display:flex; align-items:center; justify-content:space-between;
+           background:none; border:0; padding:0; pointer-events:none; }
+  header > a { pointer-events:auto; display:inline-flex; align-items:center; min-height:40px; border-radius:99px;
+               background:rgba(255,255,255,.8); -webkit-backdrop-filter:saturate(1.4) blur(12px); backdrop-filter:saturate(1.4) blur(12px);
+               border:1px solid rgba(227,225,220,.75); box-shadow:0 2px 12px rgba(29,29,27,.08); transition:background-color .2s, color .2s, border-color .2s; }
+  header .marca { padding:0 14px; line-height:0; } header .marca img { height:20px; width:auto; }
+  header .voltar { flex:0 0 auto; margin-left:auto; padding:0 16px; font-size:14px; font-weight:600; color:var(--ink); text-decoration:none; }
+  header > a:hover { background:var(--accent-bg); border-color:var(--accent); color:var(--accent); }
+  body { padding-top:56px; }  /* o conteudo comeca abaixo das capsulas */
+  @media (max-width: 800px) { header > a { min-height:44px; font-size:15px; } body { padding-top:62px; } }
+</style>
+</head>
+<body>
+<header>
+  <a class="marca" aria-label="NaPlanta" href="./"><img src="logo.svg" alt="" width="37" height="26"></a>
+  <a class="voltar" href="./">← Mapa</a>
+</header>
+<main>
+  <h1>Contato</h1>
+  <p>O NaPlanta é mantido por alunos da Universidade de Mogi das Cruzes (UMC), em Mogi das Cruzes, SP. O jeito mais rápido de falar com a gente é por e-mail.</p>
+
+  <h2>E-mail</h2>
+  <p><a href="mailto:contato@naplanta.app.br">contato@naplanta.app.br</a>: dúvidas sobre o mapa, correção de um empreendimento, sugestão de incorporadora e parcerias.</p>
+
+  <h2>Incorporadoras e corretores</h2>
+  <p>Para colocar um lançamento no mapa, de graça, use o <a href="cadastro.html">formulário de cadastro</a>. Cada envio é conferido com o site oficial do empreendimento antes de ser publicado. Para corrigir ou retirar um empreendimento que já está no mapa, escreva para o e-mail acima com o link da página dele.</p>
+
+  <h2>Instagram</h2>
+  <p>Novidades e lançamentos da semana em <a href="https://www.instagram.com/naplanta.oficial/" rel="noopener">@naplanta.oficial</a>.</p>
+
+  <h2>Dados pessoais (LGPD)</h2>
+  <p>Pedidos de acesso, correção ou exclusão de dados (inscrição nos alertas ou cadastro de lançamento) podem ser feitos pelo mesmo e-mail. Veja também a <a href="privacidade.html">política de privacidade</a>.</p>
+
+  <p class="info">O NaPlanta não vende imóveis nem atende por telefone: preços e visitas são tratados direto com a construtora.</p>
+</main>
+<script data-goatcounter="https://naplanta.goatcounter.com/count" async src="js/vendor/goatcounter.js"></script>
+</body>
+</html>
