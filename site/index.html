@@ -205,6 +205,12 @@
   #boasVindas .saiba a { font-size:13px; font-weight:600; color:var(--ink); text-decoration:none; border:1px solid var(--line); border-radius:99px; padding:5px 12px; }
   #boasVindas .saiba a:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-bg); }
   @media (min-width: 801px) { .so-celular { display:none; } }
+  /* celular: os 5 atalhos em grade de 2 colunas iguais, o ultimo (Cadastre) na largura toda */
+  @media (max-width: 800px) {
+    #boasVindas .saiba { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    #boasVindas .saiba a { display:flex; align-items:center; justify-content:center; text-align:center; min-height:48px; padding:6px 10px; font-size:14px; line-height:1.2; }
+    #boasVindas .saiba a:last-child:nth-child(odd) { grid-column:1 / -1; }
+  }
   #comecar { width:100%; min-height:48px; margin-top:8px; background:var(--accent); color:#fff; border-color:var(--accent); font-size:17px; }
   #comecar:hover { background:#185a3c; color:#fff; }
   #novidades::backdrop { background:rgba(0,0,0,.4); }
@@ -319,11 +325,11 @@
   <nav class="saiba" aria-label="Saiba mais">
     <a href="transparencia.html">De onde vêm os dados</a>
     <a href="transparencia.html#perguntas">Perguntas frequentes</a>
-    <a href="privacidade.html">Privacidade</a>
     <a class="so-celular" href="lancamentos/">Cidades</a>
+    <a href="privacidade.html">Privacidade</a>
     <a class="so-celular" href="cadastro.html">Cadastre seu lançamento</a>
   </nav>
-  <button id="comecar" type="button">Ver lançamentos</button>
+  <button id="comecar" type="button" autofocus>Ver lançamentos</button>
 </dialog>
 <dialog id="novidades" aria-labelledby="tituloNovidades">
   <header>
