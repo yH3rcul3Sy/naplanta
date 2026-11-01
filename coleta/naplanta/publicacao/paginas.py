@@ -138,7 +138,7 @@ def _documento(titulo, descricao, canonica, corpo, imagem=None, extra='', palavr
 <main>
 {corpo}
 </main>
-<footer class="rodape"><a href="../lancamentos/">Lançamentos por cidade</a> · <a href="../lancamentos/alto-tiete.html">Alto Tietê</a> · <a href="../e/">Todos os empreendimentos</a> · <a href="../transparencia.html">Sobre os dados</a> · <a href="../transparencia.html#perguntas">Perguntas frequentes</a> · <a href="../sobre.html">Sobre</a> · <a href="../contato.html">Contato</a> · <a href="../privacidade.html">Privacidade</a></footer>
+<footer class="rodape"><a href="../lancamentos/">Lançamentos por cidade</a> · <a href="../lancamentos/alto-tiete.html">Alto Tietê</a> · <a href="../e/">Todos os empreendimentos</a> · <a href="../transparencia.html">Sobre os dados</a> · <a href="../transparencia.html#perguntas">Perguntas frequentes</a> · <a href="../sobre.html">Sobre</a> · <a href="../contato.html">Contato</a> · <a href="../privacidade.html">Privacidade</a> · <a href="../termos.html">Termos de uso</a></footer>
 <script data-goatcounter="{CONTADOR}/count" async src="../js/vendor/goatcounter.js"></script>
 </body>
 </html>
@@ -417,6 +417,7 @@ Como consultar:
 - [Sobre o NaPlanta]({URL}sobre.html): o que é, como funciona e quem faz
 - [Contato]({URL}contato.html)
 - [Privacidade]({URL}privacidade.html)
+- [Termos de uso]({URL}termos.html)
 
 ## Lançamentos por cidade
 
@@ -460,7 +461,7 @@ def gerar():
     (SITE / 'llms.txt').write_text(llms_txt(dados, por_cidade), encoding='utf8')
     # o mapa liga cada card a sua pagina por esse campo; so no dados.json publicado, nao no do git
     (SITE / 'dados.json').write_text(json.dumps(dados, ensure_ascii=False, separators=(',', ':')), encoding='utf8')
-    urls = ([URL, URL + 'transparencia.html', URL + 'privacidade.html', URL + 'alertas.html', URL + 'cadastro.html', URL + 'sobre.html', URL + 'contato.html', URL + 'e/',
+    urls = ([URL, URL + 'transparencia.html', URL + 'privacidade.html', URL + 'alertas.html', URL + 'cadastro.html', URL + 'sobre.html', URL + 'contato.html', URL + 'termos.html', URL + 'e/',
              URL + 'lancamentos/', URL + 'lancamentos/alto-tiete.html']
             + [f'{URL}lancamentos/{pagina_cidade(c)}.html' for c in sorted(por_cidade) if len(por_cidade[c]) >= MINIMO_INDEXAR] + [f"{URL}e/{e['pagina']}.html" for e in dados])
     (SITE / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
