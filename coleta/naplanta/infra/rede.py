@@ -9,6 +9,7 @@ from naplanta.config import UA_ROBO
 UA = UA_ROBO
 ROBO = 'NaPlantaBot'  # nome que o robots.txt usa para dar regras so para nos
 PAUSA = 1  # segundos entre paginas
+TENTATIVAS = (10, 30)  # esperas antes de repetir uma pagina que deu timeout ou erro de conexao
 _regras = {}  # 'https://site' -> RobotFileParser
 
 
@@ -47,6 +48,12 @@ class _Transporte(httpx.HTTPTransport):
             print('robots.txt nao permite:', request.url)
             return httpx.Response(403, request=request)  # os coletores ja ignoram resposta diferente de 200
         time.sleep(pausa(str(request.url)))
+        for espera in TENTATIVAS:
+            try:
+                return super().handle_request(request)
+            except httpx.TransportError as erro:  # site lento ou conexao caiu: uma pagina nao derruba a fonte inteira
+                print(f'{erro.__class__.__name__} em {request.url}; nova tentativa em {espera}s')
+                time.sleep(espera)
         return super().handle_request(request)
 
 
