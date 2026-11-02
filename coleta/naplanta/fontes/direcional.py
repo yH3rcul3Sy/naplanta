@@ -64,9 +64,10 @@ def parse(url, html, nome):
 def coletar():
     out = []
     with rede.cliente() as c:
+            # 20 por pagina: com 100 o servidor deles passou a dar 504 depois de 60 s (out/2026)
         obras, pagina = [], 1
         while True:
-            r = c.get(f'{BASE}/wp-json/wp/v2/empreendimento', params={'per_page': 100, 'page': pagina, '_fields': 'title,link'})
+            r = c.get(f'{BASE}/wp-json/wp/v2/empreendimento', params={'per_page': 20, 'page': pagina, '_fields': 'title,link'})
             if r.status_code == 400 and pagina > 1:  # passou da ultima pagina
                 break
             lote = r.raise_for_status().json()  # 403 = o site recusou a coleta (bloqueia servidores fora do Brasil)
