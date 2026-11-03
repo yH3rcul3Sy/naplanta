@@ -1,5 +1,4 @@
-const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const dataBR = iso => iso ? iso.slice(0, 10).split('-').reverse().join('/') : null;
+import { dataBR, esc } from './nucleo/formato.js';
 function motivo(erro) {
   if (/nenhum|403/.test(erro)) return 'O site não responde à coleta automática feita pelos servidores do GitHub, então ficam os dados da última coleta que funcionou.';
   if (/incompleta/.test(erro)) return 'A coleta de hoje veio incompleta, então a anterior foi mantida.';

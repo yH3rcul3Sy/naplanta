@@ -23,6 +23,7 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
+<link rel="alternate" type="application/rss+xml" title="Novidades do NaPlanta" href="novidades.xml">
 <link rel="preload" href="dados.json" as="fetch" crossorigin>
 <!-- os pedacos do mapa sao a maior imagem da tela no celular: abrir a conexao com o OSM antes de o Leaflet pedir -->
 <link rel="preconnect" href="https://a.tile.openstreetmap.org">
@@ -70,6 +71,7 @@
   h1 { margin:0 8px 0 0; font-size:25px; letter-spacing:-.3px; } h1 span { color:var(--accent); }
   #filtros { display:flex; flex-wrap:wrap; gap:10px 12px; align-items:flex-end; }
   label { display:flex; flex-direction:column; font-size:12px; color:var(--muted); gap:3px; }
+  #filtros > label[hidden] { display:none; }  /* o campo de bairro so aparece com uma cidade escolhida */
   select, input { font:inherit; padding:7px 9px; border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--ink); min-width:110px;
                   cursor:pointer; transition:border-color .15s, box-shadow .15s; }
   input[type=number] { cursor:text; }
@@ -285,15 +287,17 @@
   <i class="quebra q1" aria-hidden="true"></i>
   <div id="filtros">
     <label class="cidade" style="--w:150px">Cidade <select id="cidade"><option value="">Todas</option></select></label>
+    <label style="--w:140px" hidden>Bairro <select id="bairro"><option value="">Todos</option></select></label>
     <label style="--w:130px">Tipo <select id="tipo"><option value="">Todos</option></select></label>
     <label style="--w:125px">Etapa <select id="etapa"><option value="">Todas</option></select></label>
     <label style="--w:125px">Construtora <select id="construtora"><option value="">Todas</option></select></label>
     <label class="fixo" style="--w:74px">Dorms <select id="dorms"><option value="">Todos</option><option value="1">1+</option><option value="2">2+</option><option value="3">3+</option><option value="4">4+</option></select></label>
     <label class="fixo" style="--w:88px">Estação <select id="estacao" title="Distância até a estação de trem ou metrô"><option value="">Todas</option><option value="1">até 1 km</option><option value="2">até 2 km</option><option value="3">até 3 km</option></select></label>
     <label class="fixo" style="--w:70px">Área mín. <input id="m2" type="number" inputmode="numeric" min="0" step="10" placeholder="Área mín. (m²)"></label>
+    <label class="fixo" style="--w:150px">Buscar <input id="busca" type="search" autocomplete="off" placeholder="Nome, bairro, rua…"></label>
     <label class="check" title="Incluir empreendimentos prontos para morar"><input id="prontos" type="checkbox"> Prontos</label>
     <label class="check" title="Só os que têm a página da construtora citando o Minha Casa Minha Vida"><input id="mcmv" type="checkbox"> MCMV</label>
-    <label class="fixo ordem" style="--w:120px">Ordenar <select id="ordem"><option value="">Padrão</option><option value="novos">Novos no site</option><option value="etapa">Etapa (breve 1º)</option><option value="estacao">Perto da estação</option><option value="area">Maior área</option></select></label>
+    <label class="fixo ordem" style="--w:120px">Ordenar <select id="ordem"><option value="">Padrão</option><option value="novos">Novos no site</option><option value="etapa">Etapa (breve 1º)</option><option value="estacao">Perto da estação</option><option value="perto">Perto de mim</option><option value="area">Maior área</option></select></label>
     <button id="limpar" type="button"><svg class="x" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>Limpar filtros</button>
   </div>
   <i class="quebra q2" aria-hidden="true"></i>
@@ -330,6 +334,7 @@
     <a href="sobre.html">Sobre o NaPlanta</a>
     <a href="transparencia.html">De onde vêm os dados</a>
     <a href="transparencia.html#perguntas">Perguntas frequentes</a>
+    <a href="lancamentos/novidades.html">Novos esta semana</a>
     <a class="so-celular" href="lancamentos/">Cidades</a>
     <a href="privacidade.html">Privacidade</a>
     <a href="termos.html">Termos de uso</a>

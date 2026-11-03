@@ -57,6 +57,10 @@ def ajustar_lista(lista_id, entrar, sair):
 def enviar_campanha(lista_id, nome, assunto, html, remetente):
     """Cria e dispara uma campanha para a lista; a Brevo cuida do descadastro ({{ unsubscribe }} no html)."""
     with _cliente() as c:
+        # workflow reexecutado no mesmo dia: a campanha (nome unico por cidade e dia) ja existe, nao manda de novo
+        feitas = c.get('/emailCampaigns', params={'limit': 100, 'sort': 'desc'}).raise_for_status().json().get('campaigns') or []
+        if ja := next((x['id'] for x in feitas if x.get('name') == nome), None):
+            return ja
         campanha = c.post('/emailCampaigns', json={
             'name': nome, 'subject': assunto, 'htmlContent': html,
             'sender': remetente, 'recipients': {'listIds': [lista_id]}}).raise_for_status().json()['id']

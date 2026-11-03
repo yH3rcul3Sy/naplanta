@@ -2,11 +2,12 @@
 a lista de todos, o sitemap.xml e o llms.txt. Roda na publicacao (job publicar), sobre o dados.json; so biblioteca padrao.
 Nada disso vai para o git."""
 import hashlib, json
+from datetime import date, datetime, timedelta
 from html import escape
 from collections import Counter, defaultdict
 from itertools import groupby
 from urllib.parse import quote
-from naplanta.config import CONTADOR, SITE, URL_SITE as URL
+from naplanta.config import CONTADOR, FUSO, SITE, URL_SITE as URL
 from naplanta.dominio.texto import slug
 
 
@@ -370,6 +371,65 @@ def html_regiao(por_cidade):
                       'lançamentos alto tietê, imóveis na planta alto tietê, lançamentos mogi das cruzes, lançamentos suzano')
 
 
+DIAS_NOVIDADES, DIAS_RSS = 7, 30
+TIPO_EVENTO = {'novo': 'Novo no site', 'etapa': 'Mudou de etapa', 'saiu': 'Saiu do site'}
+
+
+def recentes(mudancas, dias, hoje):
+    """Eventos dos ultimos dias, do mais novo ao mais antigo (a coleta ja grava os novos na frente)."""
+    limite = (date.fromisoformat(hoje) - timedelta(days=dias)).isoformat()
+    return [ev for ev in mudancas.get('eventos') or [] if ev['data'] >= limite]
+
+
+def _descricao_evento(ev):
+    return f"Mudou de {ev['de']} para {ev['etapa']}" if ev['tipo'] == 'etapa' else ev['etapa'] if ev['tipo'] == 'novo' else 'Provavelmente esgotado ou retirado pela incorporadora'
+
+
+def html_novidades(mudancas, por_fonte, hoje):
+    """/lancamentos/novidades.html: o que a coleta viu nos ultimos DIAS_NOVIDADES dias (a serie "Novos no mapa esta semana")."""
+    eventos = recentes(mudancas, DIAS_NOVIDADES, hoje)
+    novos = sum(ev['tipo'] == 'novo' for ev in eventos)
+    canonica = f'{URL}lancamentos/novidades.html'
+    trilha, ld_trilha = _trilha([('NaPlanta', URL), ('Lançamentos por cidade', f'{URL}lancamentos/'), ('Novos esta semana', None)])
+    def item(ev):
+        e = por_fonte.get(ev['fonte'])
+        nome = f'<a href="../e/{e["pagina"]}.html"><strong>{escape(ev["nome"])}</strong></a>' if e else f'<strong>{escape(ev["nome"])}</strong>'
+        return (f'<li>{nome} <span class="info">· {escape(ev["construtora"])} · {escape(ev.get("cidade") or "")} · '
+                f'<span class="selo">{TIPO_EVENTO[ev["tipo"]]}</span> {escape(_descricao_evento(ev))}</span></li>')
+    dias = ''.join(f'<h2 style="margin-top:24px">{_data(d)}</h2><ul class="lista">{"".join(item(ev) for ev in grupo)}</ul>'
+                   for d, grupo in groupby(eventos, key=lambda ev: ev['data']))
+    corpo = f"""{trilha}<h1>Novos no mapa esta semana</h1>
+<p class="sub">{_plural(novos, 'lançamento novo', 'lançamentos novos')} e {_plural(len(eventos) - novos, 'outra mudança', 'outras mudanças')} nos últimos {DIAS_NOVIDADES} dias, vistas pela coleta diária nos sites das incorporadoras.</p>
+<div class="botoes"><a class="btn primario" href="../?ordem=novos&amp;cidade=">Ver os novos no mapa</a><a class="btn" href="../alertas.html">Receber alertas por e-mail</a></div>
+{dias or '<p class="info">Nenhuma mudança nos últimos dias.</p>'}
+<p class="info" style="margin-top:24px">Também em <a href="../novidades.xml">RSS</a>. Preço e disponibilidade, consulte a construtora.</p>"""
+    return _documento('Novos lançamentos na planta esta semana | NaPlanta',
+                      f'Lançamentos imobiliários que apareceram nos sites das incorporadoras nos últimos {DIAS_NOVIDADES} dias, em Mogi das Cruzes, Alto Tietê e Grande São Paulo.',
+                      canonica, corpo, None, ld_trilha, 'lançamentos novos, novos lançamentos na planta, lançamento imobiliário esta semana')
+
+
+def rss(mudancas, por_fonte, hoje):
+    """novidades.xml: um item por mudanca dos ultimos DIAS_RSS dias, para leitores de RSS e automacoes."""
+    def item(ev):
+        e = por_fonte.get(ev['fonte'])
+        link = f'{URL}e/{e["pagina"]}.html' if e else ev['fonte']
+        quando = datetime.fromisoformat(ev['data']).replace(hour=6, tzinfo=FUSO).strftime('%a, %d %b %Y %H:%M:%S %z')
+        return (f'<item><title>{escape(TIPO_EVENTO[ev["tipo"]])}: {escape(ev["nome"])} ({escape(ev["construtora"])}, {escape(ev.get("cidade") or "")})</title>'
+                f'<link>{escape(link)}</link><guid isPermaLink="false">{escape(ev["fonte"])}#{ev["data"]}-{ev["tipo"]}</guid>'
+                f'<pubDate>{quando}</pubDate><description>{escape(_descricao_evento(ev))}</description></item>\n')
+    return ('<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel><title>Novidades do NaPlanta</title>'
+            f'<link>{URL}lancamentos/novidades.html</link><description>Lançamentos novos, mudanças de etapa e saídas vistas todo dia nos sites das incorporadoras.</description><language>pt-BR</language>\n'
+            + ''.join(item(ev) for ev in recentes(mudancas, DIAS_RSS, hoje)) + '</channel></rss>\n')
+
+
+_m = {'eventos': [{'data': '2026-11-02', 'tipo': 'novo', 'nome': 'A <b>', 'construtora': 'X', 'cidade': 'Suzano', 'etapa': 'Lançamento', 'fonte': 'https://x.com/a'},
+                  {'data': '2026-10-01', 'tipo': 'saiu', 'nome': 'B', 'construtora': 'X', 'cidade': 'Suzano', 'etapa': 'Em obras', 'fonte': 'https://x.com/b'}]}
+_n = html_novidades(_m, {'https://x.com/a': {'pagina': 'a-suzano-1'}}, '2026-11-03')
+assert '1 lançamento novo' in _n and 'A &lt;b&gt;' in _n and '../e/a-suzano-1.html' in _n and 'B</strong>' not in _n
+_r = rss(_m, {}, '2026-11-03')
+assert _r.count('<item>') == 1 and 'Mon, 02 Nov 2026 06:00:00 -0300' in _r and 'A &lt;b&gt;' in _r
+
+
 def html_lista(dados):
     por_cidade = groupby(sorted(dados, key=lambda e: (e.get('cidade') or '~', e['nome'])), key=lambda e: e.get('cidade') or 'Cidade não informada')
     titulo = lambda c: c if c == 'Cidade não informada' else f'<a href="../lancamentos/{pagina_cidade(c)}.html">{escape(c)}</a>'
@@ -415,6 +475,7 @@ Como consultar:
 
 - [Mapa interativo]({URL}): filtros por cidade, etapa, construtora, dormitórios, área, estação e MCMV
 - [Alto Tietê]({URL}lancamentos/alto-tiete.html): os lançamentos da região foco, por cidade
+- [Novos esta semana]({URL}lancamentos/novidades.html): o que apareceu ou mudou nos últimos 7 dias (RSS em {URL}novidades.xml)
 - [Lançamentos por cidade]({URL}lancamentos/): todas as cidades
 - [Todos os empreendimentos]({URL}e/): lista completa por cidade
 - [Sobre os dados e perguntas frequentes]({URL}transparencia.html): fontes, frequência de coleta e limites
@@ -462,11 +523,14 @@ def gerar():
         (pasta / f'{pagina_cidade(cidade)}.html').write_text(html_cidade(cidade, lista), encoding='utf8')
     (pasta / 'index.html').write_text(html_indice_cidades(por_cidade), encoding='utf8')
     (pasta / 'alto-tiete.html').write_text(html_regiao(por_cidade), encoding='utf8')
+    hoje, por_fonte = datetime.now(FUSO).date().isoformat(), {e['fonte']: e for e in dados}
+    (pasta / 'novidades.html').write_text(html_novidades(mudancas, por_fonte, hoje), encoding='utf8')
+    (SITE / 'novidades.xml').write_text(rss(mudancas, por_fonte, hoje), encoding='utf8')
     (SITE / 'llms.txt').write_text(llms_txt(dados, por_cidade), encoding='utf8')
     # o mapa liga cada card a sua pagina por esse campo; so no dados.json publicado, nao no do git
     (SITE / 'dados.json').write_text(json.dumps(dados, ensure_ascii=False, separators=(',', ':')), encoding='utf8')
     urls = ([URL, URL + 'transparencia.html', URL + 'privacidade.html', URL + 'alertas.html', URL + 'cadastro.html', URL + 'sobre.html', URL + 'contato.html', URL + 'termos.html', URL + 'e/',
-             URL + 'lancamentos/', URL + 'lancamentos/alto-tiete.html']
+             URL + 'lancamentos/', URL + 'lancamentos/alto-tiete.html', URL + 'lancamentos/novidades.html']
             + [f'{URL}lancamentos/{pagina_cidade(c)}.html' for c in sorted(por_cidade) if len(por_cidade[c]) >= MINIMO_INDEXAR] + [f"{URL}e/{e['pagina']}.html" for e in dados])
     (SITE / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                                       + ''.join(f'<url><loc>{escape(u)}</loc></url>\n' for u in urls) + '</urlset>\n', encoding='utf8')

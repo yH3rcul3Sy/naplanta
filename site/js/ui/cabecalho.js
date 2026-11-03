@@ -2,7 +2,7 @@
 const $ = id => document.getElementById(id);
 
 export function criarCabecalho({ redimensionarMapa }) {
-  let visiveis = 0;
+  let visiveis = 0, aviso = '';  // aviso: uma frase mostrada junto do total na proxima atualizacao
   const listaAberta = () => document.body.classList.contains('ver-lista');
 
   function verLista(sim) {
@@ -19,9 +19,11 @@ export function criarCabecalho({ redimensionarMapa }) {
 
   return {
     verLista,
+    avisar(texto) { aviso = texto; },
     atualizar({ total, atualizado, filtrosAtivos, novidades }) {
       $('nFiltros').hidden = !filtrosAtivos; $('nFiltros').textContent = filtrosAtivos;
-      $('total').textContent = `${total} empreendimento${total === 1 ? '' : 's'}${atualizado}`;
+      $('total').textContent = `${total} empreendimento${total === 1 ? '' : 's'}${atualizado}${aviso ? ' · ' + aviso : ''}`;
+      aviso = '';
       visiveis = total;
       if (!listaAberta()) $('alternar').textContent = `Ver lista · ${visiveis}`;
       $('nNovidades').hidden = !novidades; $('nNovidades').textContent = novidades;

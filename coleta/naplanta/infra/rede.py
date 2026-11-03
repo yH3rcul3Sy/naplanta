@@ -48,13 +48,15 @@ class _Transporte(httpx.HTTPTransport):
             print('robots.txt nao permite:', request.url)
             return httpx.Response(403, request=request)  # os coletores ja ignoram resposta diferente de 200
         time.sleep(pausa(str(request.url)))
-        for espera in TENTATIVAS:
+        for espera in (*TENTATIVAS, None):
             try:
                 return super().handle_request(request)
             except httpx.TransportError as erro:  # site lento ou conexao caiu: uma pagina nao derruba a fonte inteira
+                if espera is None:  # desistiu desta pagina: os coletores pulam resposta diferente de 200 (Arbore e J.Bianchi em 03/11)
+                    print(f'{erro.__class__.__name__} em {request.url}; pagina pulada')
+                    return httpx.Response(504, request=request)
                 print(f'{erro.__class__.__name__} em {request.url}; nova tentativa em {espera}s')
                 time.sleep(espera)
-        return super().handle_request(request)
 
 
 def cliente():

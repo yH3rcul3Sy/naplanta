@@ -75,7 +75,7 @@ def executar():
             novos = validos(f)
             conferir_volume(f, novos, velhos, antes)
         except Exception as erro:  # mantem os dados da ultima coleta dessa fonte
-            seguidas = getattr(erro, 'seguidas', 0)
+            seguidas = getattr(erro, 'seguidas', antes.get('quedas', 0))  # timeout no meio nao zera a contagem
             print(f'falha em {nome(f)}: {erro} -> mantendo {len(velhos)} da coleta anterior')
             dados += [geo.completar(limpo(e)) for e in velhos]
             fontes.append({'site': f.BASE, 'construtora': rotulo(f, velhos), 'total': len(velhos),
@@ -93,6 +93,7 @@ def executar():
         fontes.append({'site': f.BASE, 'construtora': rotulo(f, novos), 'total': len(novos), 'ok': True, 'atualizada': dia,
                        **({'sumidos': sumidos} if sumidos else {})})
     enriquecer(dados)
+    geo.salvar()
     historico['eventos'] = historico_recente(eventos + historico['eventos'], dia)
     repositorio.gravar(dados, historico, {'coleta': datetime.now(FUSO).isoformat(timespec='minutes'), 'fontes': fontes})
     print(len(dados), 'empreendimentos,', len(eventos), 'mudancas hoje ->', SITE)

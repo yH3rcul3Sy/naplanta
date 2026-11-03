@@ -23,8 +23,12 @@ def _get(path, **params):
             except (httpx.HTTPError, ValueError):
                 if tentativa == 2:
                     raise  # Nominatim fora do ar: a coleta para sem gravar nada e os dados de ontem ficam no ar
-        CACHE.write_text(json.dumps(cache, ensure_ascii=False), encoding='utf8')
     return cache[key]
+
+
+def salvar():
+    """Grava o cache uma vez ao fim da coleta (o arquivo tem 2 MB; regravar a cada endereco novo custava minutos)."""
+    CACHE.write_text(json.dumps(cache, ensure_ascii=False), encoding='utf8')
 
 
 def _cidade(a):
@@ -126,7 +130,6 @@ def _photon(q):
         else:
             return []  # reserva: fora do ar so deixa sem pino, nao derruba a coleta
         cache[key] = r.json().get('features') or []
-        CACHE.write_text(json.dumps(cache, ensure_ascii=False), encoding='utf8')
     return cache[key]
 
 
@@ -209,6 +212,7 @@ def no_predio(dados):
 
 def completar(e):
     e.setdefault('cidade', None); e.setdefault('uf', None)
+    e['bairro'] = e.get('bairro') or _bairro(e)  # publicado: filtro por bairro no site
     if not e['cidade'] and (m := re.search(r'([^\W\d_][^,.\d/-]+?)\s*[-/]\s*([A-Z]{2})\s*$', e.get('endereco') or '')):
         e['cidade'], e['uf'] = m[1].strip(), m[2]  # "..., Santa Rosa. Niterói - RJ"
     # fontes erram coordenadas: sinal trocado (Cury Jaguare caia na Arabia) ou lng = lat (Tenda Sete Lagoas no Atlantico)

@@ -2,7 +2,7 @@
 // A Brevo manda o e-mail de confirmacao (dupla confirmacao); o workflow 'alertas' le o atributo e separa por cidade.
 const FORM = 'https://26eab4e6.sibforms.com/v2/serve/MUIFAAVKS7lAG6EIHy0lNCUnBhjxcPaTA73UfM8FABKdd9RC_Qe6Zw8n8pGBroQPCAPxsGlOQEqGd6nqcMdefGKGFcghCakjXM7ZYJl9NOFFfsB_HsHpqj3xJgZBME1_UKHwZfZVziaLxXXVc24yFSa7wESWbalLPrGOKBnnpbs_zOd_tzqansrvmvFFOiwmV0FhREVGPMEg-_gCCQ==';
 const LISTA = '11';
-const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+import { esc } from './nucleo/formato.js';
 const $ = id => document.getElementById(id);
 const pedida = new URLSearchParams(location.search).get('cidade');
 

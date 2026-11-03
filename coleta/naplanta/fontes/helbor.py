@@ -9,7 +9,8 @@ BASE = 'https://helbor.com.br'
 
 def links(c):
     # o sitemap passou a trazer so alguns (out/2026); a lista completa esta paginada em /empreendimentos?page=N
-    achados = set(re.findall(rf'<loc>({BASE}/empreendimentos/[^<]+)</loc>', c.get(f'{BASE}/sitemap.xml').text))
+    # sem a barra do fim: o sitemap e a lista escrevem a mesma pagina de dois jeitos (VM125 entrava duas vezes)
+    achados = {u.rstrip('/') for u in re.findall(rf'<loc>({BASE}/empreendimentos/[^<]+)</loc>', c.get(f'{BASE}/sitemap.xml').text)}
     for pagina in range(1, 30):
         novos = set(re.findall(rf'{BASE}/empreendimentos/[a-z0-9-]+', c.get(f'{BASE}/empreendimentos', params={'page': pagina}).text))
         if not novos - achados:

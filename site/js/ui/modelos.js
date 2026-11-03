@@ -1,5 +1,6 @@
 // HTML do card da lista e do popup do mapa. Todo texto que vem das fontes passa por esc().
 import { ETAPA } from '../nucleo/etapas.js';
+import { km } from '../nucleo/filtros.js';
 import { dataBR, esc, faixa, num, plural } from '../nucleo/formato.js';
 
 // dados do OpenStreetMap: estacao a ate 3 km e servicos a ate 1 km, distancias em linha reta
@@ -33,6 +34,7 @@ export function cartao(e, ctx) {
       ${e.endereco ? `<p class="info">${esc(e.endereco)}</p>` : ''}
       ${fatos ? `<p class="fatos">${esc(fatos)}</p>` : ''}
       ${e.entrega ? `<p class="info">Entrega: ${esc(e.entrega)}</p>` : ''}
+      ${ctx.pos && e.lat != null ? `<p class="info">A ${num(Math.round(km(ctx.pos.lat, ctx.pos.lng, e.lat, e.lng) * 10) / 10)} km de você, em linha reta</p>` : ''}
       ${e.aprox ? `<p class="info aprox">Localização aproximada: o pino está ${e.aprox === 'rua' ? 'na rua' : 'no bairro'}, não no endereço exato</p>` : ''}
       ${ctx.parados[e.construtora] ? `<p class="info aprox">Dados de ${dataBR(ctx.parados[e.construtora])}: o site da ${esc(e.construtora)} não respondeu às últimas coletas</p>` : ''}
       ${arredores(e)}

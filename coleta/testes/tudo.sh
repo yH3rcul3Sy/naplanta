@@ -34,5 +34,6 @@ echo "::group::sintaxe do JavaScript do site"
 for f in $(git ls-files 'site/js/*.js' 'site/js/**/*.js' | grep -v vendor); do
   cp "$f" /tmp/x.mjs && node --check /tmp/x.mjs || { echo "::error file=$f::erro de sintaxe"; exit 1; }
 done
+node --test coleta/testes/filtros.test.mjs  # regras de filtro e ordenacao do mapa
 echo "::endgroup::"
 echo "bateria completa: ok ($(git rev-parse --short HEAD))"

@@ -12,11 +12,21 @@ import { criarNovidades } from './ui/novidades.js';
 import { criarPainelFiltros } from './ui/painel-filtros.js';
 
 const celular = matchMedia('(max-width: 800px)');
-let dados = [], mudancas = { inicio: null, eventos: [] }, situacao = { atualizado: '', parados: {} };
+let dados = [], mudancas = { inicio: null, eventos: [] }, situacao = { atualizado: '', parados: {} }, pos = null;
 
 // filtro mudou: a lista troca com esmaecer (View Transition, so ela: o mapa tem a propria animacao) e o mapa desliza
 const suave = !matchMedia('(prefers-reduced-motion: reduce)').matches && 'startViewTransition' in document;
 function aoFiltrar() {
+  // "Perto de mim" precisa da posicao: pede uma vez; recusada, volta para a ordem padrao
+  if (filtros.ler().ordem === 'perto' && !pos) {
+    navigator.geolocation.getCurrentPosition(
+      p => { pos = { lat: p.coords.latitude, lng: p.coords.longitude }; aoFiltrar(); },
+      () => { document.getElementById('ordem').value = ''; cabecalho.avisar('sem acesso à sua localização, ordem padrão'); aoFiltrar(); },
+      { maximumAge: 600000, timeout: 10000 });
+    return;
+  }
+  // o link reflete os filtros: da para compartilhar "2 dorms perto da estacao em Suzano"
+  history.replaceState(null, '', '?' + filtros.paraURL());
   if (!suave) return render(true);
   document.documentElement.classList.add('vt-filtro');
   document.startViewTransition(() => render(true)).finished.finally(() => document.documentElement.classList.remove('vt-filtro'));
@@ -46,10 +56,10 @@ function focar(e) {
 
 function render(animar = false) {
   const f = filtros.ler();
-  const visiveis = ordenar(filtrar(dados, f), f.ordem);
+  const visiveis = ordenar(filtrar(dados, f), f.ordem, pos);
   cabecalho.atualizar({ total: visiveis.length, atualizado: situacao.atualizado, filtrosAtivos: contarAtivos(f),
                         novidades: eventosRecentes(mudancas, f.cidade, DIAS_NOVO).length });
-  const ctx = { novoDesde: diasAtras(DIAS_NOVO), parados: situacao.parados };
+  const ctx = { novoDesde: diasAtras(DIAS_NOVO), parados: situacao.parados, pos: f.ordem === 'perto' ? pos : null };
   mapa.montar(visiveis, { popup: e => popup(e, ctx), aoClicar: e => lista.marcar(e.fonte, !celular.matches),
                           aoFecharPopup: e => lista.desmarcar(e.fonte) });
   lista.montar(visiveis, { conteudo: e => cartao(e, ctx), aoAbrir: e => abrir(e, false),
@@ -62,7 +72,7 @@ carregar().then(r => {
   situacao = resumirStatus(r.status);
   filtros.preencher(dados);
   const params = new URLSearchParams(location.search);
-  if (params.get('cidade')) filtros.escolherCidade(params.get('cidade'));  // "Ver no mapa" das paginas de cidade
+  filtros.daURL(params);  // "Ver no mapa" das paginas de cidade e links compartilhados com filtros
   render();
   // link "Ver no mapa" das paginas de empreendimento: ?e=<pagina>
   const alvo = dados.find(e => e.pagina && e.pagina === params.get('e'));

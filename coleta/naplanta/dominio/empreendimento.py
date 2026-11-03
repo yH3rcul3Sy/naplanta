@@ -69,7 +69,7 @@ def problemas(e, base):
               'dorms': faixa, 'm2': faixa,
               'imagem': lambda v: v is None or (isinstance(v, str) and v.startswith(('https://', 'http://'))),
               'link': lambda v: v is None or (isinstance(v, str) and v.startswith('https://')),
-              'etapa': texto, 'endereco': texto, 'cidade': texto, 'uf': texto, 'entrega': texto}
+              'etapa': texto, 'endereco': texto, 'cidade': texto, 'uf': texto, 'entrega': texto, 'bairro': texto}
     ruins = [k for k, ok in regras.items() if not ok(e.get(k))]
     if (e.get('lat') is None) != (e.get('lng') is None):
         ruins += ['lat', 'lng']
