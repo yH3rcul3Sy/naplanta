@@ -146,7 +146,11 @@ def _documento(titulo, descricao, canonica, corpo, imagem=None, extra='', palavr
 
 
 def _faixa(v, u):
-    return None if not v else f'{v[0]:g}{u}' if v[0] == v[1] else f'{v[0]:g} a {v[1]:g}{u}'
+    n = lambda x: f'{x:g}'.replace('.', ',')  # 32,78 m², nao 32.78
+    return None if not v else f'{n(v[0])}{u}' if v[0] == v[1] else f'{n(v[0])} a {n(v[1])}{u}'
+
+
+assert _faixa([32.78, 49.03], ' m²') == '32,78 a 49,03 m²' and _faixa([2, 2], ' dorm.') == '2 dorm.'
 
 
 def _data(iso):
