@@ -11,6 +11,8 @@ ETAPAS = {'breve lançamento': 'Breve lançamento', 'lançamento': 'Lançamento'
           'em obras': 'Em obras', 'entregue': 'Pronto para morar'}
 CARD = re.compile(r'HREF="(/imoveis/[a-z0-9-]+/)".*?ALT="([^"]+)".*?<FONT[^>]*>([^<|]+)\|\s*([A-Z]{2})\s*</FONT><BR>([^<]+)</DIV>', re.S)
 ENDERECO = re.compile(r'((?:Rua|R\.|Av\.|Avenida|Estrada|Alameda|Rodovia|Travessa)\s[^|]{3,90}?/[A-Z]{2})')
+# o topo de cada pagina traz "Nome<br>Endereco - Bairro - Cidade", com ou sem "/UF" (Boa Vista e Square Mogi vem sem)
+TOPO = re.compile(r'^((?:Rua|R\.|Av\.|Avenida|Estrada|Alameda|Rodovia|Travessa)\s.{3,120})$')
 
 
 def cards(html):
@@ -30,7 +32,8 @@ def parse(url, html, card):
         t.decompose()
     texto = ' '.join(s.get_text(' ').split())
     corpo = texto.split('Escritório:')[0]  # o rodape traz o endereco da sede e dos plantoes
-    end = ENDERECO.search(corpo)
+    topo = s.select_one('.empreend_topotxt')
+    end = (topo and TOPO.match(topo.get_text('|', strip=True).split('|')[-1])) or ENDERECO.search(corpo)
     dorms = [int(x) for x in re.findall(r'(\d)(?=(?:\s*(?:e|ou|,)\s*\d)*\s*dorm)', corpo, re.I)]
     m2 = [v for x in re.findall(r'(\d{1,3}(?:,\d+)?)\s*m²', corpo) if (v := float(x.replace(',', '.'))) >= 18]  # tira varanda e terraco soltos
     slug = url.rstrip('/').rsplit('/', 1)[-1]

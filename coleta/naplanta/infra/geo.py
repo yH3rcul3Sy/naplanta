@@ -54,7 +54,7 @@ def _bairro(e):
     """Ultimo trecho do endereco que nao e numero, CEP, cidade ou UF: 'Rua X, 178, Areia Branca' -> 'Areia Branca'."""
     fora = {_sem_acento(e.get('cidade')), _sem_acento(e.get('uf'))}
     partes = [p.strip(' .') for p in re.split(r'[,–]| - ', e.get('endereco') or '')[1:]]
-    resto = [p for p in partes if len(p) > 2 and _sem_acento(p) not in fora
+    resto = [p for p in partes if len(p) > 2 and _sem_acento(p.split('/')[0].strip()) not in fora  # "Mogi das Cruzes/SP"
              and not re.fullmatch(r'(?i)s/?n|n?º?\s*\d+\w?|cep.*|\d{5}-?\d{3}|lote.*', p)]
     return resto[-1] if resto else None
 
@@ -62,6 +62,7 @@ def _bairro(e):
 assert _bairro({'endereco': 'Rua Viver Cassage, 178, Areia Branca', 'cidade': 'Salvador'}) == 'Areia Branca'
 assert _bairro({'endereco': 'Av. Sen. Roberto Símonsen, 1545 - Jardim Imperador, Suzano - SP', 'cidade': 'Suzano', 'uf': 'SP'}) == 'Jardim Imperador'
 assert _bairro({'endereco': 'Rua Projetada A, S/N', 'cidade': 'Fortaleza'}) is None
+assert _bairro({'endereco': 'Av. Fumio Horii, 650 - Vila Braz Cubas - Mogi das Cruzes/SP', 'cidade': 'Mogi das Cruzes'}) == 'Vila Braz Cubas'
 
 
 def _tentativas(e):
