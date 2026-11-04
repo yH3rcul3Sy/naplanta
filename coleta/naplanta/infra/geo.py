@@ -54,19 +54,39 @@ ABREV = {'av.': 'Avenida', 'av': 'Avenida', 'r.': 'Rua', 'r': 'Rua', 'est.': 'Es
          'estr.': 'Estrada', 'al.': 'Alameda', 'rod.': 'Rodovia', 'tv.': 'Travessa'}
 
 
+NAO = r'(?i)[a-z]?\d|[A-Z]{2}$|n?\s?[º°]|s/?n\b|cep\b|lote|lt\b|quadra|qd\b|[aá]rea\b|gb\b|pal\b|km\b|(av|r|rua|avenida|al|alameda|est|estr|estrada|rod|rodovia|tv|travessa|pq|praca|praça)\b'
+
+
 def _bairro(e):
-    """Ultimo trecho do endereco que nao e numero, CEP, cidade ou UF: 'Rua X, 178, Areia Branca' -> 'Areia Branca'."""
-    fora = {_sem_acento(e.get('cidade')), _sem_acento(e.get('uf'))}
-    partes = [p.strip(' .') for p in re.split(r'[,–]| - ', e.get('endereco') or '')[1:]]
-    resto = [p for p in partes if len(p) > 2 and _sem_acento(p.split('/')[0].strip()) not in fora  # "Mogi das Cruzes/SP"
-             and not re.fullmatch(r'(?i)s/?n|n?º?\s*\d+\w?|cep.*|\d{5}-?\d{3}|lote.*', p)]
-    return resto[-1] if resto else None
+    """Primeiro trecho depois da rua que nao e numero, lote, CEP nem outra rua; a cidade encerra a busca (depois dela vem
+    o estado): 'Rua X, 178 - Areia Branca, Salvador - BA' -> 'Areia Branca'. So vale com a cidade ja conhecida."""
+    cidade, fim = e.get('cidade') or '', {_sem_acento(e.get('cidade')), _sem_acento(e.get('uf'))}
+    resto = (e.get('endereco') or '').partition(',')[2]
+    if cidade:
+        resto = resto.replace(f'. {cidade}', f', {cidade}')  # Cury: "Mooca. São Paulo - SP"
+    for p in re.split(r'[,|–]|\s-|-\s|\s/\s|(?<=[^\W\d_]{4})\.\s', resto):  # "Lapa. São Paulo" separa; "Jd. Nathalie" nao
+        p = p.strip(' .')
+        if _sem_acento(p) in fim:
+            return None
+        if len(p) > 1 and not re.match(NAO, p):
+            return p
+    return None
 
 
 assert _bairro({'endereco': 'Rua Viver Cassage, 178, Areia Branca', 'cidade': 'Salvador'}) == 'Areia Branca'
 assert _bairro({'endereco': 'Av. Sen. Roberto Símonsen, 1545 - Jardim Imperador, Suzano - SP', 'cidade': 'Suzano', 'uf': 'SP'}) == 'Jardim Imperador'
 assert _bairro({'endereco': 'Rua Projetada A, S/N', 'cidade': 'Fortaleza'}) is None
 assert _bairro({'endereco': 'Av. Fumio Horii, 650 - Vila Braz Cubas - Mogi das Cruzes/SP', 'cidade': 'Mogi das Cruzes'}) == 'Vila Braz Cubas'
+assert _bairro({'endereco': 'R. Fortunato Ferraz, 851 - Lapa, São Paulo - SP, 05093-000', 'cidade': 'São Paulo', 'uf': 'SP'}) == 'Lapa'
+assert _bairro({'endereco': 'Av. Francisco Rodrigues Filho, 3.601 | Vila Suissa', 'cidade': 'Mogi das Cruzes'}) == 'Vila Suissa'
+assert _bairro({'endereco': 'Rua da Mooca, 1290, Mooca. São Paulo - SP', 'cidade': 'São Paulo'}) == 'Mooca'
+assert _bairro({'endereco': 'Avenida do Estado, 2888, Sé. São Paulo - SP', 'cidade': 'São Paulo'}) == 'Sé'
+assert _bairro({'endereco': 'Av. Francisco Rodrigues Filho, 2002, Mogi das Cruzes. São Paulo - SP', 'cidade': 'Mogi das Cruzes'}) is None
+assert _bairro({'endereco': 'Rua Copas, 200. Santo André - SP', 'cidade': 'Santo André'}) is None
+assert _bairro({'endereco': 'Estr. Rikio Suenaga, 1291 - Jd. Nathalie, Mogi das Cruzes, SP, 08725-655', 'cidade': 'Mogi das Cruzes'}) == 'Jd. Nathalie'
+assert _bairro({'endereco': 'Aruã Brisas, Av. das Américas - Mogi das Cruzes, SP, 08771-000', 'cidade': 'Mogi das Cruzes'}) is None
+assert _bairro({'endereco': 'Estrada de Ouro Fino, km 11,2 – Santa Isabel', 'cidade': 'Santa Isabel'}) is None
+assert _bairro({'endereco': 'R. Nadim Ruston, 305 - LT 07 QD A- Jardim das Oliveiras, Jacareí - SP', 'cidade': 'Jacareí'}) == 'Jardim das Oliveiras'
 
 
 def _tentativas(e):
@@ -212,7 +232,6 @@ def no_predio(dados):
 
 def completar(e):
     e.setdefault('cidade', None); e.setdefault('uf', None)
-    e['bairro'] = e.get('bairro') or _bairro(e)  # publicado: filtro por bairro no site
     if not e['cidade'] and (m := re.search(r'([^\W\d_][^,.\d/-]+?)\s*[-/]\s*([A-Z]{2})\s*$', e.get('endereco') or '')):
         e['cidade'], e['uf'] = m[1].strip(), m[2]  # "..., Santa Rosa. Niterói - RJ"
     # fontes erram coordenadas: sinal trocado (Cury Jaguare caia na Arabia) ou lng = lat (Tenda Sete Lagoas no Atlantico)
@@ -228,4 +247,5 @@ def completar(e):
     if e['lat'] is not None and not e['cidade']:
         a = _get('reverse', lat=e['lat'], lon=e['lng'], zoom=10).get('address', {})
         e['cidade'], e['uf'] = _cidade(a), a.get('ISO3166-2-lvl4', '').removeprefix('BR-') or None
+    e['bairro'] = e.get('bairro') or _bairro(e)  # por ultimo, com a cidade ja conhecida; publicado: filtro por bairro no site
     return e
