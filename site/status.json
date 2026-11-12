@@ -1,82 +1,82 @@
 {
- "coleta": "2026-11-11T05:39-03:00",
+ "coleta": "2026-11-12T05:44-03:00",
  "fontes": [
   {
    "site": "https://helbor.com.br",
    "construtora": "Helbor",
    "total": 42,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://www.cacengenharia.com.br",
    "construtora": "C.A.C Engenharia",
    "total": 9,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://cury.net",
    "construtora": "Cury",
    "total": 220,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://tenda.com",
    "construtora": "Tenda",
    "total": 290,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://integraurbano.com.br",
    "construtora": "Integra Urbano",
    "total": 18,
-   "ok": false,
-   "erro": "The read operation timed out",
-   "atualizada": "2026-11-10"
+   "ok": true,
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://sousaaraujo.com.br",
    "construtora": "Sousa Araujo",
    "total": 22,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://www.damebe.com.br",
    "construtora": "Damebe",
    "total": 4,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://www.eztec.com.br",
    "construtora": "EZTEC",
    "total": 70,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://econconstrutora.com.br",
    "construtora": "Econ",
    "total": 109,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://www.metrocasa.com.br",
    "construtora": "Metrocasa",
    "total": 100,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://www.vibraresidencial.com.br",
    "construtora": "Vibra Residencial",
    "total": 21,
-   "ok": true,
+   "ok": false,
+   "erro": "nenhum empreendimento retornado (site fora do ar ou bloqueando o acesso)",
    "atualizada": "2026-11-11"
   },
   {
@@ -84,48 +84,51 @@
    "construtora": "Árbore",
    "total": 48,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://jbianchi.com.br",
    "construtora": "J.Bianchi",
    "total": 3,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://gfrempreendimentos.com.br",
    "construtora": "GFR",
    "total": 8,
-   "ok": true,
-   "atualizada": "2026-11-11"
+   "ok": false,
+   "erro": "so 3 de 8 (coleta incompleta)",
+   "atualizada": "2026-11-11",
+   "quedas": 1
   },
   {
    "site": "https://scopel.com.br",
    "construtora": "Scopel",
    "total": 7,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://ribeira.com.br",
    "construtora": "Ribeira",
    "total": 6,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://construtoralumiar.com.br",
    "construtora": "Lumiar",
    "total": 14,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://jeronimodaveiga.com.br",
    "construtora": "Jeronimo da Veiga",
    "total": 5,
-   "ok": true,
+   "ok": false,
+   "erro": "timed out",
    "atualizada": "2026-11-11"
   },
   {
@@ -133,63 +136,63 @@
    "construtora": "Evo Life",
    "total": 9,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://lumy.com.br",
    "construtora": "Lumy",
    "total": 9,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://graalengenharia.com.br",
    "construtora": "Graal",
    "total": 12,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://www.longitude.com.br",
    "construtora": "Longitude",
    "total": 48,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://www.direcional.com.br",
    "construtora": "Direcional",
-   "total": 99,
+   "total": 98,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://eme.maishm.com.br",
    "construtora": "HM Engenharia",
    "total": 15,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://www.grupolidera.com.br",
    "construtora": "Lidera",
    "total": 19,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://ngnengenharia.com.br",
    "construtora": "NGN Engenharia",
    "total": 3,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   },
   {
    "site": "https://naplanta.app.br/cadastro",
    "construtora": "Cadastro pelo site",
    "total": 1,
    "ok": true,
-   "atualizada": "2026-11-11"
+   "atualizada": "2026-11-12"
   }
  ]
 }
