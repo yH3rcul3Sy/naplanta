@@ -5,11 +5,11 @@
    "nome": "Vibra Estação São Mateus",
    "construtora": "Vibra Residencial",
    "etapa": "Em obras",
-   "endereco": "Av. Sapopemba, 15997, Cidade Satelite Santa Barbara, São Paulo",
+   "endereco": "Rua Cônego Macário de Almeida, 15997, Jardim Santa Adélia, São Paulo",
    "cidade": "São Paulo",
    "uf": "SP",
-   "lat": null,
-   "lng": null,
+   "lat": -23.6135552,
+   "lng": -46.4794606,
    "dorms": [
     1,
     2

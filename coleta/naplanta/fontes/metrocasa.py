@@ -37,7 +37,8 @@ def coletar():
     out = []
     with rede.cliente() as c:
         xml = c.get(f'{BASE}/sitemap.xml').text
-        for url in sorted(set(re.findall(rf'{BASE}/imoveis/[a-z0-9-]+(?=<|\s)', xml))):
+        # desde 11/2026 o sitemap vem sem www; a fonte segue com www para nao mudar a chave dos ja publicados
+        for url in sorted({BASE + p for p in re.findall(r'https://(?:www\.)?metrocasa\.com\.br(/imoveis/[a-z0-9-]+)(?=<|\s)', xml)}):
             r = c.get(url)
             if r.status_code == 200 and (e := parse(url, r.text)):
                 out.append(e)

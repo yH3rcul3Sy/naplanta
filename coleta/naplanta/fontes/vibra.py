@@ -12,9 +12,14 @@ def parse(url, html):
     s = BeautifulSoup(html, 'html.parser')
     g = next((n for j in s.find_all('script', type='application/ld+json') if 'ApartmentComplex' in (j.string or '')
               for n in json.loads(j.string).get('@graph', []) if n.get('@type') == 'ApartmentComplex'), None)
-    if not g or not re.search(r'InStock|PreOrder', (g.get('offers') or {}).get('availability') or ''):  # SoldOut fica de fora
+    if not g:
         return None
     prop = {p['name']: p['value'] for p in g.get('additionalProperty', [])}
+    # esgotado fica de fora: o status vira "Em obras e 100% vendido"/"Pronto e 100% vendido" (fora do ETAPA) e,
+    # desde 11/2026, a disponibilidade (SoldOut/InStock/PreOrder) vem num no RealEstateListing a parte
+    etapa = ETAPA.get(prop.get('Status do empreendimento', '').strip().lower())
+    if not etapa or 'SoldOut' in html:
+        return None
     a, geo = g.get('address') or {}, g.get('geo') or {}
     # em algumas paginas o geo vem sem o ponto decimal (-23612313034762700); ai vale o link do mapa
     m = re.search(r'@(-\d+\.\d+),(-\d+\.\d+)', g.get('hasMap') or '')
@@ -29,7 +34,7 @@ def parse(url, html):
     return {
         'nome': g['name'].title(),
         'construtora': 'Vibra Residencial',
-        'etapa': ETAPA.get(prop.get('Status do empreendimento', '').strip().lower()),
+        'etapa': etapa,
         'endereco': ', '.join(filter(None, [a.get('streetAddress'), prop.get('Bairro'), cidade])),
         'cidade': cidade, 'uf': 'SP',
         'lat': ll[0], 'lng': ll[1],
