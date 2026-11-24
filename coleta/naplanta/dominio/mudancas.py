@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 QUEDA_MAXIMA = 0.3  # fonte que perde mais que isso de um dia para o outro falhou no meio (Helbor em 26/09: 38 -> 8)
 COLETAS_PARA_ACEITAR_QUEDA = 3  # a mesma queda em coletas seguidas e real (esgotamento em massa), nao falha
 DIAS_DE_HISTORICO = 180
+DIAS_DE_VOLTA = 7  # quem some e volta nesse prazo nao saiu de verdade: a coleta veio incompleta (Tenda em 21/11: 44 de 340)
 
 
 def quedas(n_novos, n_velhos, seguidas):
@@ -14,8 +15,19 @@ def quedas(n_novos, n_velhos, seguidas):
 assert quedas(8, 38, 0) == 1 and quedas(8, 38, 2) == 3 and quedas(30, 38, 2) == 0 and quedas(5, 0, 0) == 0
 
 
-def comparar(velhos, novos, dia):
-    """Leva a data de estreia ('desde') de uma coleta para a outra e lista o que mudou numa fonte."""
+def sairam_ha_pouco(eventos, dia):
+    """{fonte: evento 'saiu'} dos ultimos DIAS_DE_VOLTA dias."""
+    limite = (datetime.fromisoformat(dia) - timedelta(days=DIAS_DE_VOLTA)).date().isoformat()
+    return {e['fonte']: e for e in eventos if e['tipo'] == 'saiu' and e['data'] >= limite}
+
+
+assert list(sairam_ha_pouco([{'tipo': 'saiu', 'data': '2026-11-21', 'fonte': 'a'}, {'tipo': 'saiu', 'data': '2026-11-01', 'fonte': 'b'},
+                             {'tipo': 'novo', 'data': '2026-11-21', 'fonte': 'c'}], '2026-11-22')) == ['a']
+
+
+def comparar(velhos, novos, dia, sairam={}):
+    """Leva a data de estreia ('desde') de uma coleta para a outra e lista o que mudou numa fonte.
+    sairam = sairam_ha_pouco(): quem esta nele e voltou recupera a estreia antiga e nao conta como novo."""
     if not velhos:  # fonte recem-integrada: tudo nela seria "novo", mas nao e lancamento
         for e in novos:
             e.setdefault('desde', None)
@@ -27,12 +39,15 @@ def comparar(velhos, novos, dia):
     eventos = []
     for e in novos:
         v = antes.get(e['fonte'])
+        if v is None and (v := sairam.get(e['fonte'])):  # voltou: o 'saiu' guardou a estreia
+            e['desde'] = v.get('desde')
+            continue
         e['desde'] = v.get('desde') if v else dia
         if not v:
             eventos.append(ev(e, 'novo'))
         elif v['etapa'] != e['etapa']:
             eventos.append(ev(e, 'etapa', de=v['etapa']))
-    return eventos + [ev(v, 'saiu') for f, v in antes.items() if f not in agora]
+    return eventos + [ev(v, 'saiu', desde=v.get('desde')) for f, v in antes.items() if f not in agora]
 
 
 _v = [{'fonte': 'a', 'nome': 'A', 'construtora': 'X', 'etapa': 'Lançamento', 'desde': '2026-09-01'},
@@ -42,6 +57,10 @@ _n = [{'fonte': 'a', 'nome': 'A', 'construtora': 'X', 'etapa': 'Em obras'},
 assert [(e['tipo'], e['nome']) for e in comparar(_v, _n, '2026-09-28')] == [('etapa', 'A'), ('novo', 'C'), ('saiu', 'B')]
 assert [e['desde'] for e in _n] == ['2026-09-01', '2026-09-28']
 assert comparar([], [{'fonte': 'z'}], '2026-09-28') == []
+_s = comparar(_v, [dict(_v[1])], '2026-11-21')  # A some numa coleta incompleta...
+assert [(e['tipo'], e['desde']) for e in _s] == [('saiu', '2026-09-01')]
+_n = [dict(_v[1]), {**_v[0], 'desde': None}]  # ...e volta no dia seguinte: nao e novo e recupera a estreia
+assert comparar(_v[1:], _n, '2026-11-22', {'a': _s[0]}) == [] and _n[1]['desde'] == '2026-09-01'
 
 
 def historico_recente(eventos, dia):

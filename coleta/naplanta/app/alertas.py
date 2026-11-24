@@ -55,7 +55,7 @@ def email(cidade, eventos, dados):
                   f'{o_que}{" · " + escape(ev["etapa"]) if ev["tipo"] == "novo" else ""}<br><a href="{escape(link)}">Ver detalhes</a></li>')
     html = f'''<div style="font-family:Arial,sans-serif;font-size:15px;color:#1d1d1b;max-width:560px">
 <p style="font-size:22px;font-weight:bold;margin:0 0 4px">Na<span style="color:#1f6f4a">Planta</span></p>
-<p>Novidades de hoje em <strong>{escape(cidade)}</strong>, direto dos sites das incorporadoras:</p>
+<p>Novidades em <strong>{escape(cidade)}</strong>, direto dos sites das incorporadoras:</p>
 <ul style="padding-left:18px">{itens}</ul>
 <p><a href="{URL_SITE}lancamentos/{pagina_cidade(cidade)}.html">Ver todos os lançamentos em {escape(cidade)}</a></p>
 <p style="font-size:12px;color:#6b6a66">Você recebe este e-mail porque se inscreveu nos alertas de {escape(cidade)} em naplanta.app.br.

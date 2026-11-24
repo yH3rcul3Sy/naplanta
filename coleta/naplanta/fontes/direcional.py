@@ -1,8 +1,8 @@
-"""Direcional Engenharia (todo o pais): a API do WordPress (/wp-json/wp/v2/empreendimento) lista nome e link; a pagina
-de cada um tem a linha do tempo da obra (a etapa atual leva o icone "complete-lancamento") e o mapa embutido com o
+"""Direcional Engenharia (todo o pais): o sitemap que o robots.txt deles indica (/enterprise-sitemap.xml) lista os links
+(a API do WordPress, usada ate 17/11/2026, passou a exigir login); a pagina de cada um tem o nome (og:title), a linha
+do tempo da obra (a etapa atual leva o icone "complete-lancamento") e o mapa embutido com o
 endereco (!2s) e a posicao (!2d lng, !3d lat)."""
 import re
-from html import unescape
 from urllib.parse import unquote
 from bs4 import BeautifulSoup
 from naplanta.dominio.texto import cita_mcmv
@@ -61,22 +61,23 @@ def parse(url, html, nome):
     }
 
 
+def links(xml):
+    """Paginas de empreendimento citadas no sitemap."""
+    return re.findall(rf'<loc>\s*({re.escape(BASE)}/empreendimentos/[^<\s]+)', xml)
+
+
+assert links(f'<loc>{BASE}/encontre-seu-apartamento/</loc><loc>{BASE}/empreendimentos/x/</loc>') == [f'{BASE}/empreendimentos/x/']
+
+
 def coletar():
     out = []
     with rede.cliente() as c:
-            # 20 por pagina: com 100 o servidor deles passou a dar 504 depois de 60 s (out/2026)
-        obras, pagina = [], 1
-        while True:
-            r = c.get(f'{BASE}/wp-json/wp/v2/empreendimento', params={'per_page': 20, 'page': pagina, '_fields': 'title,link'})
-            if r.status_code == 400 and pagina > 1:  # passou da ultima pagina
-                break
-            lote = r.raise_for_status().json()  # 403 = o site recusou a coleta (bloqueia servidores fora do Brasil)
-            if not lote:
-                break
-            obras += lote
-            pagina += 1
-        for o in obras:
-            r = c.get(o['link'])
-            if r.status_code == 200 and (e := parse(o['link'], r.text, unescape(o['title']['rendered']))):
+        obras = links(c.get(f'{BASE}/enterprise-sitemap.xml').raise_for_status().text)
+        if not obras:
+            raise ValueError('sitemap sem empreendimentos (o site pode ter mudado)')
+        for link in obras:
+            r = c.get(link)
+            nome = BeautifulSoup(r.text, 'html.parser').select_one('meta[property="og:title"]') if r.status_code == 200 else None
+            if nome and (e := parse(link, r.text, nome['content'].strip())):
                 out.append(e)
     return out
