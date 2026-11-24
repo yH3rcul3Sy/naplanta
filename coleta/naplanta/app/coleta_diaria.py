@@ -2,7 +2,7 @@
 from datetime import datetime
 from naplanta.config import FUSO, SITE
 from naplanta.dominio.empreendimento import campos_sumidos, etapa, limpo, problemas, tipo
-from naplanta.dominio.mudancas import COLETAS_PARA_ACEITAR_QUEDA, comparar, historico_recente, quedas
+from naplanta.dominio.mudancas import COLETAS_PARA_ACEITAR_QUEDA, comparar, historico_recente, quedas, sairam_ha_pouco
 from naplanta.fontes import FONTES
 from naplanta.infra import arredores, fotos, geo, repositorio
 
@@ -68,6 +68,7 @@ def executar():
     dia = hoje()
     anteriores, historico, status_antes = repositorio.ler(dia)
     dados, eventos, fontes = [], [], []
+    sairam = sairam_ha_pouco(historico['eventos'], dia)
     for f in FONTES:
         velhos = [e for e in anteriores if e.get('fonte', '').startswith(f.BASE)]
         antes = status_antes.get(f.BASE, {})
@@ -85,7 +86,7 @@ def executar():
             print(f"::warning::{nome(f)} sem atualizar desde {antes.get('atualizada')}: {erro}")
             continue
         print(f'{nome(f)}: {len(novos)} coletados')
-        eventos += comparar(velhos, novos, dia)
+        eventos += comparar(velhos, novos, dia, sairam)
         dados += [geo.completar(e) for e in novos]
         # comparado depois do geo, que tambem completa cidade e posicao dos dois lados
         if sumidos := campos_sumidos(velhos, novos):
@@ -94,6 +95,7 @@ def executar():
                        **({'sumidos': sumidos} if sumidos else {})})
     enriquecer(dados)
     geo.salvar()
-    historico['eventos'] = historico_recente(eventos + historico['eventos'], dia)
+    voltou = [sairam[e['fonte']] for e in dados if e['fonte'] in sairam]  # a saida deles era coleta incompleta: sai do historico
+    historico['eventos'] = historico_recente(eventos + [e for e in historico['eventos'] if e not in voltou], dia)
     repositorio.gravar(dados, historico, {'coleta': datetime.now(FUSO).isoformat(timespec='minutes'), 'fontes': fontes})
     print(len(dados), 'empreendimentos,', len(eventos), 'mudancas hoje ->', SITE)
