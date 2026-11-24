@@ -1,6 +1,6 @@
 """Direcional Engenharia (todo o pais): o sitemap que o robots.txt deles indica (/enterprise-sitemap.xml) lista os links
-(a API do WordPress, usada ate 17/11/2026, passou a exigir login); a pagina de cada um tem o nome (og:title), a linha
-do tempo da obra (a etapa atual leva o icone "complete-lancamento") e o mapa embutido com o
+(a API do WordPress, usada ate 17/11/2026, passou a exigir login); a pagina de cada um (layout novo
+de nov/2026) tem o nome (h1), a etapa (selo ao lado do nome) e o mapa embutido com o
 endereco (!2s) e a posicao (!2d lng, !3d lat)."""
 import re
 from urllib.parse import unquote
@@ -35,9 +35,8 @@ assert mapa('!2d-38.3!3d-12.9!2m3!2sCentral%20de%20Vendas%20Direcional!5e0') == 
 
 def parse(url, html, nome):
     s = BeautifulSoup(html, 'html.parser')
-    atual = next((r for r in s.select('section.status-empreendimento .row')
-                  if r.select_one('.text-status') and 'complete-lancamento' in str(r)), None)
-    etapa = ETAPAS.get(atual.select_one('.text-status').get_text(strip=True).lower()) if atual else None
+    atual = s.select_one('.enterprise-introduction__status')
+    etapa = ETAPAS.get(atual.get_text(strip=True).lower()) if atual else None
     if not etapa:
         return None
     endereco, cidade, uf, lat, lng = mapa(html)
@@ -77,7 +76,7 @@ def coletar():
             raise ValueError('sitemap sem empreendimentos (o site pode ter mudado)')
         for link in obras:
             r = c.get(link)
-            nome = BeautifulSoup(r.text, 'html.parser').select_one('meta[property="og:title"]') if r.status_code == 200 else None
-            if nome and (e := parse(link, r.text, nome['content'].strip())):
+            nome = BeautifulSoup(r.text, 'html.parser').select_one('h1') if r.status_code == 200 else None
+            if nome and (e := parse(link, r.text, nome.get_text(' ', strip=True))):
                 out.append(e)
     return out

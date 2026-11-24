@@ -1,21 +1,21 @@
 {
- "url": "https://www.direcional.com.br/empreendimentos/viva-vida-safira/",
- "nome": "Viva Vida Safira",
+ "url": "https://www.direcional.com.br/empreendimentos/oceana-piedade/",
+ "nome": "Breve Lançamento em Piedade",
  "esperado": [
   {
-   "nome": "Viva Vida Safira",
+   "nome": "Breve Lançamento em Piedade",
    "construtora": "Direcional",
-   "etapa": "Lançamento",
-   "endereco": "Colônia Terra Nova, Manaus - AM",
-   "cidade": "Manaus",
-   "uf": "AM",
-   "lat": -3.010846898825107,
-   "lng": -60.03682461371493,
+   "etapa": "Breve lançamento",
+   "endereco": "Rua Comendador José Didier, 27 - Piedade, Jaboatão dos Guararapes - PE, 54400-160",
+   "cidade": "Jaboatão dos Guararapes",
+   "uf": "PE",
+   "lat": -8.161919541868732,
+   "lng": -34.9196371749915,
    "dorms": null,
    "m2": null,
-   "texto": "Viva Vida Safira apartamentos",
-   "imagem": "https://www.direcional.com.br/wp-content/uploads/2021/07/Direcional-Capa.jpg",
-   "fonte": "https://www.direcional.com.br/empreendimentos/viva-vida-safira/",
+   "texto": "Breve Lançamento em Piedade apartamentos",
+   "imagem": "https://www.direcional.com.br/wp-admin/admin-ajax.php?action=rank_math_overlay_thumb&id=10423&type=play&hash=1c349facc4135491db97ffc51458b758",
+   "fonte": "https://www.direcional.com.br/empreendimentos/oceana-piedade/",
    "mcmv": true
   }
  ]
